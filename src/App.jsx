@@ -10,13 +10,14 @@ function App() {
   return (
     <>
       <Navigation / >
-      <Routes>
+      <div className="pt-30"> 
+        <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+      </div>
     </>
   )
 }

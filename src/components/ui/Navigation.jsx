@@ -17,7 +17,7 @@ export const Navigation = () => {
                 </Link>
 
                 <div className='flex items-center space-x-6'> 
-                    <Link to="/login" className="text-gray-700 hover:text-green-700 font-medium">
+                    <Link to="/login" className="text-gray-700 p-2 hover:bg-green-100 font-medium transition-colors rounded-lg">
                         Login
                     </Link>
                     <Link to="/register">
