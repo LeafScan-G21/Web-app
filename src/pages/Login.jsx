@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import logo from '../assets/leafScan.png'; 
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import FormField from '../components/ui/FormField';
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -22,23 +23,9 @@ const Login = () => {
             </div>
             {/* Login Form */}
             <div className='space-y-6'>
+                <FormField htmlFor="email" label="Email Address" Icon={Mail} input_type="email" id="email" value={email} onChange = {(e) => setEmail(e.target.value)}  placeholder="Enter your email" />               
                 <div>
-                    <label htmlFor='Email' className='block text-sm font-medium text-gray-700 mb-2'>Email Address</label>
-                    <div className='relative'>
-                        <Mail className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
-                        <input 
-                            type='email' 
-                            id='email'
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className='w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all'
-                            placeholder='Enter your email'
-                        />
-                    </div>
-                </div>
-                
-                <div>
-                    <label htmlFor='password' className='block text-sm font-medium text-gray-700 mb-2'>Email Address</label>
+                    <label htmlFor='password' className='block text-sm font-medium text-gray-700 mb-2'>Password</label>
                     <div className='relative'>
                         <Lock className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
                         <input 
