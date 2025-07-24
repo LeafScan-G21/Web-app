@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import logo from '../assets/leafScan.png'; 
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import FormField from '../components/ui/FormField';
+import PasswordField from '../components/ui/PasswordField';
+import FullWidthButton from '../components/ui/FullWidthButton';
 
 const Login = () => {
-    const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,31 +25,7 @@ const Login = () => {
             {/* Login Form */}
             <div className='space-y-6'>
                 <FormField htmlFor="email" label="Email Address" Icon={Mail} input_type="email" id="email" value={email} onChange = {(e) => setEmail(e.target.value)}  placeholder="Enter your email" />               
-                <div>
-                    <label htmlFor='password' className='block text-sm font-medium text-gray-700 mb-2'>Password</label>
-                    <div className='relative'>
-                        <Lock className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
-                        <input 
-                            type={showPassword ? 'text' : 'password'}
-                            id='password'
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className='w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all'
-                            placeholder='Enter your password'
-                        />
-                        <button 
-                            type='button' 
-                            className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-gray-400 hover:text-gray-600'
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? (
-                                <EyeOff className='h-5 w-5' />
-                            ) : (
-                                <Eye className='h-5 w-5' />
-                            )}
-                        </button>
-                    </div>
-                </div>
+                <PasswordField htmlFor="password" label="Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" /> 
                 <div className='flex items-center justify-between'>
                     <label className='flex items-center'>
                         <input 
@@ -62,9 +39,7 @@ const Login = () => {
                     </label>
                     <a href="#" className='text-sm text-green-600 hover:tect-green-700 font-medium'>Forgot Password?</a>
                 </div>
-                <button onClick={(e) => {e.preventDefault();}} className='w-full bg-green-700 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors focus:ring-2 focus:ring-green-500 focus:ring-offset-2'>
-                    Sign In
-                </button>
+                <FullWidthButton onClick={(e) => {e.preventDefault();}} body="Sign In" />
                 <div className='relative my-6'>
                     <div className='absolute inset-0 flex items-center'>
                         <div className='w-full border-t border-gray-300'></div>
