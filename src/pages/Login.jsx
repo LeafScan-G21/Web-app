@@ -4,11 +4,58 @@ import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import FormField from '../components/ui/FormField';
 import PasswordField from '../components/ui/PasswordField';
 import FullWidthButton from '../components/ui/FullWidthButton';
+import axios from 'axios';
 
 const Login = () => {
     const [rememberMe, setRememberMe] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+
+    const AUTH_URL = import.meta.env.VITE_AUTH_SERVICE_URL
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setEmailError('');
+        setPasswordError('');
+
+        let valid = true;
+        if (!email) {
+            setEmailError('Email is required');
+            valid = false;
+        } 
+
+        if (!password) {
+            setPasswordError('Password is required');
+            valid = false;
+        }
+
+        if (!valid) return;
+
+        const formData = {
+            email,
+            password,
+            remember_me: rememberMe,
+        };
+
+        try{
+            console.log(AUTH_URL);
+            const response = await axios.post(`${AUTH_URL}/users/login`, formData)
+            console.log(response.data);
+        } catch (error) {
+            if (error.response) {
+                if (error.response.data.email) {
+                    setEmailError(error.response.data.email[0]);
+                }
+                if (error.response.data.password) {
+                    setPasswordError(error.response.data.password[0]);
+                }
+            } else {
+                console.error("An unexpected error occurred:", error);
+            }
+        }
+    };
 
     
   return (
@@ -39,7 +86,7 @@ const Login = () => {
                     </label>
                     <a href="#" className='text-sm text-green-600 hover:tect-green-700 font-medium'>Forgot Password?</a>
                 </div>
-                <FullWidthButton onClick={(e) => {e.preventDefault();}} body="Sign In" />
+                <FullWidthButton onClick={handleSubmit} body="Sign In" />
                 <div className='relative my-6'>
                     <div className='absolute inset-0 flex items-center'>
                         <div className='w-full border-t border-gray-300'></div>
