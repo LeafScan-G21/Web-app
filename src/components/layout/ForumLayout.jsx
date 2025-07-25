@@ -1,6 +1,8 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Plus, Home } from "lucide-react";
 import { Button } from "../forum/Button.jsx";
+import logo from "../../assets/leafScan.png";
+
 import React from "react";
 
 const Layout = () => {
@@ -13,6 +15,11 @@ const Layout = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center space-x-2">
+              <img
+                src={logo}
+                alt="LeafScan Logo"
+                className="h-10 w-10 rounded-lg"
+              />
               <span className="text-2xl font-bold text-green-600">
                 LeafScan
               </span>
@@ -20,17 +27,17 @@ const Layout = () => {
 
             <nav className="hidden md:flex items-center space-x-6">
               <Link
-                to="/"
+                to="/forum"
                 className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
-                  location.pathname === "/"
-                    ? "bg-green-600 text-green-600-foreground"
-                    : "text-foreground hover:bg-accent"
+                  location.pathname === "/forum"
+                    ? "border-green-600"
+                    : "text-foreground hover:bg-green-300"
                 }`}
               >
                 <Home className="h-4 w-4" />
                 <span>Recent Posts</span>
               </Link>
-              <Link to="/new-post">
+              <Link to="/forum/new-post">
                 <Button className="flex items-center space-x-2">
                   <Plus className="h-4 w-4" />
                   <span>New Post</span>
@@ -40,7 +47,7 @@ const Layout = () => {
 
             {/* Mobile menu */}
             <div className="md:hidden flex items-center space-x-2">
-              <Link to="/new-post">
+              <Link to="/fonew-post">
                 <Button size="sm" className="flex items-center space-x-1">
                   <Plus className="h-4 w-4" />
                   <span>Post</span>

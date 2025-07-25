@@ -7,7 +7,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
-import Forum from "./pages/forum"; // e.g., forum/index.jsx
+import Forum from "./pages/forum/index.jsx";
+import PostView from "./pages/forum/PostView.jsx"; // Importing PostView for forum post details
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
       {/* Forum Layout */}
       <Route element={<ForumLayout />}>
         <Route path="/forum/*" element={<Forum />} />
+        <Route path="/forum/post/:id" element={<PostView />} />
+        {/* Add other forum-related routes here */}
       </Route>
 
       {/* Catch-all */}
