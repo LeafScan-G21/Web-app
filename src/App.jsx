@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "./components/layout/MainLayout";
 import ForumLayout from "./components/layout/ForumLayout";
+import { Toaster } from "react-hot-toast";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -11,7 +12,14 @@ import Forum from "./pages/forum"; // e.g., forum/index.jsx
 
 function App() {
   return (
+    <>
+    <Toaster position="top-center" toastOptions={{
+    style: {
+      marginTop: '4rem',
+    },
+  }}/>
     <Routes>
+      
       {/* Main Layout */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
@@ -27,6 +35,7 @@ function App() {
       {/* Catch-all */}
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </>
   );
 }
 

@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import logo from '../assets/leafScan.png'; 
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import FormField from '../components/ui/FormField';
 import PasswordField from '../components/ui/PasswordField';
 import FullWidthButton from '../components/ui/FullWidthButton';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const Login = () => {
     const [rememberMe, setRememberMe] = useState(false);
@@ -40,16 +41,24 @@ const Login = () => {
         };
 
         try{
-            console.log(AUTH_URL);
-            const response = await axios.post(`${AUTH_URL}/users/login`, formData)
+            const response = await axios.post(`${AUTH_URL}/users/login`, formData, 
+                {
+                    withCredentials: true, 
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+            toast.success('Login successful!');
             console.log(response.data);
         } catch (error) {
             if (error.response) {
-                if (error.response.data.email) {
-                    setEmailError(error.response.data.email[0]);
+                const detail = error.response.data.detail
+                if (detail === "Invalid email") {
+                    setEmailError(detail);
                 }
-                if (error.response.data.password) {
-                    setPasswordError(error.response.data.password[0]);
+                if (detail === "Wrong password") {
+                    setPasswordError(detail);
                 }
             } else {
                 console.error("An unexpected error occurred:", error);
@@ -71,8 +80,8 @@ const Login = () => {
             </div>
             {/* Login Form */}
             <div className='space-y-6'>
-                <FormField htmlFor="email" label="Email Address" Icon={Mail} input_type="email" id="email" value={email} onChange = {(e) => setEmail(e.target.value)}  placeholder="Enter your email" />               
-                <PasswordField htmlFor="password" label="Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" /> 
+                <FormField htmlFor="email" label="Email Address" Icon={Mail} input_type="email" id="email" value={email} onChange = {(e) => setEmail(e.target.value)}  placeholder="Enter your email" error={emailError}/>               
+                <PasswordField htmlFor="password" label="Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" error={passwordError}/> 
                 <div className='flex items-center justify-between'>
                     <label className='flex items-center'>
                         <input 
