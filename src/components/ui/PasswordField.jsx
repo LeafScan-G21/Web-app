@@ -1,7 +1,7 @@
 import { Eye, EyeOff, Lock } from 'lucide-react';
 import React, { useState } from 'react'
 
-const PasswordField = ({htmlFor, label, id, value, onChange, placeholder}) => {
+const PasswordField = ({htmlFor, label, id, value, onChange, placeholder, error}) => {
     const [showPassword, setShowPassword] = useState(false);
     return (
         <div>
@@ -15,6 +15,7 @@ const PasswordField = ({htmlFor, label, id, value, onChange, placeholder}) => {
                     onChange= {onChange}
                     className='w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all'
                     placeholder={placeholder}
+                    required
                 />
                 <button 
                     type='button' 
@@ -28,6 +29,9 @@ const PasswordField = ({htmlFor, label, id, value, onChange, placeholder}) => {
                     )}
                 </button>
             </div>
+            {error && (
+                <div className='text-red-600 text-sm mt-1'>{error}</div>
+            )}
         </div>
   )
 }
