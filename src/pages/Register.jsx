@@ -51,7 +51,9 @@ const Register = () => {
                 <div className='relative flex justify-center text-sm text-gray-500'>
                     <span className='bg-white px-4'>ALREADY HAVE AN ACCOUNT?</span>
                 </div>
+                
             </div>
+            <a href='/login' className='block text-center w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-colors border border-gray-200'>Sign In Instead</a>
         </div>
         </div>
     </div>
