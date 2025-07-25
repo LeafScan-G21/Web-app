@@ -37,7 +37,7 @@ const Layout = () => {
                 <Home className="h-4 w-4" />
                 <span>Recent Posts</span>
               </Link>
-              <Link to="/forum/new-post">
+              <Link to="/forum/add">
                 <Button className="flex items-center space-x-2">
                   <Plus className="h-4 w-4" />
                   <span>New Post</span>
@@ -47,7 +47,7 @@ const Layout = () => {
 
             {/* Mobile menu */}
             <div className="md:hidden flex items-center space-x-2">
-              <Link to="/fonew-post">
+              <Link to="/forum/add">
                 <Button size="sm" className="flex items-center space-x-1">
                   <Plus className="h-4 w-4" />
                   <span>Post</span>
