@@ -3,7 +3,7 @@ import { Check, Play } from 'lucide-react';
 
 const Home = () => {
   return (
-    <div className="container mx-auto px-10 py-30 overflow-y-hidden">
+    <div className="container mx-auto px-10 overflow-y-hidden">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left side Content */}
           <div className="space-y-8">
