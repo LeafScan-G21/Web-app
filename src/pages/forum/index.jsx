@@ -1,25 +1,49 @@
-import React from "react";
+import React, { useEffect } from "react";
 import hero from "../../assets/forum/hero-plants.jpg";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "../../components/forum/Input.jsx";
-import { getPostsByPage, getTotalPages } from "../../data/mockdata.js";
+import { getTotalPages } from "../../data/mockdata.js";
 import PostCard from "../../components/forum/PostCard.jsx";
 import Pagination from "../../components/forum/Pagination.jsx";
+import { getLatestPosts } from "../../services/forum/post.js";
+import LoadingAnimation from "../../components/forum/PostLoading.jsx";
 
 const Forum = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const postsPerPage = 5;
 
-  const posts = getPostsByPage(currentPage, postsPerPage);
+  //const posts = getPostsByPage(currentPage, postsPerPage);
   const totalPages = getTotalPages(postsPerPage);
+
+  const [fetchingPosts, setFetchingPosts] = useState(false);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 400, behavior: "smooth" });
   };
 
+  const [fetchedPosts, setFetchedPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setFetchingPosts(true);
+        const response = await getLatestPosts();
+        setFetchedPosts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      } finally {
+        setFetchingPosts(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+  if (fetchingPosts) {
+    return <LoadingAnimation multiplePosts={true} />;
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-6 sm:py-8 lg:py-12">
@@ -102,9 +126,9 @@ const Forum = () => {
 
           {/* Posts Grid */}
           <div className="space-y-6 sm:space-y-8 mb-12 sm:mb-16">
-            {posts.map((post, index) => (
+            {fetchedPosts.map((post, index) => (
               <div
-                key={post.id}
+                key={post._id}
                 className="transform hover:-translate-y-1 transition-all duration-300 hover:shadow-xl"
                 style={{
                   animationDelay: `${index * 100}ms`,

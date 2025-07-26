@@ -13,11 +13,13 @@ import {
   Trash2,
 } from "lucide-react";
 import PostCard from "../../components/forum/PostCard.jsx";
-import { getPostById, getRelatedPosts } from "../../data/mockdata.js";
+import { getRelatedPosts } from "../../data/mockdata.js";
 import EditPost from "../../components/forum/modals/EditPost.jsx";
 import DeletePost from "../../components/forum/modals/DeletePost.jsx";
 import EditComment from "../../components/forum/modals/EditComment.jsx";
 import DeleteComment from "../../components/forum/modals/DeleteComment.jsx";
+import { getPostById } from "../../services/forum/post.js";
+import LoadingAnimation from "../../components/forum/PostLoading.jsx";
 
 const PostDetail = () => {
   useEffect(() => {
@@ -30,7 +32,31 @@ const PostDetail = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState("view");
 
-  const post = id ? getPostById(id) : undefined;
+  const [post, setPost] = useState(null);
+  const comments = [];
+
+  const [fetchingPost, setFetchingPost] = useState(true);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        setFetchingPost(true);
+        const response = await getPostById(id);
+        setPost(response.data);
+      } catch (error) {
+        console.error("Failed to fetch post:", error);
+      } finally {
+        setFetchingPost(false);
+      }
+    };
+    if (id) {
+      fetchPost();
+    }
+  }, [id]);
+
+  if (fetchingPost) {
+    return <LoadingAnimation multiplePosts={false} />;
+  }
 
   if (!post) {
     return (
@@ -58,8 +84,8 @@ const PostDetail = () => {
     );
   }
 
-  const relatedPosts = getRelatedPosts(post.id, post.tags, post.plantName);
-  const formattedDate = new Date(post.createdAt).toLocaleDateString("en-US", {
+  const relatedPosts = getRelatedPosts(post._id, post.tags, post.plant_name);
+  const formattedDate = new Date(post.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -106,10 +132,10 @@ const PostDetail = () => {
             <div className="flex items-start space-x-4 flex-1 min-w-0">
               <div className="flex-shrink-0">
                 <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center ring-2 ring-gray-100">
-                  {post.author.avatar ? (
+                  {post.author_id ? (
                     <img
-                      src={post.author.avatar}
-                      alt={post.author.name}
+                      src={post.author_id}
+                      alt={post.author_id}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -119,14 +145,14 @@ const PostDetail = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 truncate">
-                  {post.author.name}
+                  {post.author_id}
                 </h3>
                 <div className="flex items-center space-x-2 text-sm text-gray-500 mb-3">
                   <Calendar className="h-4 w-4 flex-shrink-0" />
                   <span className="truncate">{formattedDate}</span>
                 </div>
                 <div className="inline-flex items-center bg-gray-100 text-sm font-medium px-3 py-1.5 rounded-full text-gray-700">
-                  {post.plantName}
+                  {post.plant_name}
                 </div>
               </div>
             </div>
@@ -182,10 +208,10 @@ const PostDetail = () => {
           </div>
 
           {/* Images */}
-          {post.imageUrls.length > 0 && (
+          {post.image_urls.length > 0 && (
             <div className="mb-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {post.imageUrls.map((url, index) => (
+                {post.image_urls.map((url, index) => (
                   <div
                     key={index}
                     className="group relative rounded-xl overflow-hidden bg-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300"
@@ -232,9 +258,7 @@ const PostDetail = () => {
 
             <div className="flex items-center space-x-2 px-3 py-2 text-gray-500 bg-gray-50 rounded-lg">
               <MessageCircle className="h-5 w-5" />
-              <span className="font-medium">
-                {post.comments.length} comments
-              </span>
+              <span className="font-medium">{comments.length} comments</span>
             </div>
           </footer>
         </article>
@@ -245,7 +269,7 @@ const PostDetail = () => {
             <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
               Comments
               <span className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-600">
-                {post.comments.length}
+                {comments.length}
               </span>
             </h2>
           </header>
@@ -280,27 +304,25 @@ const PostDetail = () => {
 
           {/* Comments List */}
           <div className="space-y-6">
-            {post.comments.length > 0 ? (
+            {comments.length > 0 ? (
               <>
-                {(showAllComments
-                  ? post.comments
-                  : post.comments.slice(0, 3)
-                ).map((comment, index) => (
-                  <>
-                    <CommentItem
-                      key={comment.id}
-                      comment={comment}
-                      onVote={handleCommentVote}
-                      isLast={
-                        index ===
-                        (showAllComments
-                          ? post.comments.length - 1
-                          : Math.min(2, post.comments.length - 1))
-                      }
-                    />
-                  </>
-                ))}
-                {post.comments.length > 3 && (
+                {(showAllComments ? comments : comments.slice(0, 3)).map(
+                  (comment, index) => (
+                    <div key={comment.id}>
+                      <CommentItem
+                        comment={comment}
+                        onVote={handleCommentVote}
+                        isLast={
+                          index ===
+                          (showAllComments
+                            ? comments.length - 1
+                            : Math.min(2, comments.length - 1))
+                        }
+                      />
+                    </div>
+                  )
+                )}
+                {comments.length > 3 && (
                   <div className="text-center pt-6 border-t border-gray-100">
                     <button
                       onClick={() => setShowAllComments(!showAllComments)}
@@ -310,7 +332,7 @@ const PostDetail = () => {
                       <span>
                         {showAllComments
                           ? "Show Less Comments"
-                          : `Show All ${post.comments.length} Comments`}
+                          : `Show All ${comments.length} Comments`}
                       </span>
                     </button>
                   </div>
@@ -363,7 +385,7 @@ const PostDetail = () => {
 };
 
 const CommentItem = ({ comment, onVote, isLast }) => {
-  const commentDate = new Date(comment.createdAt).toLocaleDateString();
+  const commentDate = new Date(comment.created_at).toLocaleDateString();
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState("view-comment");
 
@@ -388,10 +410,10 @@ const CommentItem = ({ comment, onVote, isLast }) => {
     >
       <div className="flex-shrink-0">
         <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center ring-2 ring-gray-100">
-          {comment.author.avatar ? (
+          {comment.author_id ? (
             <img
-              src={comment.author.avatar}
-              alt={comment.author.name}
+              src={comment.author_id}
+              alt={comment.author_id}
               className="h-full w-full object-cover"
             />
           ) : (
@@ -448,7 +470,7 @@ const CommentItem = ({ comment, onVote, isLast }) => {
 
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="font-bold text-gray-900 truncate">
-            {comment.author.name}
+            {comment.author_id}
           </span>
           <span className="text-gray-400">•</span>
           <span className="text-gray-500 truncate">{commentDate}</span>
