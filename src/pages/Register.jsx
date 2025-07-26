@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import logo from '../assets/leafScan.png'
 import { Mail, User} from 'lucide-react'
 import FormField from '../components/ui/FormField'
 import PasswordField from '../components/ui/PasswordField'
 import FullWidthButton from '../components/ui/FullWidthButton'
+import { toast } from 'react-hot-toast'
 import axios from 'axios'
 
 const Register = () => {
@@ -19,6 +21,9 @@ const Register = () => {
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
     const [tandcerror, setTandcError] = useState("");
+    const navigate = useNavigate();
+    
+    const AUTH_URL = import.meta.env.VITE_AUTH_SERVICE_URL;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -69,18 +74,19 @@ const Register = () => {
             password,
         };
         try{
-            const response = await axios.post('http://127.0.0.1:8000/users/register', formData);
-            console.log("User registered successfully:", response.data);
+            const response = await axios.post(`${AUTH_URL}/users/register`, formData);
+            toast.success('Registration successful! Please log in.');
+            navigate('/login');
         } catch (error) {
             if (error.response) {
                 if (error.response.data.detail === "Email already registered") {
                     setEmailError("Email is already registered");
-                } 
-            } else {
+                } else {
                     setTandcError("Network Error. Please try again.");
             }
         }
     }
+}
 
     return (
     <div className='min-h-screen bg-[#f9fbf9] flex items-center justify-center px-4'>
