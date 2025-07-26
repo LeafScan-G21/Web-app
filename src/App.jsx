@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Forum from "./pages/forum/index.jsx";
 import PostView from "./pages/forum/PostView.jsx";
 import AddPost from "./pages/forum/AddPost.jsx";
+import Diagnosis from "./pages/Diagnosis";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/diagnosis" element={<Diagnosis />} />
       </Route>
 
       {/* Forum Layout */}
