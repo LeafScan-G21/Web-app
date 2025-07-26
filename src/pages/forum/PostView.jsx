@@ -20,6 +20,11 @@ import EditComment from "../../components/forum/modals/EditComment.jsx";
 import DeleteComment from "../../components/forum/modals/DeleteComment.jsx";
 import { getPostById } from "../../services/forum/post.js";
 import LoadingAnimation from "../../components/forum/PostLoading.jsx";
+import toast from "react-hot-toast";
+import {
+  addComment,
+  getCommentsByPostId,
+} from "../../services/forum/comment.js";
 
 const PostDetail = () => {
   useEffect(() => {
@@ -33,10 +38,9 @@ const PostDetail = () => {
   const [mode, setMode] = useState("view");
 
   const [post, setPost] = useState(null);
-  const comments = [];
+  const [comments, setComments] = useState([]);
 
   const [fetchingPost, setFetchingPost] = useState(true);
-
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -54,10 +58,42 @@ const PostDetail = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    const fetchComments = async () => {
+      if (post && post._id) {
+        try {
+          const response = await getCommentsByPostId(post._id);
+          setComments(response.data);
+        } catch (error) {
+          console.error("Failed to fetch comments:", error);
+        }
+      }
+    };
+    fetchComments();
+  }, [post]);
+
   if (fetchingPost) {
     return <LoadingAnimation multiplePosts={false} />;
   }
 
+  const handleCommentUpdate = (comment_id, updatedContent) => {
+    if (!updatedContent.trim()) {
+      return;
+    }
+    setComments((prevComments) =>
+      prevComments.map((comment) =>
+        comment._id === comment_id
+          ? { ...comment, content: updatedContent }
+          : comment
+      )
+    );
+  };
+
+  const handleCommentDelete = (comment_id) => {
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment._id !== comment_id)
+    );
+  };
   if (!post) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
@@ -100,16 +136,34 @@ const PostDetail = () => {
   };
 
   const handleSubmitComment = async () => {
-    if (!newComment.trim()) return;
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setNewComment("");
+    if (!newComment.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+    const commentData = {
+      post_id: post._id,
+      content: newComment,
+      author_id: "currentUserId", // replace with actual user ID
+    };
+    try {
+      setIsSubmitting(true);
+      const response = await addComment(commentData);
+      if (response.errors) {
+        console.error("Error creating comment:", response.errors);
+      } else {
+        setNewComment("");
+        setComments((prevComments) => [...prevComments, response.data]);
+      }
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
+    toast.success("Post link copied to clipboard!");
   };
 
   return (
@@ -117,7 +171,7 @@ const PostDetail = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Back Button */}
         <div className="mb-6 sm:mb-8">
-          <Link to="/">
+          <Link to="/forum">
             <button className="inline-flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200 group">
               <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-200" />
               <span>Back to Posts</span>
@@ -156,15 +210,16 @@ const PostDetail = () => {
                 </div>
               </div>
             </div>
-            <button
-              onClick={handleShare}
-              className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
-              title="Share post"
-            >
-              <Share2 className="h-5 w-5" />
-            </button>
+
             {/* TODO: HIDE THE ICONS FOR OTHERS */}
             <div className="flex items-center space-x-4">
+              <button
+                onClick={handleShare}
+                className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                title="Share post"
+              >
+                <Share2 className="h-5 w-5" />
+              </button>
               <button
                 onClick={() => {
                   setMode("edit");
@@ -308,7 +363,7 @@ const PostDetail = () => {
               <>
                 {(showAllComments ? comments : comments.slice(0, 3)).map(
                   (comment, index) => (
-                    <div key={comment.id}>
+                    <div key={comment._id}>
                       <CommentItem
                         comment={comment}
                         onVote={handleCommentVote}
@@ -318,6 +373,8 @@ const PostDetail = () => {
                             ? comments.length - 1
                             : Math.min(2, comments.length - 1))
                         }
+                        handleCommentUpdate={handleCommentUpdate}
+                        handleCommentDelete={handleCommentDelete}
                       />
                     </div>
                   )
@@ -378,13 +435,19 @@ const PostDetail = () => {
         />
       )}
       {modalOpen && mode === "delete" && (
-        <DeletePost post_id={post.id} onClose={() => setModalOpen(false)} />
+        <DeletePost post_id={post._id} onClose={() => setModalOpen(false)} />
       )}
     </div>
   );
 };
 
-const CommentItem = ({ comment, onVote, isLast }) => {
+const CommentItem = ({
+  comment,
+  onVote,
+  isLast,
+  handleCommentUpdate,
+  handleCommentDelete,
+}) => {
   const commentDate = new Date(comment.created_at).toLocaleDateString();
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState("view-comment");
@@ -400,6 +463,7 @@ const CommentItem = ({ comment, onVote, isLast }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalOpen]);
 
   return (
@@ -501,14 +565,21 @@ const CommentItem = ({ comment, onVote, isLast }) => {
         {mode === "edit-comment" && (
           <EditComment
             comment={comment}
-            onClose={() => setMode("view-comment")}
-            onSave={() => {}}
+            onClose={(content) => {
+              setMode("view-comment");
+              setModalOpen(false);
+              handleCommentUpdate(comment._id, content);
+            }}
           />
         )}
         {mode === "delete-comment" && (
           <DeleteComment
             comment={comment}
-            onClose={() => setMode("view-comment")}
+            onClose={() => {
+              setMode("view-comment");
+              setModalOpen(false);
+              handleCommentDelete(comment._id);
+            }}
           />
         )}
       </div>

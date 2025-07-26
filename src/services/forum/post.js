@@ -55,6 +55,7 @@ export const getPostById = async (postId) => {
 export const updatePost = async (postId, postData) => {
   try {
     const response = await axios.put(`${FORUM_URL}/post/${postId}`, postData, {
+      params: { user_id: "currentUserId" }, // replace with actual user ID
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -72,6 +73,7 @@ export const updatePost = async (postId, postData) => {
 export const deletePost = async (postId) => {
   try {
     const response = await axios.delete(`${FORUM_URL}/post/${postId}`, {
+      params: { user_id: "currentUserId" }, // Replace with actual user ID
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -103,6 +105,24 @@ export const uploadpostImages = async (images) => {
   } catch (error) {
     console.error("Error uploading post images:", error);
     toast.error("Failed to upload images");
+    throw error;
+  }
+};
+
+export const deletePostImages = async (image_urls) => {
+  try {
+    const response = await axios.delete(`${FORUM_URL}/upload`, {
+      data: { image_urls },
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    //#toast.success("Images deleted successfully!");
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting post images:", error);
+    toast.error("Failed to delete images");
     throw error;
   }
 };

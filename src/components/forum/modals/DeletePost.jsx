@@ -1,22 +1,29 @@
 import React, { useState } from "react";
 import { Trash2, AlertTriangle, X } from "lucide-react";
+import { deletePost } from "../../../services/forum/post";
+import { useNavigate } from "react-router-dom";
 
 const DeletePost = ({ post_id, onClose }) => {
   const [isDeleting, setIsDeleting] = useState(false);
-
+  const navigate = useNavigate();
   const closeModal = () => {
-    console.log("Closing modal"); // Debug log
     onClose();
   };
 
   const handleDelete = async () => {
-    setIsDeleting(true);
-    // Simulate API call delay
-    setTimeout(() => {
-      console.log(`Post with ID ${post_id} deleted`);
-      setIsDeleting(false);
+    try {
+      setIsDeleting(true);
+      const response = await deletePost(post_id);
+      if (response.errors) {
+        console.error("Error deleting post:", response.errors);
+      }
       closeModal();
-    }, 1000);
+      navigate("/forum");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (

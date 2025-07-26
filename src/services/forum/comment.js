@@ -1,0 +1,76 @@
+import axios from "axios";
+import { toast } from "react-hot-toast";
+const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
+
+export const addComment = async (commentData) => {
+  try {
+    const response = await axios.post(`${FORUM_URL}/comment`, commentData, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    toast.success("Comment added successfully!");
+    return response.data;
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    toast.error("Failed to add comment");
+    throw error;
+  }
+};
+
+export const getCommentsByPostId = async (postId) => {
+  try {
+    const response = await axios.get(`${FORUM_URL}/comment/${postId}`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching comments by post ID:", error);
+    toast.error("Failed to fetch comments");
+    throw error;
+  }
+};
+
+export const deleteComment = async (commentId) => {
+  try {
+    const response = await axios.delete(`${FORUM_URL}/comment/${commentId}`, {
+      params: { user_id: "currentUserId" }, // replace with actual user ID
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    toast.success("Comment deleted successfully!");
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    toast.error("Failed to delete comment");
+    throw error;
+  }
+};
+
+export const updateComment = async (commentId, content) => {
+  try {
+    const response = await axios.put(
+      `${FORUM_URL}/comment/${commentId}`,
+      { content },
+      {
+        params: { user_id: "currentUserId" }, // replace with actual user ID
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    toast.success("Comment updated successfully!");
+    return response.data;
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    toast.error("Failed to update comment");
+    throw error;
+  }
+};

@@ -1,14 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Upload,
-  X,
-  Plus,
-  Lightbulb,
-  KeyboardIcon,
-} from "lucide-react";
+import { ArrowLeft, Upload, X, Plus, Lightbulb } from "lucide-react";
 import { createPost, uploadpostImages } from "../../services/forum/post";
 
 const AddPost = () => {

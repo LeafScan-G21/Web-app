@@ -1,25 +1,37 @@
 import { useEffect, useState } from "react";
-import { X, Plus, Edit3, Save, Lightbulb } from "lucide-react";
+import { X, Plus, Edit3, Save, Lightbulb, Upload, Camera } from "lucide-react";
+import { toast } from "react-hot-toast";
+import {
+  uploadpostImages,
+  deletePostImages,
+  updatePost,
+} from "../../../services/forum/post";
 import React from "react";
 
-const EditPost = ({ post, onClose, onSave }) => {
+const EditPost = ({ post, onClose }) => {
   const [form, setForm] = useState({
     title: "",
     content: "",
-    plantName: "General",
+    plant_name: "General",
     tags: [],
+    image_urls: [],
+    author_id: "currentUserId", // Replace with actual user ID
   });
 
   const [currentTag, setCurrentTag] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [deletedUrls, setDeletedUrls] = useState([]);
+  const [newImages, setNewImages] = useState([]);
 
   useEffect(() => {
     if (post) {
       setForm({
         title: post.title || "",
         content: post.content || "",
-        plantName: post.plantName || "General",
+        plant_name: post.plant_name || "General",
         tags: post.tags || [],
+        image_urls: post.image_urls || [],
+        author_id: post.author_id || "currentUserId", // Replace with actual user ID
       });
     }
   }, [post]);
@@ -50,14 +62,81 @@ const EditPost = ({ post, onClose, onSave }) => {
     }));
   };
 
+  const handleDeleteImage = (imageUrl) => {
+    setForm((prev) => ({
+      ...prev,
+      image_urls: prev.image_urls.filter((url) => url !== imageUrl),
+    }));
+    setDeletedUrls((prev) => [...prev, imageUrl]);
+  };
+
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+    const totalImages = form.image_urls.length + newImages.length;
+    const availableSlots = 5 - totalImages;
+
+    if (availableSlots <= 0) {
+      alert("Maximum 5 images allowed");
+      return;
+    }
+
+    const filesToAdd = files.slice(0, availableSlots);
+    setNewImages((prev) => [...prev, ...filesToAdd]);
+
+    // Clear the input
+    e.target.value = "";
+  };
+
+  const handleRemoveNewImage = (index) => {
+    setNewImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const getTotalImageCount = () => {
+    return form.image_urls.length + newImages.length;
+  };
+
   const handleSave = async () => {
-    setIsSaving(true);
-    // Simulate API call delay
-    setTimeout(() => {
-      onSave(form);
+    try {
+      setIsSaving(true);
+      if (!form.title || !form.content) {
+        toast.error("Title and content are required");
+        return;
+      }
+      if (!form.plant_name) {
+        toast.error("Plant name is required");
+        return;
+      }
+      if (deletedUrls.length > 0) {
+        console.log("Deleting images:", deletedUrls);
+        await deletePostImages(deletedUrls);
+      }
+      let postData = form;
+      if (newImages.length > 0) {
+        const uploadedImages = await uploadpostImages(newImages);
+        postData = {
+          ...postData,
+          image_urls: [...form.image_urls, ...uploadedImages.data],
+        };
+      }
+
+      const updateResponse = await updatePost(post._id, postData);
+      if (updateResponse.errors) {
+        console.error("Error updating post:", updateResponse.errors);
+        //toast.error("Failed to update post");
+        return;
+      }
+      if (updateResponse.data) {
+        //toast.success("Post updated successfully!");
+        onClose();
+        window.location.reload(); // Reload to reflect changes
+      }
+    } catch (error) {
+      console.error("Error saving post:", error);
+      //toast.error("Failed to save post");
+      throw error;
+    } finally {
       setIsSaving(false);
-      onClose();
-    }, 1000);
+    }
   };
 
   return (
@@ -70,7 +149,7 @@ const EditPost = ({ post, onClose, onSave }) => {
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative w-full max-w-3xl transform transition-all duration-300 scale-100">
+        <div className="relative w-full max-w-4xl transform transition-all duration-300 scale-100">
           <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
             {/* Header */}
             <div className="relative bg-gradient-to-r from-green-50 via-emerald-50 to-green-50 px-6 sm:px-8 py-6 border-b border-green-100">
@@ -121,9 +200,9 @@ const EditPost = ({ post, onClose, onSave }) => {
                     Plant Name
                   </label>
                   <input
-                    value={form.plantName}
+                    value={form.plant_name}
                     onChange={(e) =>
-                      handleInputChange("plantName", e.target.value)
+                      handleInputChange("plant_name", e.target.value)
                     }
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-300"
                     placeholder="e.g., Snake Plant, Monstera"
@@ -147,12 +226,128 @@ const EditPost = ({ post, onClose, onSave }) => {
                   />
                   <p className="text-sm text-gray-500 flex items-start space-x-2">
                     <span className="text-green-500 mt-0.5">
-                      {" "}
-                      <Lightbulb />
+                      <Lightbulb className="h-4 w-4" />
                     </span>
                     <span className="text-green-500 mt-0.5">
                       Be specific and detailed to get the best help from the
                       community.
+                    </span>
+                  </p>
+                </div>
+
+                {/* Images Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      Images ({getTotalImageCount()}/5)
+                    </label>
+                    <span className="text-xs text-gray-500">
+                      Maximum 5 images allowed
+                    </span>
+                  </div>
+
+                  {/* Existing Images */}
+                  {form.image_urls.length > 0 && (
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium text-gray-600">
+                        Current Images
+                      </p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {form.image_urls.map((imageUrl, index) => (
+                          <div key={index} className="relative group">
+                            <div className="aspect-square rounded-xl overflow-hidden border-2 border-gray-200 hover:border-gray-300 transition-colors">
+                              <img
+                                src={imageUrl}
+                                alt={`Image ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <button
+                              onClick={() => {
+                                handleDeleteImage(imageUrl);
+                                console.log("Deleted image:", imageUrl);
+                                console.log(deletedUrls);
+                              }}
+                              disabled={isSaving}
+                              className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg group-hover:opacity-100 disabled:opacity-50"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* New Images Preview */}
+                  {newImages.length > 0 && (
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium text-gray-600">
+                        New Images
+                      </p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {newImages.map((file, index) => (
+                          <div key={index} className="relative group">
+                            <div className="aspect-square rounded-xl overflow-hidden border-2 border-green-200 hover:border-green-300 transition-colors bg-green-50">
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={`New image ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <button
+                              onClick={() => handleRemoveNewImage(index)}
+                              disabled={isSaving}
+                              className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg opacity-0 group-hover:opacity-100 disabled:opacity-50"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Add Images Input */}
+                  {getTotalImageCount() < 5 && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-center w-full">
+                        <label
+                          htmlFor="image-upload"
+                          className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 hover:border-gray-400 transition-all duration-200"
+                        >
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <Upload className="w-8 h-8 mb-2 text-gray-400" />
+                            <p className="mb-2 text-sm text-gray-500">
+                              <span className="font-semibold">
+                                Click to upload
+                              </span>{" "}
+                              or drag and drop
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              PNG, JPG, GIF up to 10MB (
+                              {5 - getTotalImageCount()} slots remaining)
+                            </p>
+                          </div>
+                        </label>
+                        <input
+                          id="image-upload"
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={isSaving || getTotalImageCount() >= 5}
+                          className="hidden"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <p className="text-sm text-gray-500 flex items-center space-x-2">
+                    <Camera className="h-4 w-4 text-green-500" />
+                    <span>
+                      Add images to help the community better understand your
+                      post.
                     </span>
                   </p>
                 </div>

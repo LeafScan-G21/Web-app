@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Trash2, AlertTriangle, X, MessageCircle } from "lucide-react";
+import { deleteComment } from "../../../services/forum/comment";
 
-const DeleteComment = ({ comment, onClose, onDelete }) => {
+const DeleteComment = ({ comment, onClose }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
-    setIsDeleting(true);
-    // Simulate API call delay
-    setTimeout(() => {
-      console.log(`Comment with ID ${comment.id} deleted`);
-      if (onDelete) {
-        onDelete(comment.id);
+    try {
+      setIsDeleting(true);
+      const response = await deleteComment(comment._id);
+      if (response.errors) {
+        console.error("Error deleting comment:", response.errors);
       }
-      setIsDeleting(false);
       onClose();
-    }, 1000);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   // Prevent body scroll when modal is open
