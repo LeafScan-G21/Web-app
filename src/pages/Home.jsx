@@ -1,7 +1,14 @@
 import React from 'react'
 import { Check, Play } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/diagnosis');
+  };
+
   return (
     <div className="container mx-auto px-10 overflow-y-hidden">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -12,7 +19,7 @@ const Home = () => {
                 <span className="bg-gradient-to-r from-green-700 via-green-700 to-green-700 bg-clip-text text-transparent">
                   #1 FREE
                 </span>
-                <span className="text-gray-300 ml-3 text-green-600">App</span>
+                <span className="text-green-600 ml-3">App</span>
                 <br />
                 <span className="text-gray-800">for Plant Disease</span>
                 <br />
@@ -27,7 +34,10 @@ const Home = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-green-700 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center space-x-2">
+              <button 
+                onClick={handleGetStarted}
+                className="bg-green-700 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center space-x-2"
+              >
                 <span>Get Started Free</span>
                 <span className="text-xl">→</span>
               </button>
