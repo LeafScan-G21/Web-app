@@ -30,8 +30,6 @@ export const getCommentsByPostId = async (postId) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching comments by post ID:", error);
-    toast.error("Failed to fetch comments");
-    throw error;
   }
 };
 

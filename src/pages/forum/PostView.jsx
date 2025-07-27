@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
@@ -25,6 +26,16 @@ import {
   addComment,
   getCommentsByPostId,
 } from "../../services/forum/comment.js";
+import {
+  addPostVote,
+  hasVotedOnPost,
+  togglePostVote,
+  removePostVote,
+  addCommentVote,
+  removeCommentVote,
+  toggleCommentVote,
+  hasVotedOnComment,
+} from "../../services/forum/vote.js";
 
 const PostDetail = () => {
   useEffect(() => {
@@ -41,6 +52,10 @@ const PostDetail = () => {
   const [comments, setComments] = useState([]);
 
   const [fetchingPost, setFetchingPost] = useState(true);
+
+  const [hasVotedPost, setHasVotedPost] = useState(false);
+  const [postVoteType, setPostVoteType] = useState(0);
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -63,13 +78,32 @@ const PostDetail = () => {
       if (post && post._id) {
         try {
           const response = await getCommentsByPostId(post._id);
-          setComments(response.data);
+          setComments(response?.data);
         } catch (error) {
           console.error("Failed to fetch comments:", error);
         }
       }
     };
     fetchComments();
+  }, [post]);
+
+  useEffect(() => {
+    const fetchVoteStatus = async () => {
+      if (post && post._id) {
+        try {
+          const response = await hasVotedOnPost(post._id);
+          if (response.data) {
+            ////console.log("Vote status fetched:", response.data);
+            setHasVotedPost(response.data.voted);
+            setPostVoteType(response.data.type);
+          }
+        } catch (error) {
+          console.error("Failed to fetch vote status:", error);
+        }
+      }
+    };
+    fetchVoteStatus();
+    ////console.log("has voted:", hasVotedPost, "type:", postVoteType);
   }, [post]);
 
   if (fetchingPost) {
@@ -94,6 +128,7 @@ const PostDetail = () => {
       prevComments.filter((comment) => comment._id !== comment_id)
     );
   };
+
   if (!post) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
@@ -127,12 +162,169 @@ const PostDetail = () => {
     day: "numeric",
   });
 
-  const handleVote = () => {
-    // Simulate vote
+  const handleVote = async (type) => {
+    if (!hasVotedPost) {
+      try {
+        const postVoteData = await addPostVote(post._id, type);
+        if (postVoteData.errors) {
+          console.error("Error voting on post:", postVoteData.errors);
+        } else {
+          setPost((prevPost) => ({
+            ...prevPost,
+            upvote_count:
+              type === 1 ? prevPost.upvote_count + 1 : prevPost.upvote_count,
+            downvote_count:
+              type === 0
+                ? prevPost.downvote_count + 1
+                : prevPost.downvote_count,
+          }));
+        }
+      } catch (error) {
+        console.error("Error handling vote:", error);
+      }
+    } else {
+      try {
+        const removeVoteData = await removePostVote(post._id);
+        if (removeVoteData.errors) {
+          console.error(
+            "Error removing vote from post:",
+            removeVoteData.errors
+          );
+        } else {
+          setPost((prevPost) => ({
+            ...prevPost,
+            upvote_count:
+              type === 1 ? (
+                prevPost.upvote_count - 1
+              ) : (
+                <prevPost className="upvote_co"></prevPost>
+              ),
+            downvote_count:
+              type === 0
+                ? prevPost.downvote_count - 1
+                : prevPost.downvote_count,
+          }));
+        }
+      } catch (error) {
+        console.error("Error handling vote removal:", error);
+      }
+    }
   };
 
-  const handleCommentVote = () => {
-    // Simulate comment vote
+  const handleToggleVote = async () => {
+    try {
+      const oldVoteType = postVoteType;
+      const toggleVoteData = await togglePostVote(post._id);
+      if (toggleVoteData.errors) {
+        console.error("Error toggling post vote:", toggleVoteData.errors);
+      } else {
+        setHasVotedPost(true);
+        setPostVoteType(oldVoteType === 1 ? 0 : 1);
+        setPost((prevPost) => ({
+          ...prevPost,
+          upvote_count:
+            oldVoteType === 1
+              ? prevPost.upvote_count - 1
+              : prevPost.upvote_count + 1,
+          downvote_count:
+            oldVoteType === 0
+              ? prevPost.downvote_count - 1
+              : prevPost.downvote_count + 1,
+        }));
+      }
+    } catch (error) {
+      console.error("Error toggling post vote:", error);
+    }
+  };
+
+  const handleCommentVote = (comment_id, vote_type, hasVotedComment) => {
+    if (!hasVotedComment) {
+      //console.log("Adding comment vote:", comment_id, vote_type);
+      addCommentVote(comment_id, vote_type)
+        .then((response) => {
+          if (response.errors) {
+            console.error("Error voting on comment:", response.errors);
+          } else {
+            setComments((prevComments) =>
+              prevComments.map((comment) =>
+                comment._id === comment_id
+                  ? {
+                      ...comment,
+                      upvote_count:
+                        vote_type === 1
+                          ? comment.upvote_count + 1
+                          : comment.upvote_count,
+                      downvote_count:
+                        vote_type === 0
+                          ? comment.downvote_count + 1
+                          : comment.downvote_count,
+                    }
+                  : comment
+              )
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error handling comment vote:", error);
+        });
+    } else {
+      //console.log("Removing comment vote:", comment_id, vote_type);
+      removeCommentVote(comment_id)
+        .then((response) => {
+          if (response.errors) {
+            console.error("Error removing comment vote:", response.errors);
+          } else {
+            setComments((prevComments) =>
+              prevComments.map((comment) =>
+                comment._id === comment_id
+                  ? {
+                      ...comment,
+                      upvote_count:
+                        vote_type === 1
+                          ? comment.upvote_count - 1
+                          : comment.upvote_count,
+                      downvote_count:
+                        vote_type === 0
+                          ? comment.downvote_count - 1
+                          : comment.downvote_count,
+                    }
+                  : comment
+              )
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error handling remove comment vote:", error);
+        });
+    }
+  };
+  const handleToggleCommentVote = async (comment_id, oldVoteType) => {
+    try {
+      const toggleVoteData = await toggleCommentVote(comment_id);
+      if (toggleVoteData.errors) {
+        console.error("Error toggling comment vote:", toggleVoteData.errors);
+      } else {
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment._id === comment_id
+              ? {
+                  ...comment,
+                  upvote_count:
+                    oldVoteType === 1
+                      ? comment.upvote_count - 1
+                      : comment.upvote_count + 1,
+                  downvote_count:
+                    oldVoteType === 0
+                      ? comment.downvote_count - 1
+                      : comment.downvote_count + 1,
+                }
+              : comment
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling comment vote:", error);
+    }
   };
 
   const handleSubmitComment = async () => {
@@ -263,7 +455,7 @@ const PostDetail = () => {
           </div>
 
           {/* Images */}
-          {post.image_urls.length > 0 && (
+          {post.image_urls?.length > 0 && (
             <div className="mb-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {post.image_urls.map((url, index) => (
@@ -296,24 +488,36 @@ const PostDetail = () => {
           <footer className="flex flex-wrap items-center gap-6 pt-6 border-t border-gray-100">
             <div className="flex items-center space-x-1">
               <button
-                onClick={() => handleVote("up")}
+                onClick={() => {
+                  if (hasVotedPost && postVoteType === 0) {
+                    handleToggleVote();
+                  } else {
+                    handleVote(1);
+                  }
+                }}
                 className="flex items-center space-x-2 px-3 py-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all duration-200 group"
               >
                 <ChevronUp className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
-                <span className="font-medium">{post.upvotes}</span>
+                <span className="font-medium">{post.upvote_count}</span>
               </button>
               <button
-                onClick={() => handleVote("down")}
+                onClick={() => {
+                  if (hasVotedPost && postVoteType === 1) {
+                    handleToggleVote();
+                  } else {
+                    handleVote(0);
+                  }
+                }}
                 className="flex items-center space-x-2 px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-all duration-200 group"
               >
                 <ChevronDown className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
-                <span className="font-medium">{post.downvotes}</span>
+                <span className="font-medium">{post.downvote_count}</span>
               </button>
             </div>
 
             <div className="flex items-center space-x-2 px-3 py-2 text-gray-500 bg-gray-50 rounded-lg">
               <MessageCircle className="h-5 w-5" />
-              <span className="font-medium">{comments.length} comments</span>
+              <span className="font-medium">{comments?.length} comments</span>
             </div>
           </footer>
         </article>
@@ -324,7 +528,7 @@ const PostDetail = () => {
             <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
               Comments
               <span className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-600">
-                {comments.length}
+                {comments?.length}
               </span>
             </h2>
           </header>
@@ -359,7 +563,7 @@ const PostDetail = () => {
 
           {/* Comments List */}
           <div className="space-y-6">
-            {comments.length > 0 ? (
+            {comments?.length > 0 ? (
               <>
                 {(showAllComments ? comments : comments.slice(0, 3)).map(
                   (comment, index) => (
@@ -367,11 +571,12 @@ const PostDetail = () => {
                       <CommentItem
                         comment={comment}
                         onVote={handleCommentVote}
+                        onToggleVote={handleToggleCommentVote}
                         isLast={
                           index ===
                           (showAllComments
-                            ? comments.length - 1
-                            : Math.min(2, comments.length - 1))
+                            ? comments?.length - 1
+                            : Math.min(2, comments?.length - 1))
                         }
                         handleCommentUpdate={handleCommentUpdate}
                         handleCommentDelete={handleCommentDelete}
@@ -379,7 +584,7 @@ const PostDetail = () => {
                     </div>
                   )
                 )}
-                {comments.length > 3 && (
+                {comments?.length > 3 && (
                   <div className="text-center pt-6 border-t border-gray-100">
                     <button
                       onClick={() => setShowAllComments(!showAllComments)}
@@ -389,7 +594,7 @@ const PostDetail = () => {
                       <span>
                         {showAllComments
                           ? "Show Less Comments"
-                          : `Show All ${comments.length} Comments`}
+                          : `Show All ${comments?.length} Comments`}
                       </span>
                     </button>
                   </div>
@@ -409,14 +614,14 @@ const PostDetail = () => {
         </section>
 
         {/* Related Posts */}
-        {relatedPosts.length > 0 && (
+        {relatedPosts?.length > 0 && (
           <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 sm:p-8">
             <header className="flex items-center space-x-3 mb-6">
               <h2 className="text-2xl font-bold text-gray-900">
                 Related Articles
               </h2>
               <span className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-600">
-                {relatedPosts.length}
+                {relatedPosts?.length}
               </span>
             </header>
             <div className="space-y-6">
@@ -444,6 +649,7 @@ const PostDetail = () => {
 const CommentItem = ({
   comment,
   onVote,
+  onToggleVote,
   isLast,
   handleCommentUpdate,
   handleCommentDelete,
@@ -451,6 +657,27 @@ const CommentItem = ({
   const commentDate = new Date(comment.created_at).toLocaleDateString();
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState("view-comment");
+
+  const [hasVotedComment, setHasVotedComment] = useState(false);
+  const [commentVoteType, setCommentVoteType] = useState(0);
+
+  const fetchVoteStatus = async () => {
+    try {
+      const res = await hasVotedOnComment(comment._id);
+      if (res.errors) {
+        console.error("Error fetching vote status:", res.errors);
+        return;
+      }
+      setHasVotedComment(res.data.voted);
+      setCommentVoteType(res.data.type);
+    } catch (err) {
+      console.error("Error fetching vote status:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchVoteStatus();
+  }, [comment._id]);
 
   const handleClickOutside = (event) => {
     if (modalOpen && !event.target.closest(".menu-container")) {
@@ -463,7 +690,6 @@ const CommentItem = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalOpen]);
 
   return (
@@ -547,18 +773,56 @@ const CommentItem = ({
         <div className="flex flex-wrap items-center space-x-4">
           <div className="flex items-center space-x-1">
             <button
-              onClick={() => onVote(comment.id, "up")}
+              onClick={() => {
+                if (hasVotedComment && commentVoteType === 0) {
+                  //console.log("upvote button clicked");
+                  //console.log("has voted:", hasVotedComment);
+                  //console.log("comment vote type:", commentVoteType);
+                  //console.log("toggling vote");
+                  onToggleVote(comment._id, commentVoteType);
+                  setHasVotedComment(true);
+                  setCommentVoteType(1);
+                } else {
+                  //console.log("upvote button clicked");
+                  //console.log("has voted:", hasVotedComment);
+                  //console.log("comment vote type:", commentVoteType);
+                  onVote(comment._id, 1, hasVotedComment);
+                  setCommentVoteType(hasVotedComment ? 0 : 1);
+                  setHasVotedComment(!hasVotedComment);
+                }
+              }}
               className="flex items-center space-x-2 px-3 py-1.5 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all duration-200 group"
             >
               <ChevronUp className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
-              <span className="font-medium text-sm">{comment.upvotes}</span>
+              <span className="font-medium text-sm">
+                {comment.upvote_count}
+              </span>
             </button>
             <button
-              onClick={() => onVote(comment.id, "down")}
+              onClick={() => {
+                if (hasVotedComment && commentVoteType === 1) {
+                  //console.log("downvote button clicked");
+                  //console.log("has voted:", hasVotedComment);
+                  //console.log("comment vote type:", commentVoteType);
+                  //console.log("toggling vote");
+                  onToggleVote(comment._id, commentVoteType);
+                  setCommentVoteType(0);
+                  setHasVotedComment(true);
+                } else {
+                  //console.log("downvote button clicked");
+                  //console.log("has voted:", hasVotedComment);
+                  //console.log("comment vote type:", commentVoteType);
+                  onVote(comment._id, 0, hasVotedComment);
+                  setCommentVoteType(hasVotedComment ? 1 : 0);
+                  setHasVotedComment(!hasVotedComment);
+                }
+              }}
               className="flex items-center space-x-2 px-3 py-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-all duration-200 group"
             >
               <ChevronDown className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
-              <span className="font-medium text-sm">{comment.downvotes}</span>
+              <span className="font-medium text-sm">
+                {comment.downvote_count}
+              </span>
             </button>
           </div>
         </div>
