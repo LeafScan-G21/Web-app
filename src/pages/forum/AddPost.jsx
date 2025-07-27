@@ -1,14 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Upload,
-  X,
-  Plus,
-  Lightbulb,
-  KeyboardIcon,
-} from "lucide-react";
+import { ArrowLeft, Upload, X, Plus, Lightbulb } from "lucide-react";
+import { createPost, uploadpostImages } from "../../services/forum/post";
 
 const AddPost = () => {
   const navigate = useNavigate();
@@ -16,10 +10,13 @@ const AddPost = () => {
   const [form, setForm] = useState({
     title: "",
     content: "",
-    plantName: "General",
+    plant_name: "General",
     tags: [],
-    images: [],
+    image_urls: [],
+    author_id: "currentUserId", // Replace with actual user ID
   });
+
+  const [images, setImages] = useState([]);
 
   const [currentTag, setCurrentTag] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
@@ -58,26 +55,20 @@ const AddPost = () => {
     );
 
     if (files.length > 0) {
-      setForm((prev) => ({
-        ...prev,
-        images: [...prev.images, ...files].slice(0, 5),
-      }));
+      setImages((prev) => [...prev, ...files].slice(0, 5));
     }
   };
 
   const handleImageSelect = (e) => {
     const files = Array.from(e.target.files || []);
-    setForm((prev) => ({
-      ...prev,
-      images: [...prev.images, ...files].slice(0, 5),
-    }));
+    const validImages = files.filter((file) => file.type.startsWith("image/"));
+    if (validImages.length > 0) {
+      setImages((prev) => [...prev, ...validImages].slice(0, 5));
+    }
   };
 
   const handleRemoveImage = (index) => {
-    setForm((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-    }));
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -88,12 +79,34 @@ const AddPost = () => {
       return;
     }
 
-    setIsSubmitting(true);
-
-    setTimeout(() => {
-      alert("Post created successfully!");
-      navigate("/");
-    }, 2000);
+    try {
+      setIsSubmitting(true);
+      let updatedForm = { ...form };
+      if (images && images.length > 0) {
+        const uploadResponse = await uploadpostImages(images);
+        console.log("Image upload response:", uploadResponse.data);
+        if (uploadResponse.errors) {
+          console.error("Image upload errors:", uploadResponse.errors);
+          alert("Failed to upload images. Please try again.");
+          return;
+        }
+        updatedForm = { ...form, image_urls: uploadResponse.data };
+      }
+      const saveResponse = await createPost(updatedForm);
+      if (saveResponse.data) {
+        alert("Post created successfully!");
+        navigate("/forum");
+      }
+      if (saveResponse.errors) {
+        console.error("Error creating post:", saveResponse.errors);
+        alert("Failed to create post. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting post:", error);
+      alert("Failed to create post. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -160,16 +173,16 @@ const AddPost = () => {
 
               <div className="space-y-3">
                 <label
-                  htmlFor="plantName"
+                  htmlFor="plant_name"
                   className="block text-sm font-semibold text-gray-700"
                 >
                   Plant Name
                 </label>
                 <input
-                  id="plantName"
-                  value={form.plantName}
+                  id="plant_name"
+                  value={form.plant_name}
                   onChange={(e) =>
-                    handleInputChange("plantName", e.target.value)
+                    handleInputChange("plant_name", e.target.value)
                   }
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-300"
                   placeholder="e.g., Fiddle Leaf Fig, Monstera, General"
@@ -351,21 +364,21 @@ const AddPost = () => {
               </div>
             </div>
 
-            {form.images.length > 0 && (
+            {images.length > 0 && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-gray-700">
-                    Selected Images ({form.images.length}/5)
+                    Selected Images ({images.length}/5)
                   </p>
                   <div className="w-full max-w-xs bg-gray-200 rounded-full h-2 ml-4">
                     <div
                       className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(form.images.length / 5) * 100}%` }}
+                      style={{ width: `${(images.length / 5) * 100}%` }}
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {form.images.map((image, index) => (
+                  {images.map((image, index) => (
                     <div key={index} className="relative group">
                       <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-sm group-hover:shadow-md transition-all duration-300">
                         <img

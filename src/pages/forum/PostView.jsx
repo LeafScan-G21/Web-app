@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
@@ -13,11 +14,28 @@ import {
   Trash2,
 } from "lucide-react";
 import PostCard from "../../components/forum/PostCard.jsx";
-import { getPostById, getRelatedPosts } from "../../data/mockdata.js";
+import { getRelatedPosts } from "../../data/mockdata.js";
 import EditPost from "../../components/forum/modals/EditPost.jsx";
 import DeletePost from "../../components/forum/modals/DeletePost.jsx";
 import EditComment from "../../components/forum/modals/EditComment.jsx";
 import DeleteComment from "../../components/forum/modals/DeleteComment.jsx";
+import { getPostById } from "../../services/forum/post.js";
+import LoadingAnimation from "../../components/forum/PostLoading.jsx";
+import toast from "react-hot-toast";
+import {
+  addComment,
+  getCommentsByPostId,
+} from "../../services/forum/comment.js";
+import {
+  addPostVote,
+  hasVotedOnPost,
+  togglePostVote,
+  removePostVote,
+  addCommentVote,
+  removeCommentVote,
+  toggleCommentVote,
+  hasVotedOnComment,
+} from "../../services/forum/vote.js";
 
 const PostDetail = () => {
   useEffect(() => {
@@ -30,7 +48,86 @@ const PostDetail = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState("view");
 
-  const post = id ? getPostById(id) : undefined;
+  const [post, setPost] = useState(null);
+  const [comments, setComments] = useState([]);
+
+  const [fetchingPost, setFetchingPost] = useState(true);
+
+  const [hasVotedPost, setHasVotedPost] = useState(false);
+  const [postVoteType, setPostVoteType] = useState(0);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        setFetchingPost(true);
+        const response = await getPostById(id);
+        setPost(response.data);
+      } catch (error) {
+        console.error("Failed to fetch post:", error);
+      } finally {
+        setFetchingPost(false);
+      }
+    };
+    if (id) {
+      fetchPost();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      if (post && post._id) {
+        try {
+          const response = await getCommentsByPostId(post._id);
+          setComments(response?.data);
+        } catch (error) {
+          console.error("Failed to fetch comments:", error);
+        }
+      }
+    };
+    fetchComments();
+  }, [post]);
+
+  useEffect(() => {
+    const fetchVoteStatus = async () => {
+      if (post && post._id) {
+        try {
+          const response = await hasVotedOnPost(post._id);
+          if (response.data) {
+            ////console.log("Vote status fetched:", response.data);
+            setHasVotedPost(response.data.voted);
+            setPostVoteType(response.data.type);
+          }
+        } catch (error) {
+          console.error("Failed to fetch vote status:", error);
+        }
+      }
+    };
+    fetchVoteStatus();
+    ////console.log("has voted:", hasVotedPost, "type:", postVoteType);
+  }, [post]);
+
+  if (fetchingPost) {
+    return <LoadingAnimation multiplePosts={false} />;
+  }
+
+  const handleCommentUpdate = (comment_id, updatedContent) => {
+    if (!updatedContent.trim()) {
+      return;
+    }
+    setComments((prevComments) =>
+      prevComments.map((comment) =>
+        comment._id === comment_id
+          ? { ...comment, content: updatedContent }
+          : comment
+      )
+    );
+  };
+
+  const handleCommentDelete = (comment_id) => {
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment._id !== comment_id)
+    );
+  };
 
   if (!post) {
     return (
@@ -58,32 +155,207 @@ const PostDetail = () => {
     );
   }
 
-  const relatedPosts = getRelatedPosts(post.id, post.tags, post.plantName);
-  const formattedDate = new Date(post.createdAt).toLocaleDateString("en-US", {
+  const relatedPosts = getRelatedPosts(post._id, post.tags, post.plant_name);
+  const formattedDate = new Date(post.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
-  const handleVote = () => {
-    // Simulate vote
+  const handleVote = async (type) => {
+    if (!hasVotedPost) {
+      try {
+        const postVoteData = await addPostVote(post._id, type);
+        if (postVoteData.errors) {
+          console.error("Error voting on post:", postVoteData.errors);
+        } else {
+          setPost((prevPost) => ({
+            ...prevPost,
+            upvote_count:
+              type === 1 ? prevPost.upvote_count + 1 : prevPost.upvote_count,
+            downvote_count:
+              type === 0
+                ? prevPost.downvote_count + 1
+                : prevPost.downvote_count,
+          }));
+        }
+      } catch (error) {
+        console.error("Error handling vote:", error);
+      }
+    } else {
+      try {
+        const removeVoteData = await removePostVote(post._id);
+        if (removeVoteData.errors) {
+          console.error(
+            "Error removing vote from post:",
+            removeVoteData.errors
+          );
+        } else {
+          setPost((prevPost) => ({
+            ...prevPost,
+            upvote_count:
+              type === 1 ? (
+                prevPost.upvote_count - 1
+              ) : (
+                <prevPost className="upvote_co"></prevPost>
+              ),
+            downvote_count:
+              type === 0
+                ? prevPost.downvote_count - 1
+                : prevPost.downvote_count,
+          }));
+        }
+      } catch (error) {
+        console.error("Error handling vote removal:", error);
+      }
+    }
   };
 
-  const handleCommentVote = () => {
-    // Simulate comment vote
+  const handleToggleVote = async () => {
+    try {
+      const oldVoteType = postVoteType;
+      const toggleVoteData = await togglePostVote(post._id);
+      if (toggleVoteData.errors) {
+        console.error("Error toggling post vote:", toggleVoteData.errors);
+      } else {
+        setHasVotedPost(true);
+        setPostVoteType(oldVoteType === 1 ? 0 : 1);
+        setPost((prevPost) => ({
+          ...prevPost,
+          upvote_count:
+            oldVoteType === 1
+              ? prevPost.upvote_count - 1
+              : prevPost.upvote_count + 1,
+          downvote_count:
+            oldVoteType === 0
+              ? prevPost.downvote_count - 1
+              : prevPost.downvote_count + 1,
+        }));
+      }
+    } catch (error) {
+      console.error("Error toggling post vote:", error);
+    }
+  };
+
+  const handleCommentVote = (comment_id, vote_type, hasVotedComment) => {
+    if (!hasVotedComment) {
+      //console.log("Adding comment vote:", comment_id, vote_type);
+      addCommentVote(comment_id, vote_type)
+        .then((response) => {
+          if (response.errors) {
+            console.error("Error voting on comment:", response.errors);
+          } else {
+            setComments((prevComments) =>
+              prevComments.map((comment) =>
+                comment._id === comment_id
+                  ? {
+                      ...comment,
+                      upvote_count:
+                        vote_type === 1
+                          ? comment.upvote_count + 1
+                          : comment.upvote_count,
+                      downvote_count:
+                        vote_type === 0
+                          ? comment.downvote_count + 1
+                          : comment.downvote_count,
+                    }
+                  : comment
+              )
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error handling comment vote:", error);
+        });
+    } else {
+      //console.log("Removing comment vote:", comment_id, vote_type);
+      removeCommentVote(comment_id)
+        .then((response) => {
+          if (response.errors) {
+            console.error("Error removing comment vote:", response.errors);
+          } else {
+            setComments((prevComments) =>
+              prevComments.map((comment) =>
+                comment._id === comment_id
+                  ? {
+                      ...comment,
+                      upvote_count:
+                        vote_type === 1
+                          ? comment.upvote_count - 1
+                          : comment.upvote_count,
+                      downvote_count:
+                        vote_type === 0
+                          ? comment.downvote_count - 1
+                          : comment.downvote_count,
+                    }
+                  : comment
+              )
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error handling remove comment vote:", error);
+        });
+    }
+  };
+  const handleToggleCommentVote = async (comment_id, oldVoteType) => {
+    try {
+      const toggleVoteData = await toggleCommentVote(comment_id);
+      if (toggleVoteData.errors) {
+        console.error("Error toggling comment vote:", toggleVoteData.errors);
+      } else {
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment._id === comment_id
+              ? {
+                  ...comment,
+                  upvote_count:
+                    oldVoteType === 1
+                      ? comment.upvote_count - 1
+                      : comment.upvote_count + 1,
+                  downvote_count:
+                    oldVoteType === 0
+                      ? comment.downvote_count - 1
+                      : comment.downvote_count + 1,
+                }
+              : comment
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling comment vote:", error);
+    }
   };
 
   const handleSubmitComment = async () => {
-    if (!newComment.trim()) return;
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setNewComment("");
+    if (!newComment.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+    const commentData = {
+      post_id: post._id,
+      content: newComment,
+      author_id: "currentUserId", // replace with actual user ID
+    };
+    try {
+      setIsSubmitting(true);
+      const response = await addComment(commentData);
+      if (response.errors) {
+        console.error("Error creating comment:", response.errors);
+      } else {
+        setNewComment("");
+        setComments((prevComments) => [...prevComments, response.data]);
+      }
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
+    toast.success("Post link copied to clipboard!");
   };
 
   return (
@@ -91,7 +363,7 @@ const PostDetail = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Back Button */}
         <div className="mb-6 sm:mb-8">
-          <Link to="/">
+          <Link to="/forum">
             <button className="inline-flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200 group">
               <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-200" />
               <span>Back to Posts</span>
@@ -106,10 +378,10 @@ const PostDetail = () => {
             <div className="flex items-start space-x-4 flex-1 min-w-0">
               <div className="flex-shrink-0">
                 <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center ring-2 ring-gray-100">
-                  {post.author.avatar ? (
+                  {post.author_id ? (
                     <img
-                      src={post.author.avatar}
-                      alt={post.author.name}
+                      src={post.author_id}
+                      alt={post.author_id}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -119,26 +391,27 @@ const PostDetail = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 truncate">
-                  {post.author.name}
+                  {post.author_id}
                 </h3>
                 <div className="flex items-center space-x-2 text-sm text-gray-500 mb-3">
                   <Calendar className="h-4 w-4 flex-shrink-0" />
                   <span className="truncate">{formattedDate}</span>
                 </div>
                 <div className="inline-flex items-center bg-gray-100 text-sm font-medium px-3 py-1.5 rounded-full text-gray-700">
-                  {post.plantName}
+                  {post.plant_name}
                 </div>
               </div>
             </div>
-            <button
-              onClick={handleShare}
-              className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
-              title="Share post"
-            >
-              <Share2 className="h-5 w-5" />
-            </button>
+
             {/* TODO: HIDE THE ICONS FOR OTHERS */}
             <div className="flex items-center space-x-4">
+              <button
+                onClick={handleShare}
+                className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                title="Share post"
+              >
+                <Share2 className="h-5 w-5" />
+              </button>
               <button
                 onClick={() => {
                   setMode("edit");
@@ -182,10 +455,10 @@ const PostDetail = () => {
           </div>
 
           {/* Images */}
-          {post.imageUrls.length > 0 && (
+          {post.image_urls?.length > 0 && (
             <div className="mb-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {post.imageUrls.map((url, index) => (
+                {post.image_urls.map((url, index) => (
                   <div
                     key={index}
                     className="group relative rounded-xl overflow-hidden bg-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300"
@@ -215,26 +488,36 @@ const PostDetail = () => {
           <footer className="flex flex-wrap items-center gap-6 pt-6 border-t border-gray-100">
             <div className="flex items-center space-x-1">
               <button
-                onClick={() => handleVote("up")}
+                onClick={() => {
+                  if (hasVotedPost && postVoteType === 0) {
+                    handleToggleVote();
+                  } else {
+                    handleVote(1);
+                  }
+                }}
                 className="flex items-center space-x-2 px-3 py-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all duration-200 group"
               >
                 <ChevronUp className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
-                <span className="font-medium">{post.upvotes}</span>
+                <span className="font-medium">{post.upvote_count}</span>
               </button>
               <button
-                onClick={() => handleVote("down")}
+                onClick={() => {
+                  if (hasVotedPost && postVoteType === 1) {
+                    handleToggleVote();
+                  } else {
+                    handleVote(0);
+                  }
+                }}
                 className="flex items-center space-x-2 px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-all duration-200 group"
               >
                 <ChevronDown className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
-                <span className="font-medium">{post.downvotes}</span>
+                <span className="font-medium">{post.downvote_count}</span>
               </button>
             </div>
 
             <div className="flex items-center space-x-2 px-3 py-2 text-gray-500 bg-gray-50 rounded-lg">
               <MessageCircle className="h-5 w-5" />
-              <span className="font-medium">
-                {post.comments.length} comments
-              </span>
+              <span className="font-medium">{comments?.length} comments</span>
             </div>
           </footer>
         </article>
@@ -245,7 +528,7 @@ const PostDetail = () => {
             <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
               Comments
               <span className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-600">
-                {post.comments.length}
+                {comments?.length}
               </span>
             </h2>
           </header>
@@ -280,27 +563,28 @@ const PostDetail = () => {
 
           {/* Comments List */}
           <div className="space-y-6">
-            {post.comments.length > 0 ? (
+            {comments?.length > 0 ? (
               <>
-                {(showAllComments
-                  ? post.comments
-                  : post.comments.slice(0, 3)
-                ).map((comment, index) => (
-                  <>
-                    <CommentItem
-                      key={comment.id}
-                      comment={comment}
-                      onVote={handleCommentVote}
-                      isLast={
-                        index ===
-                        (showAllComments
-                          ? post.comments.length - 1
-                          : Math.min(2, post.comments.length - 1))
-                      }
-                    />
-                  </>
-                ))}
-                {post.comments.length > 3 && (
+                {(showAllComments ? comments : comments.slice(0, 3)).map(
+                  (comment, index) => (
+                    <div key={comment._id}>
+                      <CommentItem
+                        comment={comment}
+                        onVote={handleCommentVote}
+                        onToggleVote={handleToggleCommentVote}
+                        isLast={
+                          index ===
+                          (showAllComments
+                            ? comments?.length - 1
+                            : Math.min(2, comments?.length - 1))
+                        }
+                        handleCommentUpdate={handleCommentUpdate}
+                        handleCommentDelete={handleCommentDelete}
+                      />
+                    </div>
+                  )
+                )}
+                {comments?.length > 3 && (
                   <div className="text-center pt-6 border-t border-gray-100">
                     <button
                       onClick={() => setShowAllComments(!showAllComments)}
@@ -310,7 +594,7 @@ const PostDetail = () => {
                       <span>
                         {showAllComments
                           ? "Show Less Comments"
-                          : `Show All ${post.comments.length} Comments`}
+                          : `Show All ${comments?.length} Comments`}
                       </span>
                     </button>
                   </div>
@@ -330,14 +614,14 @@ const PostDetail = () => {
         </section>
 
         {/* Related Posts */}
-        {relatedPosts.length > 0 && (
+        {relatedPosts?.length > 0 && (
           <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 sm:p-8">
             <header className="flex items-center space-x-3 mb-6">
               <h2 className="text-2xl font-bold text-gray-900">
                 Related Articles
               </h2>
               <span className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-600">
-                {relatedPosts.length}
+                {relatedPosts?.length}
               </span>
             </header>
             <div className="space-y-6">
@@ -356,16 +640,44 @@ const PostDetail = () => {
         />
       )}
       {modalOpen && mode === "delete" && (
-        <DeletePost post_id={post.id} onClose={() => setModalOpen(false)} />
+        <DeletePost post_id={post._id} onClose={() => setModalOpen(false)} />
       )}
     </div>
   );
 };
 
-const CommentItem = ({ comment, onVote, isLast }) => {
-  const commentDate = new Date(comment.createdAt).toLocaleDateString();
+const CommentItem = ({
+  comment,
+  onVote,
+  onToggleVote,
+  isLast,
+  handleCommentUpdate,
+  handleCommentDelete,
+}) => {
+  const commentDate = new Date(comment.created_at).toLocaleDateString();
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState("view-comment");
+
+  const [hasVotedComment, setHasVotedComment] = useState(false);
+  const [commentVoteType, setCommentVoteType] = useState(0);
+
+  const fetchVoteStatus = async () => {
+    try {
+      const res = await hasVotedOnComment(comment._id);
+      if (res.errors) {
+        console.error("Error fetching vote status:", res.errors);
+        return;
+      }
+      setHasVotedComment(res.data.voted);
+      setCommentVoteType(res.data.type);
+    } catch (err) {
+      console.error("Error fetching vote status:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchVoteStatus();
+  }, [comment._id]);
 
   const handleClickOutside = (event) => {
     if (modalOpen && !event.target.closest(".menu-container")) {
@@ -388,10 +700,10 @@ const CommentItem = ({ comment, onVote, isLast }) => {
     >
       <div className="flex-shrink-0">
         <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center ring-2 ring-gray-100">
-          {comment.author.avatar ? (
+          {comment.author_id ? (
             <img
-              src={comment.author.avatar}
-              alt={comment.author.name}
+              src={comment.author_id}
+              alt={comment.author_id}
               className="h-full w-full object-cover"
             />
           ) : (
@@ -448,7 +760,7 @@ const CommentItem = ({ comment, onVote, isLast }) => {
 
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="font-bold text-gray-900 truncate">
-            {comment.author.name}
+            {comment.author_id}
           </span>
           <span className="text-gray-400">•</span>
           <span className="text-gray-500 truncate">{commentDate}</span>
@@ -461,32 +773,77 @@ const CommentItem = ({ comment, onVote, isLast }) => {
         <div className="flex flex-wrap items-center space-x-4">
           <div className="flex items-center space-x-1">
             <button
-              onClick={() => onVote(comment.id, "up")}
+              onClick={() => {
+                if (hasVotedComment && commentVoteType === 0) {
+                  //console.log("upvote button clicked");
+                  //console.log("has voted:", hasVotedComment);
+                  //console.log("comment vote type:", commentVoteType);
+                  //console.log("toggling vote");
+                  onToggleVote(comment._id, commentVoteType);
+                  setHasVotedComment(true);
+                  setCommentVoteType(1);
+                } else {
+                  //console.log("upvote button clicked");
+                  //console.log("has voted:", hasVotedComment);
+                  //console.log("comment vote type:", commentVoteType);
+                  onVote(comment._id, 1, hasVotedComment);
+                  setCommentVoteType(hasVotedComment ? 0 : 1);
+                  setHasVotedComment(!hasVotedComment);
+                }
+              }}
               className="flex items-center space-x-2 px-3 py-1.5 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all duration-200 group"
             >
               <ChevronUp className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
-              <span className="font-medium text-sm">{comment.upvotes}</span>
+              <span className="font-medium text-sm">
+                {comment.upvote_count}
+              </span>
             </button>
             <button
-              onClick={() => onVote(comment.id, "down")}
+              onClick={() => {
+                if (hasVotedComment && commentVoteType === 1) {
+                  //console.log("downvote button clicked");
+                  //console.log("has voted:", hasVotedComment);
+                  //console.log("comment vote type:", commentVoteType);
+                  //console.log("toggling vote");
+                  onToggleVote(comment._id, commentVoteType);
+                  setCommentVoteType(0);
+                  setHasVotedComment(true);
+                } else {
+                  //console.log("downvote button clicked");
+                  //console.log("has voted:", hasVotedComment);
+                  //console.log("comment vote type:", commentVoteType);
+                  onVote(comment._id, 0, hasVotedComment);
+                  setCommentVoteType(hasVotedComment ? 1 : 0);
+                  setHasVotedComment(!hasVotedComment);
+                }
+              }}
               className="flex items-center space-x-2 px-3 py-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-all duration-200 group"
             >
               <ChevronDown className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
-              <span className="font-medium text-sm">{comment.downvotes}</span>
+              <span className="font-medium text-sm">
+                {comment.downvote_count}
+              </span>
             </button>
           </div>
         </div>
         {mode === "edit-comment" && (
           <EditComment
             comment={comment}
-            onClose={() => setMode("view-comment")}
-            onSave={() => {}}
+            onClose={(content) => {
+              setMode("view-comment");
+              setModalOpen(false);
+              handleCommentUpdate(comment._id, content);
+            }}
           />
         )}
         {mode === "delete-comment" && (
           <DeleteComment
             comment={comment}
-            onClose={() => setMode("view-comment")}
+            onClose={() => {
+              setMode("view-comment");
+              setModalOpen(false);
+              handleCommentDelete(comment._id);
+            }}
           />
         )}
       </div>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { X, Check, AlertCircle } from "lucide-react";
+import { X, Check } from "lucide-react";
+import { updateComment } from "../../../services/forum/comment";
+import { toast } from "react-hot-toast";
 
-const EditComment = ({ comment, onClose, onSave }) => {
+const EditComment = ({ comment, onClose }) => {
   const [content, setContent] = useState(comment?.content || "");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     setContent(comment?.content || "");
@@ -13,23 +14,21 @@ const EditComment = ({ comment, onClose, onSave }) => {
 
   const handleSave = async () => {
     if (!content.trim()) {
-      setError("Comment cannot be empty");
+      toast.error("Comment content cannot be empty");
       return;
     }
 
     setIsLoading(true);
-    setError("");
-
     try {
-      // Simulate save operation
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      if (onSave) {
-        onSave({ ...comment, content: content.trim() });
+      const response = await updateComment(comment._id, content);
+      if (response.errors) {
+        console.error("Error updating comment:", response.errors);
+      } else {
+        onClose(content);
       }
-      onClose();
-    } catch (err) {
-      setError("Failed to save comment" + err);
+    } catch (error) {
+      console.error("Error saving comment:", error);
+      toast.error("Failed to save comment");
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +85,6 @@ const EditComment = ({ comment, onClose, onSave }) => {
                   value={content}
                   onChange={(e) => {
                     setContent(e.target.value);
-                    setError("");
                   }}
                   onKeyDown={handleKeyDown}
                   placeholder="Write your comment..."
@@ -98,13 +96,6 @@ const EditComment = ({ comment, onClose, onSave }) => {
                   Press Cmd/Ctrl + Enter to save, Escape to cancel
                 </div>
               </div>
-
-              {error && (
-                <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
-                  <AlertCircle size={16} />
-                  {error}
-                </div>
-              )}
             </div>
           </div>
 

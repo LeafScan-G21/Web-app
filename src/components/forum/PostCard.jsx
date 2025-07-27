@@ -11,8 +11,8 @@ import plantPlaceholder from "../../assets/forum/plant-placeholder.jpg";
 
 const PostCard = ({ post }) => {
   const coverImage =
-    post.imageUrls.length > 0 ? post.imageUrls[0] : plantPlaceholder;
-  const formattedDate = new Date(post.createdAt).toLocaleDateString();
+    post.image_urls?.length > 0 ? post.image_urls[0] : plantPlaceholder;
+  const formattedDate = new Date(post.created_at).toLocaleDateString();
 
   return (
     <div className="w-full bg-white border rounded-lg hover:shadow-lg transition-shadow duration-200 p-4">
@@ -20,10 +20,10 @@ const PostCard = ({ post }) => {
       <div className="flex items-start space-x-4 mb-4">
         {/* Avatar */}
         <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-          {post.author.avatar ? (
+          {post.author_id ? (
             <img
-              src={post.author.avatar}
-              alt={post.author.name}
+              src={post.author_id}
+              alt={post.author_id}
               className="h-full w-full object-cover"
             />
           ) : (
@@ -34,7 +34,7 @@ const PostCard = ({ post }) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2 mb-1">
             <h3 className="font-semibold text-gray-900 truncate">
-              {post.author.name}
+              {post.author_id}
             </h3>
             <span className="text-sm text-gray-400">•</span>
             <div className="flex items-center space-x-1 text-sm text-gray-500">
@@ -43,14 +43,14 @@ const PostCard = ({ post }) => {
             </div>
           </div>
           <span className="text-xs bg-gray-100 text-gray-700 rounded px-2 py-1 inline-block">
-            {post.plantName}
+            {post.plant_name}
           </span>
         </div>
       </div>
 
       {/* Content */}
       <div className="space-y-4 mb-4">
-        <Link to={`/forum/post/${post.id}`}>
+        <Link to={`/forum/post/${post._id}`}>
           <h2 className="text-xl font-bold text-gray-900 hover:text-green-600 transition-colors line-clamp-2">
             {post.title}
           </h2>
@@ -92,23 +92,23 @@ const PostCard = ({ post }) => {
           <div className="flex items-center space-x-1">
             <button className="flex items-center space-x-1 text-green-600 hover:bg-gray-100 px-2 py-1 rounded text-sm">
               <ChevronUp className="h-4 w-4" />
-              <span>{post.upvotes}</span>
+              <span>{post.upvote_count}</span>
             </button>
             <button className="flex items-center space-x-1 text-gray-400 hover:bg-gray-100 px-2 py-1 rounded text-sm">
               <ChevronDown className="h-4 w-4" />
-              <span>{post.downvotes}</span>
+              <span>{post.downvote_count}</span>
             </button>
           </div>
 
           {/* Comments */}
           <div className="flex items-center space-x-1 text-gray-500">
             <MessageCircle className="h-4 w-4" />
-            <span className="text-sm">{post.commentCount}</span>
+            <span className="text-sm">{post.comment_count}</span>
           </div>
         </div>
 
         {/* Read More */}
-        <Link to={`/forum/post/${post.id}`}>
+        <Link to={`/forum/post/${post._id}`}>
           <button className="border border-gray-300 text-sm px-3 py-1.5 rounded hover:bg-gray-100 transition">
             Read More
           </button>
