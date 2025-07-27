@@ -2,9 +2,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
 
-export const getLatestPosts = async () => {
+export const getLatestPosts = async (start, limit) => {
   try {
     const response = await axios.get(`${FORUM_URL}/post/latest`, {
+      params: { start, limit },
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -15,6 +16,22 @@ export const getLatestPosts = async () => {
   } catch (error) {
     console.error("Error fetching latest posts:", error);
     toast.error("Failed to fetch latest posts");
+    throw error;
+  }
+};
+
+export const getLatestPostCount = async () => {
+  try {
+    const response = await axios.get(`${FORUM_URL}/post/latest/count`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching latest post count:", error);
+    toast.error("Failed to fetch latest post count");
     throw error;
   }
 };
@@ -123,6 +140,74 @@ export const deletePostImages = async (image_urls) => {
   } catch (error) {
     console.error("Error deleting post images:", error);
     toast.error("Failed to delete images");
+    throw error;
+  }
+};
+
+export const searchPosts = async (query, start, limit) => {
+  try {
+    const response = await axios.get(`${FORUM_URL}/post/filter`, {
+      params: { query, start, limit },
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error searching posts:", error);
+    toast.error("Failed to search posts");
+    throw error;
+  }
+};
+
+export const getSearchPostCount = async (query) => {
+  try {
+    const response = await axios.get(`${FORUM_URL}/post/filter/count`, {
+      params: { query },
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching search post count:", error);
+    toast.error("Failed to fetch search post count");
+    throw error;
+  }
+};
+
+export const deepSearchPosts = async (query, start, limit) => {
+  try {
+    const response = await axios.get(`${FORUM_URL}/post/search`, {
+      params: { query, start, limit },
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deep searching posts:", error);
+    toast.error("Failed to deep search posts");
+    throw error;
+  }
+};
+
+export const getDeepSearchPostCount = async (query) => {
+  try {
+    const response = await axios.get(`${FORUM_URL}/post/search/count`, {
+      params: { query },
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching deep search post count:", error);
+    toast.error("Failed to fetch deep search post count");
     throw error;
   }
 };
