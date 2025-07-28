@@ -36,6 +36,8 @@ import {
   hasVotedOnComment,
 } from "../../services/forum/vote.js";
 
+import { getUserDetails } from "../../services/auth/user.js";
+
 const PostDetail = () => {
   const { id } = useParams();
   const [newComment, setNewComment] = useState("");
@@ -51,6 +53,22 @@ const PostDetail = () => {
 
   const [hasVotedPost, setHasVotedPost] = useState(false);
   const [postVoteType, setPostVoteType] = useState(0);
+
+  const [authorDetails, setAuthorDetails] = useState(null);
+
+  useEffect(() => {
+    const fetchAuthorDetails = async () => {
+      if (post && post.author_id) {
+        try {
+          const userDetails = await getUserDetails(post.author_id);
+          setAuthorDetails(userDetails);
+        } catch (error) {
+          console.error("Failed to fetch author details:", error);
+        }
+      }
+    };
+    fetchAuthorDetails();
+  }, [post]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -109,9 +127,12 @@ const PostDetail = () => {
         try {
           const response = await getRelatedPosts(post.tags, post.plant_name);
 
-          const relataedPosts = response.data.filter(
-            (relatedPost) => relatedPost._id !== post._id
-          );
+          const relataedPosts = response.data
+            .filter((relatedPost) => relatedPost._id !== post._id)
+            .filter(
+              (relatedPost, index, self) =>
+                index === self.findIndex((p) => p._id === relatedPost._id)
+            );
 
           setRelatedPosts(relataedPosts);
         } catch (error) {
@@ -124,7 +145,7 @@ const PostDetail = () => {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [post]);
+  }, [post?._id]);
 
   if (fetchingPost) {
     return <LoadingAnimation multiplePosts={false} />;
@@ -354,7 +375,7 @@ const PostDetail = () => {
     const commentData = {
       post_id: post._id,
       content: newComment,
-      author_id: "currentUserId", // replace with actual user ID
+      author_id: localStorage.getItem("user_id") || "currentUserId", // replace with actual user ID
     };
     try {
       setIsSubmitting(true);
@@ -399,7 +420,10 @@ const PostDetail = () => {
                 <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center ring-2 ring-gray-100">
                   {post.author_id ? (
                     <img
-                      src={post.author_id}
+                      src={
+                        authorDetails?.profile_picture ||
+                        "https://images.unsplash.com/photo-1647400994173-25140723080e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                      }
                       alt={post.author_id}
                       className="h-full w-full object-cover"
                     />
@@ -410,7 +434,8 @@ const PostDetail = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 truncate">
-                  {post.author_id}
+                  {authorDetails?.first_name + " " + authorDetails?.last_name ||
+                    "Unknown Author"}{" "}
                 </h3>
                 <div className="flex items-center space-x-2 text-sm text-gray-500 mb-3">
                   <Calendar className="h-4 w-4 flex-shrink-0" />
@@ -431,26 +456,30 @@ const PostDetail = () => {
               >
                 <Share2 className="h-5 w-5" />
               </button>
-              <button
-                onClick={() => {
-                  setMode("edit");
-                  setModalOpen(true);
-                }}
-                className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
-                title="Edit Post"
-              >
-                <Edit className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => {
-                  setMode("delete");
-                  setModalOpen(true);
-                }}
-                className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
-                title="Delete Post"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+              {post.author_id === localStorage.getItem("user_id") && (
+                <>
+                  <button
+                    onClick={() => {
+                      setMode("edit");
+                      setModalOpen(true);
+                    }}
+                    className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                    title="Edit Post"
+                  >
+                    <Edit className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMode("delete");
+                      setModalOpen(true);
+                    }}
+                    className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                    title="Delete Post"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </>
+              )}
             </div>
           </header>
 
@@ -679,6 +708,21 @@ const CommentItem = ({
 
   const [hasVotedComment, setHasVotedComment] = useState(false);
   const [commentVoteType, setCommentVoteType] = useState(0);
+  const [commentauthorDetails, setCommentAuthorDetails] = useState(null);
+
+  useEffect(() => {
+    const fetchCommentAuthorDetails = async () => {
+      if (comment && comment.author_id) {
+        try {
+          const userDetails = await getUserDetails(comment.author_id);
+          setCommentAuthorDetails(userDetails);
+        } catch (error) {
+          console.error("Failed to fetch comment author details:", error);
+        }
+      }
+    };
+    fetchCommentAuthorDetails();
+  }, [comment]);
 
   const fetchVoteStatus = async () => {
     try {
@@ -719,9 +763,12 @@ const CommentItem = ({
     >
       <div className="flex-shrink-0">
         <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center ring-2 ring-gray-100">
-          {comment.author_id ? (
+          {commentauthorDetails ? (
             <img
-              src={comment.author_id}
+              src={
+                commentauthorDetails?.profile_picture ||
+                "https://images.unsplash.com/photo-1647400994173-25140723080e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              }
               alt={comment.author_id}
               className="h-full w-full object-cover"
             />
@@ -732,54 +779,60 @@ const CommentItem = ({
       </div>
 
       <div className="flex-1 min-w-0 space-y-3 relative">
-        <div className="absolute top-0 right-0 menu-container">
-          <button
-            className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-            title="More Options"
-            onClick={() => setModalOpen(!modalOpen)}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6"
+        {comment.author_id === localStorage.getItem("user_id") && (
+          <div className="absolute top-0 right-0 menu-container">
+            <button
+              className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+              title="More Options"
+              onClick={() => setModalOpen(!modalOpen)}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
-          </button>
-          {modalOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-              <button
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => {
-                  setMode("edit-comment");
-                  setModalOpen(false);
-                }}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
               >
-                Edit Comment
-              </button>
-              <button
-                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                onClick={() => {
-                  setMode("delete-comment");
-                  setModalOpen(false);
-                }}
-              >
-                Delete Comment
-              </button>
-            </div>
-          )}
-        </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            </button>
+            {modalOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => {
+                    setMode("edit-comment");
+                    setModalOpen(false);
+                  }}
+                >
+                  Edit Comment
+                </button>
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  onClick={() => {
+                    setMode("delete-comment");
+                    setModalOpen(false);
+                  }}
+                >
+                  Delete Comment
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="font-bold text-gray-900 truncate">
-            {comment.author_id}
+            {commentauthorDetails
+              ? commentauthorDetails.first_name +
+                " " +
+                commentauthorDetails.last_name
+              : "unknown user"}
           </span>
           <span className="text-gray-400">•</span>
           <span className="text-gray-500 truncate">{commentDate}</span>

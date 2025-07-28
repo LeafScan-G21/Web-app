@@ -73,7 +73,7 @@ export const getPostById = async (postId) => {
 export const updatePost = async (postId, postData) => {
   try {
     const response = await axios.put(`${FORUM_URL}/post/${postId}`, postData, {
-      params: { user_id: "currentUserId" }, // replace with actual user ID
+      params: { user_id: localStorage.getItem("user_id") || "currentUserId" }, // replace with actual user ID
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export const updatePost = async (postId, postData) => {
 export const deletePost = async (postId) => {
   try {
     const response = await axios.delete(`${FORUM_URL}/post/${postId}`, {
-      params: { user_id: "currentUserId" }, // Replace with actual user ID
+      params: { user_id: localStorage.getItem("user_id") || "currentUserId" }, // Replace with actual user ID
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",

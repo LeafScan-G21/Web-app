@@ -36,7 +36,7 @@ export const getCommentsByPostId = async (postId) => {
 export const deleteComment = async (commentId) => {
   try {
     const response = await axios.delete(`${FORUM_URL}/comment/${commentId}`, {
-      params: { user_id: "currentUserId" }, // replace with actual user ID
+      params: { user_id: localStorage.getItem("user_id") || "currentUserId" }, // replace with actual user ID
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -57,7 +57,7 @@ export const updateComment = async (commentId, content) => {
       `${FORUM_URL}/comment/${commentId}`,
       { content },
       {
-        params: { user_id: "currentUserId" }, // replace with actual user ID
+        params: { user_id: localStorage.getItem("user_id") || "currentUserId" }, // replace with actual user ID
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
