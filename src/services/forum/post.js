@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
+//import qs from "qs";
 const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
 
 export const getLatestPosts = async (start, limit) => {
@@ -208,6 +209,24 @@ export const getDeepSearchPostCount = async (query) => {
   } catch (error) {
     console.error("Error fetching deep search post count:", error);
     toast.error("Failed to fetch deep search post count");
+    throw error;
+  }
+};
+
+export const getRelatedPosts = async (tags, plant_name) => {
+  try {
+    const response = await axios.get(`${FORUM_URL}/post/related`, {
+      params: { tags: tags.toString(), plant_name },
+
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching related posts:", error);
+    toast.error("Failed to fetch related posts");
     throw error;
   }
 };

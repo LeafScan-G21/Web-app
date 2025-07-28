@@ -14,12 +14,11 @@ import {
   Trash2,
 } from "lucide-react";
 import PostCard from "../../components/forum/PostCard.jsx";
-import { getRelatedPosts } from "../../data/mockdata.js";
 import EditPost from "../../components/forum/modals/EditPost.jsx";
 import DeletePost from "../../components/forum/modals/DeletePost.jsx";
 import EditComment from "../../components/forum/modals/EditComment.jsx";
 import DeleteComment from "../../components/forum/modals/DeleteComment.jsx";
-import { getPostById } from "../../services/forum/post.js";
+import { getPostById, getRelatedPosts } from "../../services/forum/post.js";
 import LoadingAnimation from "../../components/forum/PostLoading.jsx";
 import toast from "react-hot-toast";
 import {
@@ -38,9 +37,6 @@ import {
 } from "../../services/forum/vote.js";
 
 const PostDetail = () => {
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
   const { id } = useParams();
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -106,6 +102,30 @@ const PostDetail = () => {
     ////console.log("has voted:", hasVotedPost, "type:", postVoteType);
   }, [post]);
 
+  const [relatedPosts, setRelatedPosts] = useState([]);
+  useEffect(() => {
+    const fetchRelatedPosts = async () => {
+      if ((post && post.tags) || (post && post.plant_name)) {
+        try {
+          const response = await getRelatedPosts(post.tags, post.plant_name);
+
+          const relataedPosts = response.data.filter(
+            (relatedPost) => relatedPost._id !== post._id
+          );
+
+          setRelatedPosts(relataedPosts);
+        } catch (error) {
+          console.error("Failed to fetch related posts:", error);
+        }
+      }
+    };
+    fetchRelatedPosts();
+  }, [post]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [post]);
+
   if (fetchingPost) {
     return <LoadingAnimation multiplePosts={false} />;
   }
@@ -155,7 +175,6 @@ const PostDetail = () => {
     );
   }
 
-  const relatedPosts = getRelatedPosts(post._id, post.tags, post.plant_name);
   const formattedDate = new Date(post.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -618,7 +637,7 @@ const PostDetail = () => {
           <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 sm:p-8">
             <header className="flex items-center space-x-3 mb-6">
               <h2 className="text-2xl font-bold text-gray-900">
-                Related Articles
+                Related Posts
               </h2>
               <span className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-600">
                 {relatedPosts?.length}
