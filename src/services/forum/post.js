@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
+//import qs from "qs";
 const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
 
 export const getLatestPosts = async (start, limit) => {
@@ -72,7 +73,7 @@ export const getPostById = async (postId) => {
 export const updatePost = async (postId, postData) => {
   try {
     const response = await axios.put(`${FORUM_URL}/post/${postId}`, postData, {
-      params: { user_id: "currentUserId" }, // replace with actual user ID
+      params: { user_id: localStorage.getItem("user_id") || "currentUserId" }, // replace with actual user ID
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -90,7 +91,7 @@ export const updatePost = async (postId, postData) => {
 export const deletePost = async (postId) => {
   try {
     const response = await axios.delete(`${FORUM_URL}/post/${postId}`, {
-      params: { user_id: "currentUserId" }, // Replace with actual user ID
+      params: { user_id: localStorage.getItem("user_id") || "currentUserId" }, // Replace with actual user ID
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -208,6 +209,24 @@ export const getDeepSearchPostCount = async (query) => {
   } catch (error) {
     console.error("Error fetching deep search post count:", error);
     toast.error("Failed to fetch deep search post count");
+    throw error;
+  }
+};
+
+export const getRelatedPosts = async (tags, plant_name) => {
+  try {
+    const response = await axios.get(`${FORUM_URL}/post/related`, {
+      params: { tags: tags.toString(), plant_name },
+
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching related posts:", error);
+    toast.error("Failed to fetch related posts");
     throw error;
   }
 };

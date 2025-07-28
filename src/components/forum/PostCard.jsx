@@ -8,21 +8,38 @@ import {
   Calendar,
 } from "lucide-react";
 import plantPlaceholder from "../../assets/forum/plant-placeholder.jpg";
+import { getUserDetails } from "../../services/auth/user";
+import { useEffect } from "react";
 
 const PostCard = ({ post }) => {
   const coverImage =
     post.image_urls?.length > 0 ? post.image_urls[0] : plantPlaceholder;
   const formattedDate = new Date(post.created_at).toLocaleDateString();
 
+  const [authorDetails, setAuthorDetails] = React.useState(null);
+  useEffect(() => {
+    const fetchAuthorDetails = async () => {
+      try {
+        const details = await getUserDetails(post.author_id);
+        setAuthorDetails(details);
+      } catch (error) {
+        console.error("Error fetching author details:", error);
+      }
+    };
+    fetchAuthorDetails();
+  }, [post.author_id]);
   return (
     <div className="w-full bg-white border rounded-lg hover:shadow-lg transition-shadow duration-200 p-4">
       {/* Header */}
       <div className="flex items-start space-x-4 mb-4">
         {/* Avatar */}
         <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-          {post.author_id ? (
+          {authorDetails ? (
             <img
-              src={post.author_id}
+              src={
+                authorDetails.profile_picture ||
+                "https://images.unsplash.com/photo-1647400994173-25140723080e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              }
               alt={post.author_id}
               className="h-full w-full object-cover"
             />
@@ -34,7 +51,9 @@ const PostCard = ({ post }) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2 mb-1">
             <h3 className="font-semibold text-gray-900 truncate">
-              {post.author_id}
+              {authorDetails
+                ? authorDetails.first_name + " " + authorDetails.last_name
+                : "unknown author"}
             </h3>
             <span className="text-sm text-gray-400">•</span>
             <div className="flex items-center space-x-1 text-sm text-gray-500">

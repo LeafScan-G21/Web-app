@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, X, Plus, Lightbulb } from "lucide-react";
 import { createPost, uploadpostImages } from "../../services/forum/post";
+import toast from "react-hot-toast";
 
 const AddPost = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const AddPost = () => {
     plant_name: "General",
     tags: [],
     image_urls: [],
-    author_id: "currentUserId", // Replace with actual user ID
+    author_id: localStorage.getItem("user_id") || "currentUserId", // Replace with actual user ID
   });
 
   const [images, setImages] = useState([]);
@@ -75,7 +76,7 @@ const AddPost = () => {
     e.preventDefault();
 
     if (!form.title.trim() || !form.content.trim()) {
-      alert("Please fill in both title and content.");
+      toast.error("Title and content are required");
       return;
     }
 
@@ -87,23 +88,24 @@ const AddPost = () => {
         console.log("Image upload response:", uploadResponse.data);
         if (uploadResponse.errors) {
           console.error("Image upload errors:", uploadResponse.errors);
-          alert("Failed to upload images. Please try again.");
+          toast.error("Failed to upload images");
+          setIsSubmitting(false);
           return;
         }
         updatedForm = { ...form, image_urls: uploadResponse.data };
       }
       const saveResponse = await createPost(updatedForm);
       if (saveResponse.data) {
-        alert("Post created successfully!");
+        toast.success("Post created successfully!");
         navigate("/forum");
       }
       if (saveResponse.errors) {
         console.error("Error creating post:", saveResponse.errors);
-        alert("Failed to create post. Please try again.");
+        toast.error("Failed to create post");
       }
     } catch (error) {
       console.error("Error submitting post:", error);
-      alert("Failed to create post. Please try again.");
+      toast.error("An error occurred while creating the post");
     } finally {
       setIsSubmitting(false);
     }
