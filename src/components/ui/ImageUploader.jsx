@@ -113,6 +113,10 @@ const ImageUploader = ({ onImageUpload }) => {
       console.log(`   • Prediction: ${data.prediction}`); //Test the Preprocess of the Image
       console.log(`   • Confidence: ${(data.confidence * 100).toFixed(1)}%`); //Test the Preprocess of the Image
       console.log(`   • Disease detected: ${data.disease_detected}`); //Test the Preprocess of the Image
+      console.log(`   • Image saved to cloud: ${data.image_saved}`); //Test the Preprocess of the Image
+      if (data.image_url) {
+        console.log(`   • Cloud URL: ${data.image_url}`); //Test the Preprocess of the Image
+      }
       
       setPrediction(data);
       
@@ -248,9 +252,33 @@ const ImageUploader = ({ onImageUpload }) => {
                 <div className="bg-white rounded-lg p-4 border border-green-100">
                   <p className="text-gray-800 font-medium text-lg">{prediction.prediction || prediction}</p>
                   {typeof prediction === 'object' && prediction.confidence && (
-                    <p className="text-green-600 font-medium mt-2">
-                      Confidence: {(prediction.confidence * 100).toFixed(1)}%
-                    </p>
+                    <div className="mt-2 space-y-1">
+                      <p className="text-green-600 font-medium">
+                        Confidence: {(prediction.confidence * 100).toFixed(1)}%
+                      </p>
+                      {prediction.image_saved && (
+                        <div className="flex items-center space-x-2 text-sm">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            ☁️ Saved to Cloud
+                          </span>
+                          {prediction.image_url && (
+                            <a 
+                              href={prediction.image_url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 underline"
+                            >
+                              View Stored Image
+                            </a>
+                          )}
+                        </div>
+                      )}
+                      {!prediction.image_saved && prediction.confidence && (
+                        <p className="text-amber-600 text-sm">
+                          ⚠️ Confidence below 50% - Image not stored
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
                 <p className="text-sm text-gray-600 mt-3">
@@ -282,6 +310,7 @@ const ImageUploader = ({ onImageUpload }) => {
                   <ul className="space-y-1 text-gray-600">
                     <li>• Shape: {prediction.processing_info.processed_shape?.join(' × ')}</li>
                     <li>• Ready for CNN: {prediction.processing_info.ready_for_cnn ? '✅' : '❌'}</li>
+                    <li>• Confidence Threshold: {((prediction.processing_info.confidence_threshold || 0.5) * 100).toFixed(0)}%</li>
                   </ul>
                 </div>
                 
