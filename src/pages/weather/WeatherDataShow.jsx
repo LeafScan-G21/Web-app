@@ -261,51 +261,7 @@ const GetLocation = () => {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center gap-6">
-                          <div className="relative">
-                            <div className="absolute inset-0 bg-green-500 bg-opacity-20 rounded-full animate-pulse" />
-                            <div className="relative bg-gradient-to-br from-green-500 to-emerald-600 rounded-full p-5 shadow-lg">
-                              <CheckCircle size={40} className="text-white" />
-                            </div>
-                          </div>
-
-                          <div className="text-center space-y-6">
-                            <h2 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">
-                              Location Found!
-                            </h2>
-
-                            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 lg:p-8 border border-green-200 shadow-inner space-y-4">
-                              <div className="flex items-center justify-between text-lg">
-                                <span className="text-gray-600 font-medium">
-                                  Latitude:
-                                </span>
-                                <span className="font-bold text-green-700">
-                                  {location?.lat ||
-                                    localStorage.getItem("latitude") ||
-                                    "N/A"}
-                                </span>
-                              </div>
-                              <div className="w-full h-px bg-gradient-to-r from-transparent via-green-300 to-transparent" />
-                              <div className="flex items-center justify-between text-lg">
-                                <span className="text-gray-600 font-medium">
-                                  Longitude:
-                                </span>
-                                <span className="font-bold text-green-700">
-                                  {location?.lon ||
-                                    localStorage.getItem("longitude") ||
-                                    "N/A"}
-                                </span>
-                              </div>
-
-                              <button
-                                className="mt-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold px-10 py-3 lg:px-12 lg:py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                                onClick={getLocation}
-                              >
-                                Refresh Location
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+                        <> </>
                       )}
                     </>
                   )}

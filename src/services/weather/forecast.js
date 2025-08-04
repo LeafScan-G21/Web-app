@@ -19,3 +19,20 @@ export const getWeatherForecast = async (latitude, longitude, address) => {
     throw error;
   }
 };
+
+export const geturrentWeather = async (latitude, longitude) => {
+  try {
+    const response = await axios.get(`${FORECAST_URL}/current`, {
+      params: { latitude, longitude },
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching current weather:", error);
+    toast.error("Failed to fetch current weather");
+    throw error;
+  }
+};
