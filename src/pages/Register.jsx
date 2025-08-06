@@ -23,7 +23,7 @@ const Register = () => {
     const [tandcerror, setTandcError] = useState("");
     const navigate = useNavigate();
     
-    const AUTH_URL = import.meta.env.VITE_AUTH_SERVICE_URL;
+    const AUTH_URL = import.meta.env.VITE_BACKEND_URL;
 
     const handleSubmit = async (e) => {
         e.preventDefault();

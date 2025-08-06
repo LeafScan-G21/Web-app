@@ -14,7 +14,7 @@ const Login = () => {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
-    const AUTH_URL = import.meta.env.VITE_AUTH_SERVICE_URL
+    const AUTH_URL = import.meta.env.VITE_BACKEND_URL
 
     const handleSubmit = async (e) => {
         e.preventDefault();
