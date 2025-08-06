@@ -20,6 +20,7 @@ export const getWeatherForecast = async (latitude, longitude, address) => {
   }
 };
 
+
 export const geturrentWeather = async (latitude, longitude) => {
   try {
     const response = await axios.get(`${FORECAST_URL}/current`, {
@@ -36,3 +37,4 @@ export const geturrentWeather = async (latitude, longitude) => {
     throw error;
   }
 };
+

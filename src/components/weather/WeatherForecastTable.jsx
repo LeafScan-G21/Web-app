@@ -1,4 +1,6 @@
+
 import React, { useEffect, useState } from "react";
+
 import {
   MapPin,
   CloudSun,
@@ -12,7 +14,9 @@ import {
   AlertTriangle,
   Calendar1Icon,
 } from "lucide-react";
+
 import { geturrentWeather } from "../../services/weather/forecast";
+
 
 // Reusable fallback component
 const ErrorMessage = ({ message }) => (
@@ -21,7 +25,9 @@ const ErrorMessage = ({ message }) => (
     <p className="text-lg">{message}</p>
   </div>
 );
+
 const formatLocation = (location) => {
+
   return location
     .split(",")
     .map((part) =>
@@ -41,6 +47,7 @@ const WeatherForecastTable = ({
   isError = false,
   handleResetLocation,
 }) => {
+
   const latitide = localStorage.getItem("latitude");
   const longitude = localStorage.getItem("longitude");
   const [currentWeatherData, setCurrentWeatherData] = useState({
@@ -109,11 +116,13 @@ const WeatherForecastTable = ({
           </div>
         )}
 
+
         {isLoading && (
           <div className="text-center text-gray-500 py-12 text-lg font-medium">
             Loading forecast...
           </div>
         )}
+
 
         {!isLoading &&
           !isError &&
@@ -123,9 +132,11 @@ const WeatherForecastTable = ({
             </div>
           )}
 
+
         {!isLoading && !isError && forecastData && forecastData.length > 0 && (
           <>
             {/* Desktop Table */}
+
             <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -188,24 +199,30 @@ const WeatherForecastTable = ({
               </table>
             </div>
 
+
             {/* Mobile Cards */}
             <div className="sm:hidden space-y-4 mt-6">
+
               {forecastData.map((entry, idx) => (
                 <div
                   key={idx}
                   className="border border-green-200 rounded-2xl bg-white p-4 shadow-sm"
                 >
+
                   <div className="text-lg font-semibold mb-2 text-green-800 flex items-center gap-2">
+
                     <Calendar1Icon size={18} /> {entry.date}
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
                     <span>
+
                       <ThermometerSun size={16} /> Max: {entry.max_temp}°C
                     </span>
                     <span>
                       <ThermometerSnowflake size={16} /> Min: {entry.min_temp}°C
                     </span>
                     <span>
+
                       <ThermometerIcon size={16} /> Avg: {entry.mean_temp}°C
                     </span>
                     <span>
@@ -238,6 +255,7 @@ const WeatherForecastTable = ({
             Reset Location
           </button>
         </div>
+
       </div>
     </div>
   );
