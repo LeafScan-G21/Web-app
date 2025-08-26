@@ -13,6 +13,7 @@ import PostView from "./pages/forum/PostView.jsx";
 import AddPost from "./pages/forum/AddPost.jsx";
 import Diagnosis from "./pages/Diagnosis";
 import WeatherDataShow from "./pages/weather/WeatherDataShow.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 function App() {
   return (
     <>
@@ -43,7 +44,9 @@ function App() {
         </Route>
 
         {/* Catch-all */}
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<NotFound />} />
+
       </Routes>
     </>
   );
