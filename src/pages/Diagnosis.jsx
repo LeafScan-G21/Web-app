@@ -64,27 +64,9 @@ const Diagnosis = () => {
           </div>
         </div>
 
-        {/* Main Upload Section */}
+        {/* Instructions Section */}
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-green-100">
-            {/* Upload Area Header */}
-            <div className="bg-gradient-to-r from-green-600 to-green-700 px-8 py-6">
-              <h2 className="text-2xl font-bold text-white text-center">
-                Upload Your Plant Image
-              </h2>
-              <p className="text-green-100 text-center mt-2">
-                For best results, ensure the leaf fills most of the frame and is well-lit
-              </p>
-            </div>
-
-            {/* Upload Component */}
-            <div className="p-8">
-              <ImageUploader onImageUpload={handleImageUpload} />
-            </div>
-          </div>
-
-          {/* Instructions Section */}
-          <div className="mt-12 grid md:grid-cols-3 gap-6">
+          <div className="mt-12 grid md:grid-cols-3 gap-6 mb-12 ">
             <div className="text-center p-6 bg-white rounded-2xl shadow-lg border border-green-50 hover:shadow-xl transition-shadow">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-green-600 font-bold text-lg">1</span>
@@ -107,6 +89,28 @@ const Diagnosis = () => {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Get Results</h3>
               <p className="text-gray-600 text-sm">Receive detailed diagnosis with treatment recommendations</p>
+            </div>
+          </div>
+          </div>
+
+        
+
+        {/* Main Upload Section */}
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-green-100">
+            {/* Upload Area Header */}
+            <div className="bg-gradient-to-r from-green-600 to-green-700 px-8 py-6">
+              <h2 className="text-2xl font-bold text-white text-center">
+                Upload Your Plant Image
+              </h2>
+              <p className="text-green-100 text-center mt-2">
+                For best results, ensure the leaf fills most of the frame and is well-lit
+              </p>
+            </div>
+
+            {/* Upload Component */}
+            <div className="p-8">
+              <ImageUploader onImageUpload={handleImageUpload} />
             </div>
           </div>
         </div>

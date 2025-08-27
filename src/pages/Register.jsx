@@ -23,7 +23,7 @@ const Register = () => {
     const [tandcerror, setTandcError] = useState("");
     const navigate = useNavigate();
     
-    const AUTH_URL = import.meta.env.VITE_BACKEND_URL;
+    const AUTH_URL = import.meta.env.VITE_AUTH_SERVICE_URL;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -75,6 +75,7 @@ const Register = () => {
         };
         try{
             const response = await axios.post(`${AUTH_URL}/users/register`, formData);
+            console.log(`${AUTH_URL}/users/register`)
             toast.success('Registration successful! Please log in.');
             navigate('/login');
         } catch (error) {
@@ -82,7 +83,7 @@ const Register = () => {
                 if (error.response.data.detail === "Email already registered") {
                     setEmailError("Email is already registered");
                 } else {
-                    setTandcError("Network Error. Please try again.");
+                    setTandcError("Network Error. Please try again."+ error);
             }
         }
     }

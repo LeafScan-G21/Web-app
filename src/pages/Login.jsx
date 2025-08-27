@@ -6,6 +6,7 @@ import PasswordField from "../components/ui/PasswordField";
 import FullWidthButton from "../components/ui/FullWidthButton";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -13,6 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const navigate = useNavigate();
 
   const AUTH_URL = import.meta.env.VITE_AUTH_SERVICE_URL;
 
@@ -50,6 +52,7 @@ const Login = () => {
       toast.success("Login successful!");
       console.log(response.data);
       localStorage.setItem("user_id", response.data.user_id);
+      navigate("/dashboard");
     } catch (error) {
       if (error.response) {
         const detail = error.response.data.detail;
