@@ -1,5 +1,6 @@
 import axios from "axios";
-const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
+// const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
+const FORUM_URL = "http://localhost:8003";
 
 export const addPostVote = async (postId, vote_type) => {
   try {

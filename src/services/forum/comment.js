@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
-const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
+// const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
+const FORUM_URL = "http://localhost:8003";
 
 export const addComment = async (commentData) => {
   try {
