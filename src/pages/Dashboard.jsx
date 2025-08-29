@@ -1,8 +1,18 @@
 import React from 'react';
 import { Camera, Users, BookOpen, Sprout, MapPin, Thermometer, Cloud, Droplets, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Dashboard() {
+
+  const { user } = useAuth();
+  const first = user?.user_metadata?.first_name;
+  const last = user?.user_metadata?.last_name;
+  const full = user?.user_metadata?.full_name;
+
+  const username = (first && last ? `${first} ${last}` : full) || "Unknown User";
+ 
+  console.log(username);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -16,7 +26,7 @@ export default function Dashboard() {
           </div>
           <div className="text-right text-gray-600 font-medium bg-green-700 text-white px-4 py-2 rounded-lg shadow-sm">
             <User className="w-6 h-6 inline-block mr-2" />
-            John Doe
+            {username}
           </div>
         </div>
 

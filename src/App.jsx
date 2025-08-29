@@ -37,7 +37,11 @@ function App() {
         </Route>
 
         {/* Forum Layout */}
-        <Route element={<ForumLayout />}>
+        <Route element={
+          <ProtectedRoute>
+          <ForumLayout />
+          </ProtectedRoute>
+        }>
           <Route path="/forum/*" element={<Forum />} />
           <Route path="/forum/post/:id" element={<PostView />} />
           <Route path="/forum/add" element={<AddPost />} />
@@ -45,11 +49,7 @@ function App() {
         </Route>
 
         {/* Catch-all */}
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-          } />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<NotFound />} />
 
       </Routes>
