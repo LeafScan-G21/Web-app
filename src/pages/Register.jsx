@@ -7,6 +7,7 @@ import PasswordField from '../components/ui/PasswordField'
 import FullWidthButton from '../components/ui/FullWidthButton'
 import { toast } from 'react-hot-toast'
 import axios from 'axios'
+import { supabase } from '../services/auth/supabaseClient'
 
 const Register = () => {
     const [first_name, setFirstName] = useState("");
@@ -66,27 +67,33 @@ const Register = () => {
             valid = false;
         }
         if (!valid) return;
-
-        const formData = {
-            first_name,
-            last_name,
+        try {
+        const {data, error} = await supabase.auth.signUp({
             email,
             password,
-        };
-        try{
-            const response = await axios.post(`${AUTH_URL}/users/register`, formData);
-            console.log(`${AUTH_URL}/users/register`)
-            toast.success('Registration successful! Please log in.');
-            navigate('/login');
-        } catch (error) {
-            if (error.response) {
-                if (error.response.data.detail === "Email already registered") {
-                    setEmailError("Email is already registered");
-                } else {
-                    setTandcError("Network Error. Please try again."+ error);
+            options: {
+                data: {
+                    first_name,
+                    last_name
+                },
+            },
+        });
+
+        if (error) {
+            if (error.message.includes("duplicate key")) {
+                setEmailError("Email is already registered");
+            } else {
+                toast.error(error.message);
             }
+        return;
         }
-    }
+
+        toast.success("Registration successful! Please check your email to confirm.");
+        navigate("/login");
+        } catch (err) {
+            console.error(err);
+            toast.error("Something went wrong. Please try again.");
+        }
 }
 
     return (

@@ -7,6 +7,7 @@ import FullWidthButton from "../components/ui/FullWidthButton";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../services/auth/supabaseClient";
 
 const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -14,10 +15,12 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [session, setSession] = useState(null);
+  const [protectedData, setProtectedData] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const AUTH_URL = import.meta.env.VITE_AUTH_SERVICE_URL;
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setEmailError("");
@@ -36,37 +39,29 @@ const Login = () => {
 
     if (!valid) return;
 
-    const formData = {
+    setLoading(true);
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
-      remember_me: rememberMe,
-    };
-
-    try {
-      const response = await axios.post(`${AUTH_URL}/users/login`, formData, {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      toast.success("Login successful!");
-      console.log(response.data);
-      localStorage.setItem("user_id", response.data.user_id);
-      navigate("/dashboard");
-    } catch (error) {
-      if (error.response) {
-        const detail = error.response.data.detail;
-        if (detail === "Invalid email") {
-          setEmailError(detail);
-        }
-        if (detail === "Wrong password") {
-          setPasswordError(detail);
-        }
-      } else {
-        console.error("An unexpected error occurred:", error);
-      }
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
     }
+
+    setSession(data.session);
+    toast.success("Login successful!");
+    navigate("/dashboard");
   };
+
+  const signInWithGoogle = async () => {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+  });
+  if (error) toast.error(error.message);
+};
+
 
   return (
     <div className="min-h-screen bg-[#f9fbf9] flex items-center justify-center px-4">
@@ -132,6 +127,14 @@ const Login = () => {
           </div>
 
           {/* Continue as guest button */}
+          <button
+            type="button"
+            onClick={signInWithGoogle}
+            className="w-full bg-red-500 text-white font-semibold py-3 px-4 rounded-lg"
+          >
+            Continue with Google
+          </button>
+
           <button
             type="button"
             className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-colors border border-gray-200"

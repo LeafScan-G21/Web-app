@@ -14,6 +14,7 @@ import AddPost from "./pages/forum/AddPost.jsx";
 import Diagnosis from "./pages/Diagnosis";
 import WeatherDataShow from "./pages/weather/WeatherDataShow.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 function App() {
   return (
     <>
@@ -36,7 +37,11 @@ function App() {
         </Route>
 
         {/* Forum Layout */}
-        <Route element={<ForumLayout />}>
+        <Route element={
+          <ProtectedRoute>
+          <ForumLayout />
+          </ProtectedRoute>
+        }>
           <Route path="/forum/*" element={<Forum />} />
           <Route path="/forum/post/:id" element={<PostView />} />
           <Route path="/forum/add" element={<AddPost />} />

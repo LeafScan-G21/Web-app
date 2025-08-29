@@ -79,7 +79,7 @@ const ImageUploader = ({ onImageUpload }) => {
       console.log("⏳ Making API request..."); //Test the Preprocess of the Image
       const startTime = performance.now(); //Test the Preprocess of the Image
       
-      const response = await fetch("http://localhost:8001/predict", {
+      const response = await fetch("http://localhost:8002/predict", {
         method: "POST",
         body: formData,
       });
