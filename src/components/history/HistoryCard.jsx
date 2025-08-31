@@ -1,3 +1,5 @@
+import React from "react";
+
 const HistoryCard = ({ item }) => (
   <div className="bg-white shadow-md rounded-xl p-4 flex items-center gap-4 hover:shadow-lg transition">
     <img
@@ -11,7 +13,7 @@ const HistoryCard = ({ item }) => (
         Confidence: {(item.confidence * 100).toFixed(1)}%
       </p>
       <p className="text-xs text-gray-400">
-        {new Date(item.timestamp).toLocaleString()}
+        {new Date(item.timestamp || item.created_at).toLocaleString()}
       </p>
     </div>
   </div>

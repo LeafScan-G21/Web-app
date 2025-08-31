@@ -16,6 +16,7 @@ import WeatherDataShow from "./pages/weather/WeatherDataShow.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import UserHistory from "./pages/UserHistory.jsx";
+import HistoryTest from "./pages/HistoryTest.jsx"; // Import the HistoryTest component
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
         {/* Catch-all */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/user-history" element={<UserHistory />} />
+        <Route path="/history-test" element={<HistoryTest />} /> {/* Add the /history-test route */}
         <Route path="*" element={<NotFound />} />
 
       </Routes>
