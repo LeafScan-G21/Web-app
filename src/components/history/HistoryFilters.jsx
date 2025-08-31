@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 const HistoryFilters = ({ onFilter }) => {
   const [sortBy, setSortBy] = useState("date");
-
+  
   const handleChange = (e) => {
     setSortBy(e.target.value);
     onFilter(e.target.value);

@@ -19,8 +19,11 @@ export const addHistoryRecord = async (record) => {
 
 export const getUserHistory = async (userId) => {
   try {
+    console.log("Fetching history for user:", userId);
     const response = await fetch(`${API_URL}/${userId}`);
-    return await response.json();
+    const data = await response.json();
+    console.log("History response:", data);
+    return data;
   } catch (err) {
     console.error("Failed to fetch history", err);
     return [];
