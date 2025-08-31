@@ -16,6 +16,7 @@ export const addHistoryRecord = async (record) => {
   }
 };
 
+
 export const getUserHistory = async (userId) => {
   try {
     const response = await fetch(`${API_URL}/${userId}`);
