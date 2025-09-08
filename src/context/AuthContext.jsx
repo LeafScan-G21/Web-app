@@ -1,11 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../services/auth/supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
+    navigate("/login");
+  };
 
   useEffect(() => {
     const getSession = async () => {
@@ -27,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     };
     }, []);
     return (
-      <AuthContext.Provider value={{ user, session, loading }}>
+      <AuthContext.Provider value={{ user, session, loading, logout }}>
         {children}
       </AuthContext.Provider>
     );

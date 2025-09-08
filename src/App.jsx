@@ -15,6 +15,7 @@ import Diagnosis from "./pages/Diagnosis";
 import WeatherDataShow from "./pages/weather/WeatherDataShow.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import Prediction from "./pages/Prediction.jsx";
 function App() {
   return (
     <>
@@ -33,6 +34,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/diagnosis" element={<Diagnosis />} />
+          <Route path="/prediction" element={<Prediction />} />
           <Route path="/weather" element={<WeatherDataShow />} />
         </Route>
 

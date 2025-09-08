@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import logo from "../assets/leafScan.png";
 import { Mail } from "lucide-react";
 import FormField from "../components/ui/FormField";
@@ -60,7 +60,7 @@ const Login = () => {
     provider: "google",
   });
   if (error) toast.error(error.message);
-};
+  };
 
 
   return (
@@ -130,7 +130,7 @@ const Login = () => {
           <button
             type="button"
             onClick={signInWithGoogle}
-            className="w-full bg-red-500 text-white font-semibold py-3 px-4 rounded-lg"
+            className="w-full rounded-lg border-solid cursor-pointer font-semibold py-3 px-4 rounded-lg"
           >
             Continue with Google
           </button>
