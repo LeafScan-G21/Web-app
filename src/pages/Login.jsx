@@ -4,10 +4,10 @@ import { Mail } from "lucide-react";
 import FormField from "../components/ui/FormField";
 import PasswordField from "../components/ui/PasswordField";
 import FullWidthButton from "../components/ui/FullWidthButton";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../services/auth/supabaseClient";
+import googleLogo from "../assets/google.png";
 
 const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -16,7 +16,6 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [session, setSession] = useState(null);
-  const [protectedData, setProtectedData] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -126,12 +125,12 @@ const Login = () => {
             </div>
           </div>
 
-          {/* Continue as guest button */}
           <button
             type="button"
             onClick={signInWithGoogle}
-            className="w-full rounded-lg border-solid cursor-pointer font-semibold py-3 px-4 rounded-lg"
+            className="w-full border border-gray-300 border-solid cursor-pointer font-semibold py-3 px-4 rounded-lg hover:bg-gray-50"
           >
+            <img src={googleLogo} alt="Google Logo" className="w-5 h-5 inline-block mr-2" />
             Continue with Google
           </button>
 
@@ -142,7 +141,6 @@ const Login = () => {
             Continue as Guest
           </button>
 
-          {/* Sign in Button */}
           <div className="text-center pt-4">
             <span className="text-sm text-gray-600">
               Don't have an account?{" "}

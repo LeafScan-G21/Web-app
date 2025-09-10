@@ -38,7 +38,6 @@ function App() {
           <Route path="/weather" element={<WeatherDataShow />} />
         </Route>
 
-        {/* Forum Layout */}
         <Route element={
           <ProtectedRoute>
           <ForumLayout />
@@ -47,10 +46,8 @@ function App() {
           <Route path="/forum/*" element={<Forum />} />
           <Route path="/forum/post/:id" element={<PostView />} />
           <Route path="/forum/add" element={<AddPost />} />
-          {/* Add other forum-related routes here */}
         </Route>
 
-        {/* Catch-all */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<NotFound />} />
 

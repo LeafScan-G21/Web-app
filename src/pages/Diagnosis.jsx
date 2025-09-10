@@ -7,7 +7,6 @@ const Diagnosis = () => {
   const [hasUploadedImage, setHasUploadedImage] = useState(false);
   const navigate = useNavigate();
 
-  // Add beforeunload event listener to warn user about losing changes
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (hasUploadedImage) {

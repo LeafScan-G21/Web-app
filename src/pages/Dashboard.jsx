@@ -14,8 +14,6 @@ export default function Dashboard() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const menuRef = useRef();
- 
-  console.log(username);
 
   useEffect(() => {
     function handleClickOutside(event) {
