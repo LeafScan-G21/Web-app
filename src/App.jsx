@@ -15,6 +15,10 @@ import Diagnosis from "./pages/Diagnosis";
 import WeatherDataShow from "./pages/weather/WeatherDataShow.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import UserHistory from "./pages/UserHistory.jsx";
+import HistoryTest from "./pages/HistoryTest.jsx"; // Import the HistoryTest component
+
+
 import Prediction from "./pages/Prediction.jsx";
 function App() {
   return (
@@ -49,6 +53,8 @@ function App() {
         </Route>
 
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/user-history" element={<UserHistory />} />
+        <Route path="/history-test" element={<HistoryTest />} /> {/* Add the /history-test route */}
         <Route path="*" element={<NotFound />} />
 
       </Routes>
