@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Camera, Sparkles, Shield, Zap } from 'lucide-react'
 import ImageUploader from '../components/ui/ImageUploader'
+import { useNavigate } from 'react-router-dom'
 
 const Diagnosis = () => {
   const [hasUploadedImage, setHasUploadedImage] = useState(false);
+  const navigate = useNavigate();
 
-  // Add beforeunload event listener to warn user about losing changes
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (hasUploadedImage) {
@@ -25,6 +26,21 @@ const Diagnosis = () => {
   const handleImageUpload = (uploaded) => {
     setHasUploadedImage(uploaded);
   };
+
+  const handlePredictionResult = (predictionData) => {
+    // Store the prediction data in sessionStorage or state management
+    // Using sessionStorage for simplicity - you might want to use Redux/Context instead
+    sessionStorage.setItem('predictionResult', JSON.stringify(predictionData));
+    
+    // Navigate to prediction page after a short delay to show the preview
+    setTimeout(() => {
+      navigate('/prediction', { 
+        state: { predictionData },
+        replace: true // Replace current history entry to prevent back navigation issues
+      });
+    }, 2000); // 2 second delay to show the preview result
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
       {/* Hero Section */}
@@ -91,9 +107,7 @@ const Diagnosis = () => {
               <p className="text-gray-600 text-sm">Receive detailed diagnosis with treatment recommendations</p>
             </div>
           </div>
-          </div>
-
-        
+        </div>
 
         {/* Main Upload Section */}
         <div className="max-w-3xl mx-auto">
@@ -110,7 +124,10 @@ const Diagnosis = () => {
 
             {/* Upload Component */}
             <div className="p-8">
-              <ImageUploader onImageUpload={handleImageUpload} />
+              <ImageUploader 
+                onImageUpload={handleImageUpload} 
+                onPredictionResult={handlePredictionResult}
+              />
             </div>
           </div>
         </div>
