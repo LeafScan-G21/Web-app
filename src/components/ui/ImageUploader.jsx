@@ -78,6 +78,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
 
       if (!response.ok) {
         console.error(`❌ HTTP ERROR: ${response.status} ${response.statusText}`);
+        console.log("error response:", await response.text());
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
@@ -173,7 +174,6 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
                 setSelectedImage(null);
                 setPrediction("");
                 setError(null);
-                // Notify parent component that image has been removed
                 if (onImageUpload) {
                   onImageUpload(false);
                 }
