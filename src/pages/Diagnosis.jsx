@@ -28,17 +28,14 @@ const Diagnosis = () => {
   };
 
   const handlePredictionResult = (predictionData) => {
-    // Store the prediction data in sessionStorage or state management
-    // Using sessionStorage for simplicity - you might want to use Redux/Context instead
     sessionStorage.setItem('predictionResult', JSON.stringify(predictionData));
     
-    // Navigate to prediction page after a short delay to show the preview
     setTimeout(() => {
       navigate('/prediction', { 
         state: { predictionData },
-        replace: true // Replace current history entry to prevent back navigation issues
+        replace: true 
       });
-    }, 2000); // 2 second delay to show the preview result
+    }, 2000); 
   };
 
   return (
