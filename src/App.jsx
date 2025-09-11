@@ -16,7 +16,9 @@ import WeatherDataShow from "./pages/weather/WeatherDataShow.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import UserHistory from "./pages/UserHistory.jsx";
-import HistoryTest from "./pages/HistoryTest.jsx"; // Import the HistoryTest component
+import HistoryTest from "./pages/HistoryTest.jsx"; 
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 
 import Prediction from "./pages/Prediction.jsx";
@@ -40,6 +42,8 @@ function App() {
           <Route path="/diagnosis" element={<Diagnosis />} />
           <Route path="/prediction" element={<Prediction />} />
           <Route path="/weather" element={<WeatherDataShow />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
 
         <Route element={
