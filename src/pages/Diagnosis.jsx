@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Camera, Sparkles, Shield, Zap } from 'lucide-react'
 import ImageUploader from '../components/ui/ImageUploader'
+import { useNavigate } from 'react-router-dom'
 
 const Diagnosis = () => {
   const [hasUploadedImage, setHasUploadedImage] = useState(false);
+  const navigate = useNavigate();
 
-  // Add beforeunload event listener to warn user about losing changes
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (hasUploadedImage) {
@@ -25,6 +26,18 @@ const Diagnosis = () => {
   const handleImageUpload = (uploaded) => {
     setHasUploadedImage(uploaded);
   };
+
+  const handlePredictionResult = (predictionData) => {
+    sessionStorage.setItem('predictionResult', JSON.stringify(predictionData));
+    
+    setTimeout(() => {
+      navigate('/prediction', { 
+        state: { predictionData },
+        replace: true 
+      });
+    }, 2000); 
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
       {/* Hero Section */}
@@ -91,9 +104,7 @@ const Diagnosis = () => {
               <p className="text-gray-600 text-sm">Receive detailed diagnosis with treatment recommendations</p>
             </div>
           </div>
-          </div>
-
-        
+        </div>
 
         {/* Main Upload Section */}
         <div className="max-w-3xl mx-auto">
@@ -110,7 +121,10 @@ const Diagnosis = () => {
 
             {/* Upload Component */}
             <div className="p-8">
-              <ImageUploader onImageUpload={handleImageUpload} />
+              <ImageUploader 
+                onImageUpload={handleImageUpload} 
+                onPredictionResult={handlePredictionResult}
+              />
             </div>
           </div>
         </div>

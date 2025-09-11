@@ -19,6 +19,7 @@ import UserHistory from "./pages/UserHistory.jsx";
 import HistoryTest from "./pages/HistoryTest.jsx"; // Import the HistoryTest component
 
 
+import Prediction from "./pages/Prediction.jsx";
 function App() {
   return (
     <>
@@ -37,10 +38,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/diagnosis" element={<Diagnosis />} />
+          <Route path="/prediction" element={<Prediction />} />
           <Route path="/weather" element={<WeatherDataShow />} />
         </Route>
 
-        {/* Forum Layout */}
         <Route element={
           <ProtectedRoute>
           <ForumLayout />
@@ -49,10 +50,8 @@ function App() {
           <Route path="/forum/*" element={<Forum />} />
           <Route path="/forum/post/:id" element={<PostView />} />
           <Route path="/forum/add" element={<AddPost />} />
-          {/* Add other forum-related routes here */}
         </Route>
 
-        {/* Catch-all */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/user-history" element={<UserHistory />} />
         <Route path="/history-test" element={<HistoryTest />} /> {/* Add the /history-test route */}

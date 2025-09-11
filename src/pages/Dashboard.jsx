@@ -1,18 +1,34 @@
-import React from 'react';
-import { Camera, Users, BookOpen, Sprout, MapPin, Thermometer, Cloud, Droplets, User } from 'lucide-react';
+import { Camera, Users, BookOpen, Sprout, MapPin, Thermometer, Cloud, Droplets, User, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import React, {useState, useRef, useEffect} from 'react';
+
 
 export default function Dashboard() {
-
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const first = user?.user_metadata?.first_name;
   const last = user?.user_metadata?.last_name;
   const full = user?.user_metadata?.full_name;
-
   const username = (first && last ? `${first} ${last}` : full) || "Unknown User";
- 
-  console.log(username);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const menuRef = useRef();
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logout(); 
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -24,10 +40,32 @@ export default function Dashboard() {
               Welcome to LeafScan
             </h1>
           </div>
-          <div className="text-right text-gray-600 font-medium bg-green-700 text-white px-4 py-2 rounded-lg shadow-sm">
-            <User className="w-6 h-6 inline-block mr-2" />
-            {username}
-          </div>
+          <div className="text-right relative" ref={menuRef}>
+      <button
+        className="bg-green-700 text-white px-4 py-2 rounded-lg shadow-sm font-medium flex items-center gap-2"
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        <User className="w-6 h-6 inline-block mr-2" />
+        {username}
+        <ChevronDown className="w-4 h-4" />
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+          <button
+            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-lg"
+            onClick={() => { setOpen(false); navigate("/account"); }}
+          >
+            My Account
+          </button>
+          <button
+            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-b-lg"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
         </div>
 
         {/* Current Location & Weather */}

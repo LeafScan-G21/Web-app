@@ -7,14 +7,14 @@ import toast from "react-hot-toast";
 
 const AddPost = () => {
   const navigate = useNavigate();
-
+  const supabaseAuth = JSON.parse(localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}");
   const [form, setForm] = useState({
     title: "",
     content: "",
     plant_name: "General",
     tags: [],
     image_urls: [],
-    author_id: localStorage.getItem("user_id") || "currentUserId", // Replace with actual user ID
+    author_id: supabaseAuth?.user?.id || ""
   });
 
   const [images, setImages] = useState([]);

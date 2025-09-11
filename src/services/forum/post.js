@@ -40,6 +40,7 @@ export const getLatestPostCount = async () => {
 
 export const createPost = async (postData) => {
   try {
+    console.log(postData);
     const response = await axios.post(`${FORUM_URL}/post`, postData, {
       withCredentials: true,
       headers: {
