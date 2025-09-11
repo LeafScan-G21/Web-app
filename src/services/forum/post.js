@@ -1,8 +1,8 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
 //import qs from "qs";
-// const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
-const FORUM_URL = "http://localhost:8003";
+const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
+//const FORUM_URL = "http://localhost:8003";
 
 export const getLatestPosts = async (start, limit) => {
   try {

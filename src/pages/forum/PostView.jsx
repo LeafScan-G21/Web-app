@@ -234,11 +234,7 @@ const PostDetail = () => {
           setPost((prevPost) => ({
             ...prevPost,
             upvote_count:
-              type === 1 ? (
-                prevPost.upvote_count - 1
-              ) : (
-                <prevPost className="upvote_co"></prevPost>
-              ),
+              type === 1 ? prevPost.upvote_count - 1 : prevPost.upvote_count,
             downvote_count:
               type === 0
                 ? prevPost.downvote_count - 1

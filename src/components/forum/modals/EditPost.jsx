@@ -122,7 +122,7 @@ const EditPost = ({ post, onClose }) => {
       const updateResponse = await updatePost(post._id, postData);
       if (updateResponse.errors) {
         console.error("Error updating post:", updateResponse.errors);
-        //toast.error("Failed to update post");
+        toast.error(updateResponse.errors || "Failed to update post");
         return;
       }
       if (updateResponse.data) {
