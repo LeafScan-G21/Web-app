@@ -27,15 +27,20 @@ const HistoryCard = ({ item }) => {
             <span className="inline-block px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs">
               {(item.confidence * 100).toFixed(1)}% confidence
             </span>
+            {item.disease && (
+              <span className="inline-block px-2 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-semibold">
+                {item.disease}
+              </span>
+            )}
+            {item.plant && (
+              <span className="inline-block px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">
+                {item.plant}
+              </span>
+            )}
           </div>
           <div className="text-gray-700 text-sm truncate">
             <span className="font-medium">Timestamp:</span> {new Date(item.timestamp || item.created_at).toLocaleString()}
           </div>
-          {item.notes && (
-            <div className="mt-2 text-xs text-gray-500 italic truncate">
-              {item.notes}
-            </div>
-          )}
         </div>
         <button
           className="ml-auto px-3 py-1 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 transition"
@@ -68,9 +73,29 @@ const HistoryCard = ({ item }) => {
               <div>
                 <span className="font-semibold text-emerald-700">Confidence:</span> {(item.confidence * 100).toFixed(1)}%
               </div>
+              {item.disease && (
+                <div>
+                  <span className="font-semibold text-pink-700">Disease:</span> {item.disease}
+                </div>
+              )}
+              {item.plant && (
+                <div>
+                  <span className="font-semibold text-yellow-700">Plant:</span> {item.plant}
+                </div>
+              )}
               <div>
                 <span className="font-semibold text-gray-700">Timestamp:</span> {new Date(item.timestamp || item.created_at).toLocaleString()}
               </div>
+              {item.description && (
+                <div>
+                  <span className="font-semibold text-blue-700">Description:</span> {item.description}
+                </div>
+              )}
+              {item.treatment && (
+                <div>
+                  <span className="font-semibold text-green-700">Treatment:</span> {item.treatment}
+                </div>
+              )}
               {item.notes && (
                 <div>
                   <span className="font-semibold text-gray-700">Notes:</span> {item.notes}
