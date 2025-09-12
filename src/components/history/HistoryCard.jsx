@@ -46,7 +46,7 @@ const HistoryCard = ({ item }) => {
           </div>
         </div>
         <button
-          className="ml-auto px-3 py-1 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 transition"
+          className="ml-auto px-5 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl text-base font-bold shadow hover:from-green-600 hover:to-emerald-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-300"
           onClick={() => setShowModal(true)}
         >
           Details
