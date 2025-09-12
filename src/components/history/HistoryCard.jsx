@@ -1,5 +1,7 @@
 
+
 import React, { useState } from "react";
+import { Flower2, ShieldAlert, Leaf } from "lucide-react";
 
 
 const HistoryCard = ({ item }) => {
@@ -7,34 +9,35 @@ const HistoryCard = ({ item }) => {
 
   return (
     <>
-      <div className="relative group bg-white shadow-md rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-6 hover:shadow-xl transition-all border border-green-100">
-        <div className="relative">
+  <div className="relative group bg-gradient-to-br from-green-50 via-emerald-50 to-green-100 shadow-lg rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-6 hover:shadow-2xl transition-all border border-green-200">
+  <div className="relative">
           <img
             src={item.image_url}
             alt="leaf"
-            className="w-28 h-28 rounded-xl object-cover border-2 border-green-200 shadow-sm group-hover:scale-105 transition-transform duration-200"
+            className="w-28 h-28 rounded-xl object-cover border-4 border-emerald-200 shadow-md group-hover:scale-105 transition-transform duration-200"
+            style={{ background: 'linear-gradient(135deg, #d1fae5 0%, #f0fdf4 100%)' }}
           />
           {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-green-700/70 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+          <div className="absolute inset-0 bg-emerald-700/70 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
             <span className="text-white text-xs font-semibold">View Full Image</span>
           </div>
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-2 mb-1">
-            <span className="inline-block px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-              {item.prediction}
+            <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-green-400 to-emerald-400 text-white rounded-full text-xs font-semibold shadow">
+              <ShieldAlert className="w-3 h-3" /> {item.prediction}
             </span>
-            <span className="inline-block px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs">
-              {(item.confidence * 100).toFixed(1)}% confidence
+            <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-emerald-200 to-green-100 text-emerald-800 rounded-full text-xs font-semibold shadow">
+              <Flower2 className="w-3 h-3" /> {(item.confidence * 100).toFixed(1)}% confidence
             </span>
             {item.disease && (
-              <span className="inline-block px-2 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-semibold">
-                {item.disease}
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-pink-200 to-pink-100 text-pink-700 rounded-full text-xs font-semibold shadow">
+                <ShieldAlert className="w-3 h-3" /> {item.disease}
               </span>
             )}
             {item.plant && (
-              <span className="inline-block px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">
-                {item.plant}
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-yellow-200 to-yellow-100 text-yellow-800 rounded-full text-xs font-semibold shadow">
+                <Leaf className="w-3 h-3" /> {item.plant}
               </span>
             )}
           </div>
