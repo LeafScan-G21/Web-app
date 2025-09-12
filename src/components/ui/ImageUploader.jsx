@@ -68,7 +68,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
     const token = authData?.access_token || "";
 
     try {
-      const response = await fetch("http://localhost:8002/api/v1/upload", {
+      const response = await fetch("http://localhost:8000/api/v1/upload", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

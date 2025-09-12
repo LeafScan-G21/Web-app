@@ -5,7 +5,7 @@ const HistoryTest = () => {
   return (
     <div style={{ padding: 32 }}>
       <h1>Test User History</h1>
-      <HistoryList userId="Test1" />
+      <HistoryList userId="user123" />
     </div>
   );
 };
