@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Upload, Image as ImageIcon, CheckCircle, AlertCircle, Loader } from "lucide-react";
 
+
 const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [prediction, setPrediction] = useState("");
@@ -8,6 +9,8 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState(null);
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -49,7 +52,9 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
     }
   };
 
-  const handleUpload = async () => {
+
+  // Main upload logic, receives location or null
+  const handleUpload = async (location) => {
     if (!selectedImage) {
       alert("Please select an image.");
       return;
@@ -57,12 +62,15 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
 
     setIsLoading(true);
     setError(null);
-    
     const formData = new FormData();
     formData.append("file", selectedImage);
-    formData.append("lat", "6.9271"); // Example latitude
-    formData.append("lon", "79.8612"); // Example longitude
-    formData.append("consent_location", true);
+    if (location) {
+      formData.append("lat", location.lat);
+      formData.append("lon", location.lng);
+      formData.append("consent_location", true);
+    } else {
+      formData.append("consent_location", false);
+    }
 
     const authData = JSON.parse(localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}");
     const token = authData?.access_token || "";
@@ -81,24 +89,58 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
         console.log("error response:", await response.text());
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
       const data = await response.json();
       console.log("✅ Upload Response:", data);
-      
-      // Set local prediction for immediate feedback
       setPrediction(data);
-      
-      // Pass the full result to parent component to navigate to prediction page
       if (onPredictionResult) {
         onPredictionResult(data);
       }
-      
     } catch (error) {
       console.error("Upload error:", error);
       setError(`Failed to process image: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Called when user clicks Analyze
+  const handleAnalyzeClick = () => {
+    const saved = localStorage.getItem("location");
+    if (!saved) {
+      setShowLocationPrompt(true);
+    } else {
+      handleUpload(JSON.parse(saved));
+    }
+  };
+
+  // Called if user allows location in modal
+  const handleAllowLocation = () => {
+    setLocationLoading(true);
+    if (!("geolocation" in navigator)) {
+      setError("Geolocation is not supported by your browser.");
+      setLocationLoading(false);
+      setShowLocationPrompt(false);
+      handleUpload(null);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const loc = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        localStorage.setItem("location", JSON.stringify(loc));
+        setLocationLoading(false);
+        setShowLocationPrompt(false);
+        handleUpload(loc);
+      },
+      (err) => {
+        setError("Location permission denied or unavailable.");
+        setLocationLoading(false);
+        setShowLocationPrompt(false);
+        handleUpload(null);
+      }
+    );
   };
 
   return (
@@ -189,7 +231,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
       {/* Action Button */}
       {selectedImage && (
         <button
-          onClick={handleUpload}
+          onClick={handleAnalyzeClick}
           disabled={isLoading}
           className={`w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center justify-center space-x-3 ${
             isLoading
@@ -209,6 +251,40 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
             </>
           )}
         </button>
+      )}
+
+      {/* Location Permission Modal */}
+      {showLocationPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative animate-fade-in">
+            <button
+              className="absolute top-2 right-2 text-gray-400 hover:text-green-700 text-xl font-bold"
+              onClick={() => setShowLocationPrompt(false)}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <h2 className="text-xl font-bold text-green-700 mb-2 text-center">Allow Location Access?</h2>
+            <p className="text-gray-700 mb-4 text-center">
+              Allowing location helps us provide more accurate disease predictions based on your region and local conditions. Your location is only used for this analysis.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 mt-4">
+              <button
+                onClick={handleAllowLocation}
+                disabled={locationLoading}
+                className="flex-1 py-2 px-4 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg font-semibold shadow hover:from-green-700 hover:to-emerald-600 transition-all disabled:opacity-60"
+              >
+                {locationLoading ? "Getting Location..." : "Allow Location"}
+              </button>
+              <button
+                onClick={() => { setShowLocationPrompt(false); handleUpload(null); }}
+                className="flex-1 py-2 px-4 bg-gray-200 text-gray-700 rounded-lg font-semibold shadow hover:bg-gray-300 transition-all"
+              >
+                Continue Without Location
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       
