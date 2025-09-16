@@ -1,13 +1,16 @@
 import axios from "axios";
+import { getUserIdFromLocalStorage } from "../../utils/auth";
 const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
 // const FORUM_URL = "http://localhost:8003";
+
+const currentUserId = getUserIdFromLocalStorage();
 
 export const addPostVote = async (postId, vote_type) => {
   try {
     const response = await axios.post(
       `${FORUM_URL}/vote`,
       {
-        user_id: localStorage.getItem("user_id") || "currentUserId", // replace with actual user ID
+        user_id: currentUserId || "currentUserId", // replace with actual user ID
         target_type: "post",
         target_id: postId,
         vote_type: vote_type,
@@ -30,7 +33,7 @@ export const removePostVote = async (target_id) => {
   try {
     const response = await axios.delete(`${FORUM_URL}/vote`, {
       params: {
-        user_id: localStorage.getItem("user_id") || "currentUserId", // replace with actual user ID
+        user_id: currentUserId || "currentUserId", // replace with actual user ID
         target_type: "post",
         target_id: target_id,
       },
@@ -53,7 +56,7 @@ export const togglePostVote = async (postId) => {
       {},
       {
         params: {
-          user_id: localStorage.getItem("user_id") || "currentUserId", // replace with actual user ID
+          user_id: currentUserId || "currentUserId", // replace with actual user ID
           target_type: "post",
           target_id: postId,
         },
@@ -74,7 +77,7 @@ export const hasVotedOnPost = async (postId) => {
   try {
     const response = await axios.get(`${FORUM_URL}/vote/check`, {
       params: {
-        user_id: localStorage.getItem("user_id") || "currentUserId", // replace with actual user ID
+        user_id: currentUserId || "currentUserId", // replace with actual user ID
         target_type: "post",
         target_id: postId,
       },
@@ -95,7 +98,7 @@ export const addCommentVote = async (commentId, vote_type) => {
     const response = await axios.post(
       `${FORUM_URL}/vote`,
       {
-        user_id: localStorage.getItem("user_id") || "currentUserId", // replace with actual user ID
+        user_id: currentUserId || "currentUserId", // replace with actual user ID
         target_type: "comment",
         target_id: commentId,
         vote_type: vote_type,
@@ -118,7 +121,7 @@ export const removeCommentVote = async (target_id) => {
   try {
     const response = await axios.delete(`${FORUM_URL}/vote`, {
       params: {
-        user_id: localStorage.getItem("user_id") || "currentUserId", // replace with actual user ID
+        user_id: currentUserId || "currentUserId", // replace with actual user ID
         target_type: "comment",
         target_id: target_id,
       },
@@ -141,7 +144,7 @@ export const toggleCommentVote = async (commentId) => {
       {},
       {
         params: {
-          user_id: localStorage.getItem("user_id") || "currentUserId", // replace with actual user ID
+          user_id: currentUserId || "currentUserId", // replace with actual user ID
           target_type: "comment",
           target_id: commentId,
         },
@@ -162,7 +165,7 @@ export const hasVotedOnComment = async (commentId) => {
   try {
     const response = await axios.get(`${FORUM_URL}/vote/check`, {
       params: {
-        user_id: localStorage.getItem("user_id") || "currentUserId", // replace with actual user ID
+        user_id: currentUserId || "currentUserId", // replace with actual user ID
         target_type: "comment",
         target_id: commentId,
       },
