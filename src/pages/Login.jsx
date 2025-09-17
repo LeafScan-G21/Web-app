@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import logo from "../assets/leafScan.png";
 import { Mail } from "lucide-react";
 import FormField from "../components/ui/FormField";
@@ -19,7 +19,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setEmailError("");
@@ -55,12 +54,12 @@ const Login = () => {
   };
 
   const signInWithGoogle = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-  });
-  if (error) toast.error(error.message);
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+    console.log("login Data:", data);
+    if (error) toast.error(error.message);
   };
-
 
   return (
     <div className="min-h-screen bg-[#f9fbf9] flex items-center justify-center px-4">
@@ -130,7 +129,11 @@ const Login = () => {
             onClick={signInWithGoogle}
             className="w-full border border-gray-300 border-solid cursor-pointer font-semibold py-3 px-4 rounded-lg hover:bg-gray-50"
           >
-            <img src={googleLogo} alt="Google Logo" className="w-5 h-5 inline-block mr-2" />
+            <img
+              src={googleLogo}
+              alt="Google Logo"
+              className="w-5 h-5 inline-block mr-2"
+            />
             Continue with Google
           </button>
 

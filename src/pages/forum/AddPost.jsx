@@ -4,17 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, X, Plus, Lightbulb } from "lucide-react";
 import { createPost, uploadpostImages } from "../../services/forum/post";
 import toast from "react-hot-toast";
+import { getUserIdFromLocalStorage } from "../../utils/auth";
 
 const AddPost = () => {
   const navigate = useNavigate();
-  const supabaseAuth = JSON.parse(localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}");
+
   const [form, setForm] = useState({
     title: "",
     content: "",
     plant_name: "General",
     tags: [],
     image_urls: [],
-    author_id: supabaseAuth?.user?.id || ""
+    author_id: getUserIdFromLocalStorage() || "",
   });
 
   const [images, setImages] = useState([]);

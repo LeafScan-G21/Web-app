@@ -37,8 +37,10 @@ import {
 } from "../../services/forum/vote.js";
 
 import { getUserDetails } from "../../services/auth/user.js";
+import { getUserIdFromLocalStorage } from "../../utils/auth.js";
 
 const PostDetail = () => {
+  const currentUserId = getUserIdFromLocalStorage();
   const { id } = useParams();
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -234,11 +236,7 @@ const PostDetail = () => {
           setPost((prevPost) => ({
             ...prevPost,
             upvote_count:
-              type === 1 ? (
-                prevPost.upvote_count - 1
-              ) : (
-                <prevPost className="upvote_co"></prevPost>
-              ),
+              type === 1 ? prevPost.upvote_count - 1 : prevPost.upvote_count,
             downvote_count:
               type === 0
                 ? prevPost.downvote_count - 1
@@ -375,7 +373,7 @@ const PostDetail = () => {
     const commentData = {
       post_id: post._id,
       content: newComment,
-      author_id: localStorage.getItem("user_id") || "currentUserId", // replace with actual user ID
+      author_id: currentUserId || "currentUserId", // replace with actual user ID
     };
     try {
       setIsSubmitting(true);
@@ -456,7 +454,7 @@ const PostDetail = () => {
               >
                 <Share2 className="h-5 w-5" />
               </button>
-              {post.author_id === localStorage.getItem("user_id") && (
+              {post.author_id === currentUserId && (
                 <>
                   <button
                     onClick={() => {
@@ -702,6 +700,7 @@ const CommentItem = ({
   handleCommentUpdate,
   handleCommentDelete,
 }) => {
+  const currentUserId = getUserIdFromLocalStorage();
   const commentDate = new Date(comment.created_at).toLocaleDateString();
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState("view-comment");
@@ -779,7 +778,7 @@ const CommentItem = ({
       </div>
 
       <div className="flex-1 min-w-0 space-y-3 relative">
-        {comment.author_id === localStorage.getItem("user_id") && (
+        {comment.author_id === currentUserId && (
           <div className="absolute top-0 right-0 menu-container">
             <button
               className="text-gray-500 hover:text-gray-700 transition-colors duration-200"

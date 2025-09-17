@@ -1,7 +1,10 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
-// const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
-const FORUM_URL = "http://localhost:8003";
+import { getUserIdFromLocalStorage } from "../../utils/auth";
+const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
+// const FORUM_URL = "http://localhost:8003";
+
+const currUserId = getUserIdFromLocalStorage();
 
 export const addComment = async (commentData) => {
   try {
@@ -37,7 +40,7 @@ export const getCommentsByPostId = async (postId) => {
 export const deleteComment = async (commentId) => {
   try {
     const response = await axios.delete(`${FORUM_URL}/comment/${commentId}`, {
-      params: { user_id: localStorage.getItem("user_id") || "currentUserId" }, // replace with actual user ID
+      params: { user_id: currUserId || "currentUserId" }, // replace with actual user ID
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +61,7 @@ export const updateComment = async (commentId, content) => {
       `${FORUM_URL}/comment/${commentId}`,
       { content },
       {
-        params: { user_id: localStorage.getItem("user_id") || "currentUserId" }, // replace with actual user ID
+        params: { user_id: currUserId || "currentUserId" }, // replace with actual user ID
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
