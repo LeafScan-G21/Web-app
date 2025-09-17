@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Upload, Image as ImageIcon, CheckCircle, AlertCircle, Loader } from "lucide-react";
 
 
+
 const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [prediction, setPrediction] = useState("");
@@ -11,6 +12,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
   const [error, setError] = useState(null);
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
+  const IMAGE_UPLOAD_SERVICE_URL = import.meta.env.VITE_IMAGE_UPLOAD_SERVICE_URL || "http://localhost:8002";
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -76,7 +78,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
     const token = authData?.access_token || "";
 
     try {
-      const response = await fetch("http://localhost:8000/api/v1/upload", {
+      const response = await fetch(`${IMAGE_UPLOAD_SERVICE_URL}/api/v1/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
