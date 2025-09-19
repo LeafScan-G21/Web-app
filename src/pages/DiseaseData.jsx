@@ -133,7 +133,7 @@ const DiseaseData = () => {
   if (selectedDisease) {
     if (detailLoading) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+        <div className="min-h-screen">
           <div className="bg-white shadow-sm border-b border-green-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <div className="flex items-center space-x-4">
@@ -162,7 +162,7 @@ const DiseaseData = () => {
 
     if (detailError) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+        <div className="min-h-screen">
           <div className="bg-white shadow-sm border-b border-green-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <div className="flex items-center space-x-4">
@@ -202,7 +202,7 @@ const DiseaseData = () => {
     }
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+      <div className="min-h-screen">
         {/* Header */}
         <div className="bg-white shadow-sm border-b border-green-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -363,7 +363,7 @@ const DiseaseData = () => {
 
   // Main list view
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+    <div className="min-h-screen">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-green-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
