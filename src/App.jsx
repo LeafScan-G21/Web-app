@@ -22,6 +22,7 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 
 
 import Prediction from "./pages/Prediction.jsx";
+import DiseaseData from "./pages/DiseaseData";
 function App() {
   return (
     <>
@@ -44,6 +45,7 @@ function App() {
           <Route path="/weather" element={<WeatherDataShow />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/diseases" element={<DiseaseData />} />
         </Route>
 
         <Route element={

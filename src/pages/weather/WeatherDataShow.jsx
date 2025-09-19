@@ -27,6 +27,7 @@ const GetLocation = () => {
 
   const getLocation = () => {
     if (!navigator.geolocation) {
+      
       setError("Geolocation is not supported by your browser.");
       setManualInput(true);
       return;
