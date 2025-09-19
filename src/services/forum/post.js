@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { getUserIdFromLocalStorage } from "../../utils/auth";
 //import qs from "qs";
-const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
+const FORUM_URL = `${import.meta.env.VITE_BACKEND_URL}/forum`;
 //const FORUM_URL = "http://localhost:8003";
 
 const currentUserId = getUserIdFromLocalStorage();

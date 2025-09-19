@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-const FORECAST_URL = import.meta.env.VITE_WEATHER_SERVICE_URL;
+const FORECAST_URL = `${import.meta.env.VITE_BACKEND_URL}/weather`;
 
 export const getWeatherForecast = async (latitude, longitude, address) => {
   try {
@@ -20,7 +20,6 @@ export const getWeatherForecast = async (latitude, longitude, address) => {
   }
 };
 
-
 export const geturrentWeather = async (latitude, longitude) => {
   try {
     const response = await axios.get(`${FORECAST_URL}/current`, {
@@ -37,4 +36,3 @@ export const geturrentWeather = async (latitude, longitude) => {
     throw error;
   }
 };
-

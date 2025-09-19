@@ -1,7 +1,7 @@
 import axios from "axios";
 //import { toast } from "react-hot-toast";
 
-const AUTH_URL = import.meta.env.VITE_AUTH_SERVICE_URL;
+const AUTH_URL = `${import.meta.env.VITE_BACKEND_URL}/auth`;
 
 export const getUserDetails = async (userId) => {
   try {
