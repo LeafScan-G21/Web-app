@@ -48,6 +48,7 @@ const AddPost = () => {
     }));
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleImageDrop = (e) => {
     e.preventDefault();
     setIsDragOver(false);
@@ -61,6 +62,7 @@ const AddPost = () => {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleImageSelect = (e) => {
     const files = Array.from(e.target.files || []);
     const validImages = files.filter((file) => file.type.startsWith("image/"));
@@ -97,12 +99,12 @@ const AddPost = () => {
       }
       const saveResponse = await createPost(updatedForm);
       if (saveResponse.data) {
-        toast.success("Post created successfully!");
+        //toast.success("Post created successfully!");
         navigate("/forum");
       }
       if (saveResponse.errors) {
         console.error("Error creating post:", saveResponse.errors);
-        toast.error("Failed to create post");
+        //toast.error("Failed to create post");
       }
     } catch (error) {
       console.error("Error submitting post:", error);
@@ -315,7 +317,47 @@ const AddPost = () => {
                   ? "border-green-400 bg-purple-50 scale-[1.02]"
                   : "border-gray-300 hover:border-green-400 hover:bg-green-50/50"
               }`}
-              onDrop={handleImageDrop}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDragOver(false);
+                const maxSizeMB = 10;
+                const maxBytes = maxSizeMB * 1024 * 1024;
+
+                const dropped = Array.from(e.dataTransfer.files || []).filter(
+                  (f) => f.type.startsWith("image/")
+                );
+
+                const valid = [];
+                let skippedForSize = 0;
+
+                dropped.forEach((f) => {
+                  if (f.size <= maxBytes) valid.push(f);
+                  else skippedForSize++;
+                });
+
+                if (skippedForSize) {
+                  toast.error(
+                    `Skipped ${skippedForSize} file(s) over ${maxSizeMB}MB`
+                  );
+                }
+
+                if (valid.length) {
+                  setImages((prev) => {
+                    const available = 5 - prev.length;
+                    if (available <= 0) {
+                      toast.error("You can only upload up to 5 images");
+                      return prev;
+                    }
+                    const toAdd = valid.slice(0, available);
+                    if (valid.length > available) {
+                      toast.error(
+                        `Only ${available} more image(s) allowed (max 5)`
+                      );
+                    }
+                    return [...prev, ...toAdd];
+                  });
+                }
+              }}
               onDragOver={(e) => {
                 e.preventDefault();
                 setIsDragOver(true);
@@ -350,7 +392,48 @@ const AddPost = () => {
                   type="file"
                   multiple
                   accept="image/*"
-                  onChange={handleImageSelect}
+                  onChange={(e) => {
+                    const maxSizeMB = 10;
+                    const maxBytes = maxSizeMB * 1024 * 1024;
+
+                    const files = Array.from(e.target.files || []).filter((f) =>
+                      f.type.startsWith("image/")
+                    );
+
+                    const valid = [];
+                    let skippedForSize = 0;
+
+                    files.forEach((f) => {
+                      if (f.size <= maxBytes) valid.push(f);
+                      else skippedForSize++;
+                    });
+
+                    if (skippedForSize) {
+                      toast.error(
+                        `Skipped ${skippedForSize} file(s) over ${maxSizeMB}MB`
+                      );
+                    }
+
+                    if (valid.length) {
+                      setImages((prev) => {
+                        const available = 5 - prev.length;
+                        if (available <= 0) {
+                          toast.error("You can only upload up to 5 images");
+                          return prev;
+                        }
+                        const toAdd = valid.slice(0, available);
+                        if (valid.length > available) {
+                          toast.error(
+                            `Only ${available} more image(s) allowed (max 5)`
+                          );
+                        }
+                        return [...prev, ...toAdd];
+                      });
+                    }
+
+                    // reset input so selecting the same file again will trigger onChange
+                    e.target.value = "";
+                  }}
                   className="hidden"
                   id="image-upload"
                 />
