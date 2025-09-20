@@ -432,8 +432,11 @@ const PostDetail = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 truncate">
-                  {authorDetails?.first_name + " " + authorDetails?.last_name ||
-                    "Unknown Author"}{" "}
+                  {authorDetails?.first_name || authorDetails?.last_name
+                    ? `${authorDetails?.first_name ?? ""} ${
+                        authorDetails?.last_name ?? ""
+                      }`.trim()
+                    : "Unknown User"}
                 </h3>
                 <div className="flex items-center space-x-2 text-sm text-gray-500 mb-3">
                   <Calendar className="h-4 w-4 flex-shrink-0" />
@@ -480,14 +483,12 @@ const PostDetail = () => {
               )}
             </div>
           </header>
-
           {/* Post Title */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
               {post.title}
             </h1>
           </div>
-
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-6">
             {post.tags.map((tag) => (
@@ -499,7 +500,6 @@ const PostDetail = () => {
               </span>
             ))}
           </div>
-
           {/* Images */}
           {post.image_urls?.length > 0 && (
             <div className="mb-8">
@@ -520,7 +520,6 @@ const PostDetail = () => {
               </div>
             </div>
           )}
-
           {/* Content */}
           <div className="mb-8">
             <div className="prose prose-gray max-w-none">
@@ -529,7 +528,6 @@ const PostDetail = () => {
               </p>
             </div>
           </div>
-
           {/* Voting and Stats */}
           <footer className="flex flex-wrap items-center gap-6 pt-6 border-t border-gray-100">
             <div className="flex items-center space-x-1">
@@ -828,9 +826,13 @@ const CommentItem = ({
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="font-bold text-gray-900 truncate">
             {commentauthorDetails
-              ? commentauthorDetails.first_name +
+              ? (commentauthorDetails.first_name
+                  ? commentauthorDetails.first_name
+                  : "") +
                 " " +
-                commentauthorDetails.last_name
+                (commentauthorDetails.last_name
+                  ? commentauthorDetails.last_name
+                  : "")
               : "unknown user"}
           </span>
           <span className="text-gray-400">•</span>
