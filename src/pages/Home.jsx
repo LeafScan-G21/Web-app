@@ -1,6 +1,8 @@
 import React from 'react'
-import { Check, Play } from 'lucide-react';
+import { Check, Play, Camera, Users, BookOpen, Sprout, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'lucide-react';
+import diagnosis from "../assets/hero-app.png";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -78,6 +80,126 @@ const Home = () => {
             <div className="absolute -top-4 -right-4 w-20 h-20 bg-green-100 rounded-full opacity-60"></div>
             <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-green-200 rounded-full opacity-40"></div>
           </div>
+        </div>
+
+        <div className="bg-green-50 min-h-screen">
+      {/* Hero Section */}
+          <section className="text-center py-16 px-6">
+            <h1 className="text-4xl font-bold text-green-700 mb-4">
+              Boost your crop production
+            </h1>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Our AI-powered platform helps you identify, treat, and prevent plant diseases
+              with the support of a thriving community.
+            </p>
+          </section>
+
+          {/* Features Section */}
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto px-6 mb-16">
+            {/* Diagnose */}
+            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="w-14 h-14 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                <Camera className="w-7 h-7 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Diagnose your sick crop</h3>
+              <p className="text-gray-600 mb-6 text-sm">
+                Take a photo of your sick crop and get a free diagnosis and treatment
+                suggestions — all in a few seconds!
+              </p>
+              <button className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">
+                Get a free diagnosis
+              </button>
+            </div>
+
+            {/* Community */}
+            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="w-14 h-14 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                <Users className="w-7 h-7 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Get expert advice</h3>
+              <p className="text-gray-600 mb-6 text-sm">
+                Have a question? Our community of agri-experts will help you. Learn
+                about crop cultivation and help fellow farmers.
+              </p>
+              <button className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">
+                Join community
+              </button>
+            </div>
+
+            {/* Library */}
+            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="w-14 h-14 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                <Sprout className="w-7 h-7 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Maximize crop yields</h3>
+              <p className="text-gray-600 mb-6 text-sm">
+                Our library covers specific crop diseases and prevention methods to
+                ensure a successful harvest.
+              </p>
+              <button className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">
+                Explore library
+              </button>
+            </div>
+          </section>
+
+          {/* Plant Disease Detection Section */}
+          <section className="bg-white py-16 px-6">
+            <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+              {/* Image */}
+              <div>
+                <img
+                  src={diagnosis}
+                  alt="Plant diagnosis"
+                  className="rounded-xl shadow-md"
+                />
+              </div>
+
+              {/* Text */}
+              <div>
+                <h2 className="text-3xl font-bold text-green-700 mb-4">
+                  Plant disease detection made simple
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Our advanced CNN model analyzes your plant photos and provides
+                  accurate disease identification with personalized care
+                  recommendations.
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-2 text-gray-700">
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    Instant AI-powered analysis
+                  </li>
+                  <li className="flex items-center gap-2 text-gray-700">
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    95%+ accuracy rate
+                  </li>
+                  <li className="flex items-center gap-2 text-gray-700">
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    Trusted by thousands of farmers
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* Call To Action */}
+          <section className="text-center py-16 px-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Ready to save your crops?
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Join thousands of farmers and plant enthusiasts who trust LeafDoctor
+              for accurate plant disease detection and treatment.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition flex items-center justify-center gap-2">
+                Start Free Diagnosis <ChevronRight className="w-4 h-4" />
+              </button>
+              <button className="bg-white border border-green-600 text-green-600 px-6 py-3 rounded-lg font-medium hover:bg-green-50 transition">
+                Sign In
+              </button>
+            </div>
+          </section>
         </div>
       </div>
   )
