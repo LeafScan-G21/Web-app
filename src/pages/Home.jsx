@@ -1,14 +1,96 @@
-import React from 'react'
-import { Check, Play, Camera, Users, BookOpen, Sprout, ChevronRight, CheckCircle2 } from 'lucide-react';
+import React, {useState} from 'react'
+import { Check, Play, Camera, Users, BookOpen, Sprout, ChevronRight, CheckCircle2, ChevronLeft, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'lucide-react';
 import diagnosis from "../assets/hero-app.png";
+import PlantCard from '../components/ui/PlantCard';
 
 const Home = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
     navigate('/diagnosis');
+  };
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const plants = [
+    {
+      name: 'Apple',
+      image: 'https://images.unsplash.com/photo-1505611202014-8c9470f8d068?q=80&w=1073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      description: 'AI-powered diagnosis available'
+    },
+    {
+      name: 'Bean',
+      image: 'https://plus.unsplash.com/premium_photo-1661904096621-94b9b9222182?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      description: 'AI-powered diagnosis available'
+    },
+    {
+      name: 'Cherry',
+      image: 'https://plus.unsplash.com/premium_photo-1700089302927-4213458cde94?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      description: 'AI-powered diagnosis available'
+    },
+    {
+      name: 'Chilli',
+      image: 'https://images.unsplash.com/photo-1754994641903-38360759005e?q=80&w=699&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      description: 'AI-powered diagnosis available'
+    },
+    {
+      name: 'Grape',
+      image: 'https://plus.unsplash.com/premium_photo-1675727579600-b2656a265c15?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      description: 'AI-powered diagnosis available' 
+    },
+    {
+      name: 'Peach',
+      image: 'https://images.unsplash.com/photo-1438274754346-45322cac87e4?q=80&w=2048&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      description: 'AI-powered diagnosis available'
+    },
+    {
+      name: 'Bell Pepper',
+      image: 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=600&h=400&fit=crop',
+      description: 'AI-powered diagnosis available'
+    },
+    {
+      name: 'Strawberry',
+      image: 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=600&h=400&fit=crop',
+      description: 'AI-powered diagnosis available'
+    },
+    {
+      name: 'Tea',
+      image: 'https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=600&h=400&fit=crop',
+      description: 'AI-powered diagnosis available'
+    },
+    {
+      name: 'Tomato',
+      image: 'https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=600&h=400&fit=crop',
+      description: 'AI-powered diagnosis available'
+    },
+    {
+      name: 'Potato',
+      image: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&h=400&fit=crop',
+      description: 'AI-powered diagnosis available'
+    },
+    {
+      name: 'Corn',
+      image: 'https://www.ugaoo.com/cdn/shop/articles/9f9b3771a2.jpg?v=1727692315&width=1780',
+      description: 'AI-powered diagnosis available'
+    }
+  ];
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % plants.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + plants.length) % plants.length);
+  };
+
+  const getVisiblePlants = () => {
+    const visible = [];
+    for (let i = 0; i < 4; i++) {
+      visible.push(plants[(currentIndex + i) % plants.length]);
+    }
+    return visible;
   };
 
   return (
@@ -182,8 +264,52 @@ const Home = () => {
             </div>
           </section>
 
-          {/* Call To Action */}
-          <section className="text-center py-16 px-6">
+          <section>
+            <div className="bg-green-50 py-16 px-4">
+              <div className="max-w-7xl mx-auto">
+                <div className="text-center mb-12">
+                  <h1 className="text-5xl font-bold mb-4 text-green-800">Plants We Diagnose
+                  </h1>
+                  <p className="text-gray-600 text-lg">
+                    Our AI can diagnose diseases across multiple plant species with high accuracy
+                  </p>
+                </div>
+                <div className="relative">
+                  <div className="flex items-center justify-center gap-6">
+                    <button
+                      onClick={prevSlide}
+                      className="p-3 rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors z-10"
+                      aria-label="Previous slide"
+                    >
+                      <ChevronLeft className="w-6 h-6 text-gray-700" />
+                    </button>
+                    <div className="flex gap-6 overflow-hidden">
+                      {getVisiblePlants().map((plant, index) => (
+                        <PlantCard key={index} plant={plant} index={index} />
+                      ))}
+                    </div>
+                    <button
+                      onClick={nextSlide}
+                      className="p-3 rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors z-10"
+                      aria-label="Next slide"
+                    >
+                      <ChevronRight className="w-6 h-6 text-gray-700" />
+                    </button>
+                  </div>
+                </div>
+                <div className="text-center mt-12">
+                  <a
+                    href="/diseases"
+                    className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-4 rounded-lg shadow-lg transition-colors"
+                  >
+                    View All Diseases
+                    <ArrowRight className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section className="text-center py-16 px-6 bg-white">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Ready to save your crops?
             </h2>
@@ -192,7 +318,7 @@ const Home = () => {
               for accurate plant disease detection and treatment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition flex items-center justify-center gap-2">
+              <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition flex items-center justify-center gap-2" onClick={handleGetStarted}>
                 Start Free Diagnosis <ChevronRight className="w-4 h-4" />
               </button>
               <button className="bg-white border border-green-600 text-green-600 px-6 py-3 rounded-lg font-medium hover:bg-green-50 transition">
