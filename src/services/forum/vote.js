@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getUserIdFromLocalStorage } from "../../utils/auth";
-const FORUM_URL = import.meta.env.VITE_FORUM_SERVICE_URL;
+const FORUM_URL = `${import.meta.env.VITE_BACKEND_URL}/forum`;
 // const FORUM_URL = "http://localhost:8003";
 
 const currentUserId = getUserIdFromLocalStorage();

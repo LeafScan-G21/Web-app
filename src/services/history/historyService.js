@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000/history";
+const API_URL = `${import.meta.env.VITE_BACKEND_URL}/history`;
 
 export const addHistoryRecord = async (record) => {
   try {
@@ -15,7 +15,6 @@ export const addHistoryRecord = async (record) => {
     return null;
   }
 };
-
 
 export const getUserHistory = async (userId) => {
   try {
