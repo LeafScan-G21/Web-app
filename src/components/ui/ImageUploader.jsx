@@ -13,6 +13,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const IMAGE_UPLOAD_SERVICE_URL = import.meta.env.VITE_IMAGE_UPLOAD_SERVICE_URL || "http://localhost:8002";
+  const BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/upload`;
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -78,7 +79,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
     const token = authData?.access_token || "";
 
     try {
-      const response = await fetch(`${IMAGE_UPLOAD_SERVICE_URL}/api/v1/upload`, {
+      const response = await fetch(`${BACKEND_URL}/api/v1/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

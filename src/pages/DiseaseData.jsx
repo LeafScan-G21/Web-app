@@ -11,12 +11,14 @@ const DiseaseData = () => {
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState(null);
 
+  const PREDICTION_URL = `${import.meta.env.VITE_BACKEND_URL}/prediction`;
+
   // Fetch diseases from backend
   useEffect(() => {
     const fetchDiseases = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://127.0.0.1:8001/api/v1/diseases?limit=20&skip=0&include_count=true");
+        const res = await fetch(`${PREDICTION_URL}/api/v1/diseases?limit=20&skip=0&include_count=true`);
         if (!res.ok) {
           throw new Error(`Error: ${res.status}`);
         }
@@ -37,7 +39,7 @@ const DiseaseData = () => {
     try {
       setDetailLoading(true);
       setDetailError(null);
-      const res = await fetch(`http://127.0.0.1:8001/api/v1/diseases/${diseaseId}`);
+      const res = await fetch(`${PREDICTION_URL}/api/v1/diseases/${diseaseId}`);
       if (!res.ok) {
         throw new Error(`Error: ${res.status}`);
       }

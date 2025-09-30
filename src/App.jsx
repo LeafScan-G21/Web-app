@@ -23,6 +23,7 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 
 import Prediction from "./pages/Prediction.jsx";
 import DiseaseData from "./pages/DiseaseData";
+import ChatbotInterface from "./pages/Chatbot.jsx";
 function App() {
   return (
     <>
@@ -40,12 +41,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/diagnosis" element={<Diagnosis />} />
-          <Route path="/prediction" element={<Prediction />} />
-          <Route path="/weather" element={<WeatherDataShow />} />
+          <Route path="/diagnosis" element={<ProtectedRoute><Diagnosis /></ProtectedRoute>} />
+          <Route path="/prediction" element={<ProtectedRoute><Prediction /></ProtectedRoute>} />
+          <Route path="/weather" element={<ProtectedRoute><WeatherDataShow /></ProtectedRoute>} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/diseases" element={<DiseaseData />} />
+          <Route path="chat" element={<ChatbotInterface />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         </Route>
 
         <Route element={
@@ -58,7 +61,7 @@ function App() {
           <Route path="/forum/add" element={<AddPost />} />
         </Route>
 
-        <Route path="/dashboard" element={<Dashboard />} />
+        
         <Route path="/user-history" element={<UserHistory />} />
         <Route path="/history-test" element={<HistoryTest />} /> {/* Add the /history-test route */}
         <Route path="*" element={<NotFound />} />
