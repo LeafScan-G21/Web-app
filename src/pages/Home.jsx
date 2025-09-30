@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'lucide-react';
 import diagnosis from "../assets/hero-app.png";
 import PlantCard from '../components/ui/PlantCard';
+import Footer from '../components/ui/Footer';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -52,12 +53,12 @@ const Home = () => {
     },
     {
       name: 'Strawberry',
-      image: 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=600&h=400&fit=crop',
+      image: 'https://images.unsplash.com/photo-1588165171080-c89acfa5ee83?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description: 'AI-powered diagnosis available'
     },
     {
       name: 'Tea',
-      image: 'https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=600&h=400&fit=crop',
+      image: 'https://images.unsplash.com/photo-1602943543714-cf535b048440?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description: 'AI-powered diagnosis available'
     },
     {
@@ -268,7 +269,7 @@ const Home = () => {
             <div className="bg-green-50 py-16 px-4">
               <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-12">
-                  <h1 className="text-5xl font-bold mb-4 text-green-800">Plants We Diagnose
+                  <h1 className="text-5xl font-bold mb-4 text-green-700">Plants We Diagnose
                   </h1>
                   <p className="text-gray-600 text-lg">
                     Our AI can diagnose diseases across multiple plant species with high accuracy
@@ -325,6 +326,9 @@ const Home = () => {
                 Sign In
               </button>
             </div>
+          </section>
+          <section>
+            <Footer />
           </section>
         </div>
       </div>

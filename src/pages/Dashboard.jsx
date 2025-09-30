@@ -10,6 +10,7 @@ import {
   User,
   ChevronDown,
   CloudRain,
+  Bot
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -122,8 +123,7 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (!latitude || !longitude) return; // only fetch when coords exist
-
+    if (!latitude || !longitude) return;
     const fetchWeather = async () => {
       try {
         setLoading(true);
@@ -175,7 +175,7 @@ export default function Dashboard() {
               Welcome to LeafScan
             </h1>
           </div>
-          <div className="text-right relative" ref={menuRef}>
+          {/* <div className="text-right relative" ref={menuRef}>
             <button
               className="bg-green-700 text-white px-4 py-2 rounded-lg shadow-sm font-medium flex items-center gap-2"
               onClick={() => setOpen((prev) => !prev)}
@@ -203,7 +203,7 @@ export default function Dashboard() {
                 </button>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Current Location & Weather */}
@@ -397,6 +397,23 @@ export default function Dashboard() {
                 </p>
                 <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
                   View Weather
+                </button>
+              </Link>
+            </div>
+            {/*Chatbot*/}
+            <div className="bg-white px-4 py-5 rounded-lg shadow-md border border-green-100 text-center">
+              <Link to="/diseases">
+                <div className="w-16 h-16 bg-orange-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Bot className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  LeafScan Chatbot
+                </h3>
+                <p className="text-gray-600 text-sm mb-6">
+                  AI Powered Chatbot for Plant and Agriculuture Help
+                </p>
+                <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                  Get Started
                 </button>
               </Link>
             </div>
