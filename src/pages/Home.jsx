@@ -310,12 +310,12 @@ const Home = () => {
               </div>
             </div>
           </section>
-          <section className="text-center py-16 px-6 bg-white">
+          <section className="text-center py-16 px-6 bg-white rounded-xl">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Ready to save your crops?
             </h2>
             <p className="text-gray-600 mb-6">
-              Join thousands of farmers and plant enthusiasts who trust LeafDoctor
+              Join thousands of farmers and plant enthusiasts who trust LeafScan
               for accurate plant disease detection and treatment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

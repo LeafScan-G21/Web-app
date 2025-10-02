@@ -79,6 +79,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
     const token = authData?.access_token || "";
 
     try {
+      console.log(formData);
       const response = await fetch(`${BACKEND_URL}/api/v1/upload`, {
         method: "POST",
         headers: {
