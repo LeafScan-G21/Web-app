@@ -445,7 +445,7 @@ const DiseaseData = () => {
                   {truncateText(disease.description)}
                 </p>
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-500">ID: {disease.disease_id}</div>
+                  {/* <div className="text-sm text-gray-500">ID: {disease.disease_id}</div> */}
                   <button className="flex items-center text-green-600 font-medium hover:text-green-700 transition-colors">
                     Learn more
                     <ChevronRight className="h-4 w-4 ml-1" />
