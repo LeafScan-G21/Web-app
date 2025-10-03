@@ -6,6 +6,10 @@ const FORUM_URL = `${import.meta.env.VITE_BACKEND_URL}/forum`;
 //const FORUM_URL = "http://localhost:8003";
 
 const currentUserId = getUserIdFromLocalStorage();
+const authData = JSON.parse(
+  localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+);
+const token = authData?.access_token || "";
 
 export const getLatestPosts = async (start, limit) => {
   try {
@@ -14,6 +18,7 @@ export const getLatestPosts = async (start, limit) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response);
@@ -31,6 +36,7 @@ export const getLatestPostCount = async () => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -48,6 +54,7 @@ export const createPost = async (postData) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     toast.success("Post created successfully!");
@@ -65,6 +72,7 @@ export const getPostById = async (postId) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -82,6 +90,7 @@ export const updatePost = async (postId, postData) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     toast.success("Post updated successfully!");
@@ -100,6 +109,7 @@ export const deletePost = async (postId) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     toast.success("Post deleted successfully!");
@@ -122,6 +132,7 @@ export const uploadpostImages = async (images) => {
       withCredentials: true,
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -139,6 +150,7 @@ export const deletePostImages = async (image_urls) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     //#toast.success("Images deleted successfully!");
@@ -157,6 +169,7 @@ export const searchPosts = async (query, start, limit) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -174,6 +187,7 @@ export const getSearchPostCount = async (query) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -191,6 +205,7 @@ export const deepSearchPosts = async (query, start, limit) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -208,6 +223,7 @@ export const getDeepSearchPostCount = async (query) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -226,6 +242,7 @@ export const getRelatedPosts = async (tags, plant_name) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;

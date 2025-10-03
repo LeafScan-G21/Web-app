@@ -4,6 +4,10 @@ const FORUM_URL = `${import.meta.env.VITE_BACKEND_URL}/forum`;
 // const FORUM_URL = "http://localhost:8003";
 
 const currentUserId = getUserIdFromLocalStorage();
+const authData = JSON.parse(
+  localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+);
+const token = authData?.access_token || "";
 
 export const addPostVote = async (postId, vote_type) => {
   try {
@@ -19,6 +23,7 @@ export const addPostVote = async (postId, vote_type) => {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -40,6 +45,7 @@ export const removePostVote = async (target_id) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -63,6 +69,7 @@ export const togglePostVote = async (postId) => {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -84,6 +91,7 @@ export const hasVotedOnPost = async (postId) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -107,6 +115,7 @@ export const addCommentVote = async (commentId, vote_type) => {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -128,6 +137,7 @@ export const removeCommentVote = async (target_id) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -151,6 +161,7 @@ export const toggleCommentVote = async (commentId) => {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -172,6 +183,7 @@ export const hasVotedOnComment = async (commentId) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;

@@ -5,6 +5,10 @@ const FORUM_URL = `${import.meta.env.VITE_BACKEND_URL}/forum`;
 // const FORUM_URL = "http://localhost:8003";
 
 const currUserId = getUserIdFromLocalStorage();
+const authData = JSON.parse(
+  localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+);
+const token = authData?.access_token || "";
 
 export const addComment = async (commentData) => {
   try {
@@ -12,6 +16,7 @@ export const addComment = async (commentData) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     toast.success("Comment added successfully!");
@@ -29,6 +34,7 @@ export const getCommentsByPostId = async (postId) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -44,6 +50,7 @@ export const deleteComment = async (commentId) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     toast.success("Comment deleted successfully!");
@@ -65,6 +72,7 @@ export const updateComment = async (commentId, content) => {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       }
     );

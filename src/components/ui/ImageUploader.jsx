@@ -1,7 +1,12 @@
 import React, { useState } from "react";
-import { Upload, Image as ImageIcon, CheckCircle, AlertCircle, Loader } from "lucide-react";
-
-
+import {
+  Upload,
+  Image as ImageIcon,
+  CheckCircle,
+  AlertCircle,
+  Loader,
+} from "lucide-react";
+import DiagnosisLoader from "../loaders/DiagnosisLoader";
 
 const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -12,7 +17,8 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
   const [error, setError] = useState(null);
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
-  const IMAGE_UPLOAD_SERVICE_URL = import.meta.env.VITE_IMAGE_UPLOAD_SERVICE_URL || "http://localhost:8002";
+  const IMAGE_UPLOAD_SERVICE_URL =
+    import.meta.env.VITE_IMAGE_UPLOAD_SERVICE_URL || "http://localhost:8002";
   const BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/upload`;
 
   const handleFileChange = (event) => {
@@ -20,7 +26,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
     if (file) {
       setSelectedImage(file);
       setPreviewUrl(URL.createObjectURL(file));
-      setPrediction(""); 
+      setPrediction("");
       setError(null);
       if (onImageUpload) {
         onImageUpload(true);
@@ -42,19 +48,18 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       setSelectedImage(file);
       setPreviewUrl(URL.createObjectURL(file));
-      setPrediction(""); 
+      setPrediction("");
       setError(null);
       if (onImageUpload) {
         onImageUpload(true);
       }
     }
   };
-
 
   // Main upload logic, receives location or null
   const handleUpload = async (location) => {
@@ -75,7 +80,9 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
       formData.append("consent_location", false);
     }
 
-    const authData = JSON.parse(localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}");
+    const authData = JSON.parse(
+      localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+    );
     const token = authData?.access_token || "";
 
     try {
@@ -89,7 +96,9 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
       });
 
       if (!response.ok) {
-        console.error(`❌ HTTP ERROR: ${response.status} ${response.statusText}`);
+        console.error(
+          `❌ HTTP ERROR: ${response.status} ${response.statusText}`
+        );
         console.log("error response:", await response.text());
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -143,9 +152,14 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
         setLocationLoading(false);
         setShowLocationPrompt(false);
         handleUpload(null);
+        console.warn(`ERROR(${err.code}): ${err.message}`);
       }
     );
   };
+
+  if (isLoading && !prediction) {
+    return <DiagnosisLoader />;
+  }
 
   return (
     <div className="space-y-6">
@@ -183,7 +197,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           id="file-upload"
         />
-        
+
         {!previewUrl ? (
           <div className="space-y-4">
             <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
@@ -213,7 +227,9 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
                 <CheckCircle className="w-5 h-5 text-white" />
               </div>
             </div>
-            <p className="text-green-600 font-medium">Image uploaded successfully!</p>
+            <p className="text-green-600 font-medium">
+              Image uploaded successfully!
+            </p>
             <button
               onClick={() => {
                 setPreviewUrl(null);
@@ -268,9 +284,13 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
             >
               &times;
             </button>
-            <h2 className="text-xl font-bold text-green-700 mb-2 text-center">Allow Location Access?</h2>
+            <h2 className="text-xl font-bold text-green-700 mb-2 text-center">
+              Allow Location Access?
+            </h2>
             <p className="text-gray-700 mb-4 text-center">
-              Allowing location helps us provide more accurate disease predictions based on your region and local conditions. Your location is only used for this analysis.
+              Allowing location helps us provide more accurate disease
+              predictions based on your region and local conditions. Your
+              location is only used for this analysis.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
               <button
@@ -281,7 +301,10 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
                 {locationLoading ? "Getting Location..." : "Allow Location"}
               </button>
               <button
-                onClick={() => { setShowLocationPrompt(false); handleUpload(null); }}
+                onClick={() => {
+                  setShowLocationPrompt(false);
+                  handleUpload(null);
+                }}
                 className="flex-1 py-2 px-4 bg-gray-200 text-gray-700 rounded-lg font-semibold shadow hover:bg-gray-300 transition-all"
               >
                 Continue Without Location
@@ -290,8 +313,6 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
           </div>
         </div>
       )}
-
-      
     </div>
   );
 };
