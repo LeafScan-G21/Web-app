@@ -1,4 +1,5 @@
-const API_URL = `${import.meta.env.VITE_BACKEND_URL}/history`;
+const API_URL = `${import.meta.env.VITE_HISTORY_SERVICE_URL}/history`;
+
 
 export const addHistoryRecord = async (record) => {
   try {
