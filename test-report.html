@@ -1,0 +1,277 @@
+<html><head><meta charset="utf-8"/><title>Test Report</title><style type="text/css">:root {
+  --text-primary: #111;
+  --text-secondary: #4f4f4f;
+  --success: #006633;
+  --success-bright: #80ffbf;
+  --danger: #cc071e;
+  --danger-bright: #fbdfe0;
+  --warning: #995c00;
+  --warning-bright: #ffeea8;
+  --panel: #eee;
+  --border: #949494;
+  --disabled: #6b6b6b;
+}
+
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  color: var(--text-primary);
+}
+body {
+  padding: 2rem 1rem;
+}
+.jesthtml-content {
+  margin: 0 auto;
+  max-width: 70rem;
+}
+header {
+  display: flex;
+  align-items: center;
+}
+#title {
+  margin: 0;
+  flex-grow: 1;
+}
+#logo {
+  height: 4rem;
+}
+#timestamp {
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+#metadata-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.additional-information-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+}
+
+/** SUMMARY */
+#summary {
+  color: var(--text-primary);
+  display: flex;
+  font-family: monospace;
+  font-size: 1rem;
+}
+#summary > div {
+  margin-right: 0.5rem;
+  background: var(--panel);
+  padding: 1rem;
+  min-width: 15rem;
+}
+#summary > div:last-child {
+  margin-right: 0;
+}
+@media only screen and (max-width: 720px) {
+  #summary {
+    flex-direction: column;
+  }
+  #summary > div {
+    margin-right: 0;
+    margin-top: 1rem;
+  }
+  #summary > div:first-child {
+    margin-top: 0;
+  }
+}
+
+.summary-total {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.summary-passed {
+  color: var(--success);
+  border-left: 0.4rem solid var(--success);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-failed,
+.summary-obsolete-snapshots {
+  color: var(--danger);
+  border-left: 0.4rem solid var(--danger);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-pending {
+  color: var(--warning);
+  border-left: 0.4rem solid var(--warning);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-empty {
+  color: var(--disabled);
+  border-left: 0.4rem solid var(--disabled);
+  margin-bottom: 0.15rem;
+}
+
+.test-result {
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+}
+.test-result:last-child {
+  border: 0;
+}
+.test-result.passed {
+  background-color: var(--success-bright);
+  color: var(--success);
+}
+.test-result.failed {
+  background-color: var(--danger-bright);
+  color: var(--danger);
+}
+.test-result.pending {
+  background-color: var(--warning-bright);
+  color: var(--warning);
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-between;
+}
+.test-suitename {
+  width: 20%;
+  text-align: left;
+  font-weight: bold;
+  word-break: break-word;
+}
+.test-title {
+  width: 40%;
+  text-align: left;
+  font-style: italic;
+}
+.test-status {
+  width: 20%;
+  text-align: right;
+}
+.test-duration {
+  width: 10%;
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+.failureMessages {
+  padding: 0 1rem;
+  margin-top: 1rem;
+  border-top: 1px dashed var(--danger);
+}
+.failureMessages.suiteFailure {
+  border-top: none;
+}
+.failureMsg {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.suite-container {
+  margin-bottom: 1rem;
+}
+.suite-info {
+  padding: 1rem;
+  background-color: var(--panel);
+  color: var(--text-secondary);
+  border: 0.15rem solid;
+  border-color: var(--panel);
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.suite-info:hover {
+  border-color: var(--border);
+  cursor: pointer;
+}
+.suite-info .suite-path {
+  word-break: break-all;
+  flex-grow: 1;
+  font-family: monospace;
+  font-size: 1rem;
+}
+.suite-info .suite-time {
+  margin-left: 1rem;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.85rem;
+}
+.suite-info .suite-time.warn {
+  background-color: var(--danger);
+  color: #fff;
+}
+.suite-info:before {
+  content: "\2303";
+  display: inline-block;
+  margin-right: 1rem;
+  transform: rotate(180deg) translateY(0.15rem);
+}
+.suite-container[open] .suite-info:before {
+  transform: rotate(0deg) translateY(0.15rem);
+}
+
+/* CONSOLE LOGS */
+.suite-consolelog {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: var(--panel);
+}
+.suite-consolelog-header {
+  font-weight: bold;
+}
+.suite-consolelog-item {
+  padding: 0.5rem;
+}
+.suite-consolelog-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-consolelog-item-origin {
+  color: var(--text-secondary);
+  font-weight: bold;
+}
+.suite-consolelog-item-message {
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+
+/* OBSOLETE SNAPSHOTS */
+.suite-obsolete-snapshots {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: var(--danger-bright);
+  color: var(--danger);
+}
+.suite-obsolete-snapshots-header {
+  font-weight: bold;
+}
+.suite-obsolete-snapshots-item {
+  padding: 0.5rem;
+}
+.suite-obsolete-snapshots-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-obsolete-snapshots-item-message {
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+</style></head><body><main class="jesthtml-content"><header><h1 id="title">Test Report</h1></header><section id="metadata-container"><div id="timestamp">Started: 2025-10-12 22:10:53</div><div id="summary"><div id="suite-summary"><div class="summary-total">Suites (37)</div><div class="summary-passed ">36 passed</div><div class="summary-failed  summary-empty">0 failed</div><div class="summary-pending ">1 pending</div></div><div id="test-summary"><div class="summary-total">Tests (98)</div><div class="summary-passed ">97 passed</div><div class="summary-failed  summary-empty">0 failed</div><div class="summary-pending ">1 pending</div></div></div></section><details id="suite-1" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\forum\vote.extra.test.jsx</div><div class="suite-time">4.573s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum vote extra</div><div class="test-title">addPostVote throws on error</div><div class="test-status">passed</div><div class="test-duration">0.031s</div></div></div></div></details><details id="suite-2" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\ui\CareAdviceItem.test.jsx</div><div class="suite-time">4.719s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">CareAdviceItem</div><div class="test-title">renders advice with markdown bold parsed</div><div class="test-status">passed</div><div class="test-duration">0.107s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CareAdviceItem</div><div class="test-title">parses LaTeX-like temperature notation</div><div class="test-status">passed</div><div class="test-duration">0.017s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CareAdviceItem</div><div class="test-title">shows chevron and toggles relevance reason when provided</div><div class="test-status">passed</div><div class="test-duration">0.076s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CareAdviceItem</div><div class="test-title">no toggle when relevance_reason missing</div><div class="test-status">passed</div><div class="test-duration">0.018s</div></div></div></div></details><details id="suite-3" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\forum\PostCard.test.jsx</div><div class="suite-time warn">5.121s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/PostCard</div><div class="test-title">renders title, excerpt, image and tags</div><div class="test-status">passed</div><div class="test-duration">0.421s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/PostCard</div><div class="test-title">renders author name after fetching details</div><div class="test-status">passed</div><div class="test-duration">0.064s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/PostCard</div><div class="test-title">fallback author text when details fail</div><div class="test-status">passed</div><div class="test-duration">0.043s</div></div></div></div></details><details id="suite-4" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\forum\Pagination.test.jsx</div><div class="suite-time">1.693s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/Pagination</div><div class="test-title">returns null for single page</div><div class="test-status">passed</div><div class="test-duration">0.059s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/Pagination</div><div class="test-title">navigates pages and disables prev/next appropriately</div><div class="test-status">passed</div><div class="test-duration">0.498s</div></div></div></div></details><details id="suite-5" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\weather\WeatherForecastTable.test.jsx</div><div class="suite-time">2.405s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">weather/WeatherForecastTable</div><div class="test-title">shows loading state</div><div class="test-status">passed</div><div class="test-duration">0.249s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">weather/WeatherForecastTable</div><div class="test-title">shows error state</div><div class="test-status">passed</div><div class="test-duration">0.025s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">weather/WeatherForecastTable</div><div class="test-title">shows empty state when no data</div><div class="test-status">passed</div><div class="test-duration">0.029s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">weather/WeatherForecastTable</div><div class="test-title">renders table rows when data provided and reset button</div><div class="test-status">passed</div><div class="test-duration">0.377s</div></div></div></div></details><details id="suite-6" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\ImageUploader.test.jsx</div><div class="suite-time">2.498s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">components/ImageUploader</div><div class="test-title">selecting a file shows preview and analyze button</div><div class="test-status">passed</div><div class="test-duration">0.216s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">components/ImageUploader</div><div class="test-title">Analyze without saved location prompts for location, continue without location posts without lat/lon</div><div class="test-status">passed</div><div class="test-duration">0.225s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">components/ImageUploader</div><div class="test-title">Analyze with saved location includes lat/lon in formdata</div><div class="test-status">passed</div><div class="test-duration">0.072s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">components/ImageUploader</div><div class="test-title">shows error when upload fails</div><div class="test-status">passed</div><div class="test-duration">0.167s</div></div></div></div></details><details id="suite-7" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\Navigation.extra.test.jsx</div><div class="suite-time">1.465s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Navigation extra</div><div class="test-title">login link routes to /login when no session</div><div class="test-status">passed</div><div class="test-duration">0.103s</div></div></div></div></details><details id="suite-8" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\Navigation.test.jsx</div><div class="suite-time">1.676s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">components/Navigation</div><div class="test-title">renders guest nav with Login and Get Started when no session</div><div class="test-status">passed</div><div class="test-duration">0.127s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">components/Navigation</div><div class="test-title">shows user nav when session exists and toggles dropdown</div><div class="test-status">passed</div><div class="test-duration">0.24s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">components/Navigation</div><div class="test-title">dropdown closes on outside click</div><div class="test-status">passed</div><div class="test-duration">0.285s</div></div></div></div></details><details id="suite-9" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\weather\AddressInput.test.jsx</div><div class="suite-time">1.836s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">weather/AddressInput</div><div class="test-title">shows error when city/country missing</div><div class="test-status">passed</div><div class="test-duration">0.337s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">weather/AddressInput</div><div class="test-title">submits full address and resets state</div><div class="test-status">passed</div><div class="test-duration">0.261s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">weather/AddressInput</div><div class="test-title">closes when clicking backdrop and header close</div><div class="test-status">passed</div><div class="test-duration">0.054s</div></div></div></div></details><details id="suite-10" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\DiseaseDataLoader.test.jsx</div><div class="suite-time">1.642s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">DiseaseDataLoader</div><div class="test-title">renders title, default message, steps and icons</div><div class="test-status">passed</div><div class="test-duration">0.305s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DiseaseDataLoader</div><div class="test-title">renders custom message</div><div class="test-status">passed</div><div class="test-duration">0.024s</div></div></div></div></details><details id="suite-11" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\DiagnosisLoader.test.jsx</div><div class="suite-time">0.916s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">DiagnosisLoader</div><div class="test-title">renders title and default message</div><div class="test-status">passed</div><div class="test-duration">0.087s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DiagnosisLoader</div><div class="test-title">renders custom message</div><div class="test-status">passed</div><div class="test-duration">0.036s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DiagnosisLoader</div><div class="test-title">shows steps and icons</div><div class="test-status">passed</div><div class="test-duration">0.02s</div></div></div></div></details><details id="suite-12" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\ui\PlantCard.test.jsx</div><div class="suite-time">0.87s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">PlantCard</div><div class="test-title">renders plant name, description and image</div><div class="test-status">passed</div><div class="test-duration">0.144s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">PlantCard</div><div class="test-title">uses index in key stability (smoke)</div><div class="test-status">passed</div><div class="test-duration">0.009s</div></div></div></div></details><details id="suite-13" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\DiseaseLoader.test.jsx</div><div class="suite-time">1.081s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">DiseaseLoader</div><div class="test-title">renders title and default message</div><div class="test-status">passed</div><div class="test-duration">0.142s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DiseaseLoader</div><div class="test-title">renders custom message</div><div class="test-status">passed</div><div class="test-duration">0.024s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DiseaseLoader</div><div class="test-title">shows steps and icons</div><div class="test-status">passed</div><div class="test-duration">0.042s</div></div></div></div></details><details id="suite-14" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\FullWidthButton.test.jsx</div><div class="suite-time">0.802s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">FullWidthButton</div><div class="test-title">renders body and handles click</div><div class="test-status">passed</div><div class="test-duration">0.075s</div></div></div></div></details><details id="suite-15" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\PredictionLoader.test.jsx</div><div class="suite-time">0.935s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">PredictionLoader</div><div class="test-title">renders default message and title</div><div class="test-status">passed</div><div class="test-duration">0.104s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">PredictionLoader</div><div class="test-title">renders custom message</div><div class="test-status">passed</div><div class="test-duration">0.034s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">renders title, default message, steps and icons</div><div class="test-status">passed</div><div class="test-duration">0.06s</div></div></div></div></details><details id="suite-16" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\PasswordField.test.jsx</div><div class="suite-time">1.132s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">PasswordField</div><div class="test-title">toggles password visibility</div><div class="test-status">passed</div><div class="test-duration">0.287s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">PasswordField</div><div class="test-title">shows error when provided</div><div class="test-status">passed</div><div class="test-duration">0.022s</div></div></div></div></details><details id="suite-17" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\forum\Input.test.jsx</div><div class="suite-time">1.342s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/Input</div><div class="test-title">renders input with type and placeholder</div><div class="test-status">passed</div><div class="test-duration">0.075s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/Input</div><div class="test-title">allows typing value</div><div class="test-status">passed</div><div class="test-duration">0.035s</div></div></div></div></details><details id="suite-18" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\forum\comment.test.jsx</div><div class="suite-time">1.168s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/comment</div><div class="test-title">addComment posts and toasts</div><div class="test-status">passed</div><div class="test-duration">0.05s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/comment</div><div class="test-title">getCommentsByPostId calls correct url</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/comment</div><div class="test-title">deleteComment and updateComment include user_id param</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/comment</div><div class="test-title">addComment errors toast and throws</div><div class="test-status">passed</div><div class="test-duration">0.083s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/comment</div><div class="test-title">deleteComment errors toast and throws</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/comment</div><div class="test-title">updateComment errors toast and throws</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div></div></details><details id="suite-19" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\ui\Footer.test.jsx</div><div class="suite-time">1.099s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Footer</div><div class="test-title">renders brand name and copyright</div><div class="test-status">passed</div><div class="test-duration">0.047s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Footer</div><div class="test-title">renders logo image</div><div class="test-status">passed</div><div class="test-duration">0.106s</div></div></div></div></details><details id="suite-20" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\auth\user.extra.test.jsx</div><div class="suite-time">0.759s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/auth user extra</div><div class="test-title">getUserDetails returns parsed user details on success</div><div class="test-status">passed</div><div class="test-duration">0.075s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/auth user extra</div><div class="test-title">getUserDetails throws on error</div><div class="test-status">passed</div><div class="test-duration">0.011s</div></div></div></div></details><details id="suite-21" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\FormField.test.jsx</div><div class="suite-time">1.021s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">FormField</div><div class="test-title">renders label, input and icon, fires onChange</div><div class="test-status">passed</div><div class="test-duration">0.109s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">FormField</div><div class="test-title">renders error</div><div class="test-status">passed</div><div class="test-duration">0.02s</div></div></div></div></details><details id="suite-22" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\ProtectedRoute.test.jsx</div><div class="suite-time">1.051s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">components/ProtectedRoute</div><div class="test-title">renders loading state when loading is true</div><div class="test-status">passed</div><div class="test-duration">0.054s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">components/ProtectedRoute</div><div class="test-title">redirects to /login when user is not present</div><div class="test-status">passed</div><div class="test-duration">0.023s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">components/ProtectedRoute</div><div class="test-title">renders children when user is present</div><div class="test-status">passed</div><div class="test-duration">0.016s</div></div></div></div></details><details id="suite-23" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\forum\Button.test.jsx</div><div class="suite-time">1.269s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/Button</div><div class="test-title">renders children and handles click</div><div class="test-status">passed</div><div class="test-duration">0.168s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/Button</div><div class="test-title">applies variant and size classes</div><div class="test-status">passed</div><div class="test-duration">0.018s</div></div></div></div></details><details id="suite-24" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\hooks\useGeolocation.test.jsx</div><div class="suite-time">1.274s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">hooks/useGeolocation</div><div class="test-title">returns saved location from localStorage and does not ask geolocation</div><div class="test-status">passed</div><div class="test-duration">0.075s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">hooks/useGeolocation</div><div class="test-title">sets error when geolocation is not supported</div><div class="test-status">passed</div><div class="test-duration">0.032s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">hooks/useGeolocation</div><div class="test-title">gets current position and saves to localStorage on success</div><div class="test-status">passed</div><div class="test-duration">0.019s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">hooks/useGeolocation</div><div class="test-title">sets error on geolocation failure</div><div class="test-status">passed</div><div class="test-duration">0.008s</div></div></div></div></details><details id="suite-25" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\ProtectedRoute.extra.test.jsx</div><div class="suite-time">1.446s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">ProtectedRoute extra</div><div class="test-title">redirects unauthenticated and hides children</div><div class="test-status">passed</div><div class="test-duration">0.102s</div></div></div></div></details><details id="suite-26" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\forum\vote.test.jsx</div><div class="suite-time">0.75s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/vote</div><div class="test-title">post vote flows</div><div class="test-status">passed</div><div class="test-duration">0.06s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/vote</div><div class="test-title">comment vote flows</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div></div></details><details id="suite-27" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\history\historyService.extra.test.jsx</div><div class="suite-time">1.007s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">historyService extra</div><div class="test-title">addHistoryRecord returns null on network error</div><div class="test-status">passed</div><div class="test-duration">0.281s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">historyService extra</div><div class="test-title">getUserHistory returns [] on error</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div></div></details><details id="suite-28" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\forum\post.extra.test.jsx</div><div class="suite-time">0.725s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum post extra</div><div class="test-title">createPost throws and toasts on error</div><div class="test-status">passed</div><div class="test-duration">0.066s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum post extra</div><div class="test-title">getPostById throws on error</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div></div></details><details id="suite-29" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\components\forum\PostLoading.test.jsx</div><div class="suite-time">1.04s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/PostLoading</div><div class="test-title">renders loading single post</div><div class="test-status">passed</div><div class="test-duration">0.074s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">forum/PostLoading</div><div class="test-title">renders loading multiple posts</div><div class="test-status">passed</div><div class="test-duration">0.022s</div></div></div></div></details><details id="suite-30" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\weather\currentWeather.extra.test.jsx</div><div class="suite-time">0.613s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/weather geturrentWeather extra</div><div class="test-title">calls axios.get with coords</div><div class="test-status">passed</div><div class="test-duration">0.014s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/weather geturrentWeather extra</div><div class="test-title">throws and toasts on error</div><div class="test-status">passed</div><div class="test-duration">0.023s</div></div></div></div></details><details id="suite-31" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\utils\auth.test.jsx</div><div class="suite-time">0.819s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">utils/auth.getUserIdFromLocalStorage</div><div class="test-title">returns user id when token with user present</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">utils/auth.getUserIdFromLocalStorage</div><div class="test-title">returns undefined when token missing user</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">utils/auth.getUserIdFromLocalStorage</div><div class="test-title">returns undefined when token not present</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div></div></details><details id="suite-32" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\auth\user.test.jsx</div><div class="suite-time">0.835s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/auth/user.getUserDetails</div><div class="test-title">returns parsed user details when metadata exists</div><div class="test-status">passed</div><div class="test-duration">0.047s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/auth/user.getUserDetails</div><div class="test-title">returns undefined if no user_metadata</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/auth/user.getUserDetails</div><div class="test-title">throws when axios fails</div><div class="test-status">passed</div><div class="test-duration">0.03s</div></div></div></div></details><details id="suite-33" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\history\historyService.test.jsx</div><div class="suite-time">0.857s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/history/historyService</div><div class="test-title">addHistoryRecord posts JSON and returns parsed data</div><div class="test-status">passed</div><div class="test-duration">0.01s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/history/historyService</div><div class="test-title">getUserHistory fetches and returns array</div><div class="test-status">passed</div><div class="test-duration">0.03s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/history/historyService</div><div class="test-title">addHistoryRecord returns null on network error</div><div class="test-status">passed</div><div class="test-duration">0.037s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/history/historyService</div><div class="test-title">getUserHistory returns [] on network error</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div></div></details><details id="suite-34" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\weather\forecast.test.jsx</div><div class="suite-time">0.742s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/weather/forecast</div><div class="test-title">getWeatherForecast calls endpoint with params</div><div class="test-status">passed</div><div class="test-duration">0.04s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/weather/forecast</div><div class="test-title">geturrentWeather calls endpoint with params</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/weather/forecast</div><div class="test-title">getWeatherForecast throws and toasts on error</div><div class="test-status">passed</div><div class="test-duration">0.036s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/weather/forecast</div><div class="test-title">geturrentWeather throws and toasts on error</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div></div></details><details id="suite-35" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\utils\auth.extra.test.jsx</div><div class="suite-time">0.668s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">utils/auth extra</div><div class="test-title">returns undefined for malformed JSON without throwing</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">utils/auth extra</div><div class="test-title">returns undefined when user missing</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></details><details id="suite-36" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\services\forum\post.test.jsx</div><div class="suite-time">0.784s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/post</div><div class="test-title">getLatestPosts returns data</div><div class="test-status">passed</div><div class="test-duration">0.048s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/post</div><div class="test-title">createPost posts and toasts on success</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/post</div><div class="test-title">updatePost and deletePost include user_id param</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/post</div><div class="test-title">uploadpostImages sends FormData</div><div class="test-status">passed</div><div class="test-duration">0.007s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/post</div><div class="test-title">search helpers call proper endpoints</div><div class="test-status">passed</div><div class="test-duration">0.004s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">services/forum/post</div><div class="test-title">getRelatedPosts uses tags and plant_name params</div><div class="test-status">passed</div><div class="test-duration">0.011s</div></div></div></div></details><details id="suite-37" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\Users\HP\Desktop\sep\Web-app\test\ImageUploader.test.jsx</div><div class="suite-time">0.329s</div></summary><div class="suite-tests"><div class="test-result pending"><div class="test-info"><div class="test-suitename">ImageUploader</div><div class="test-title">placeholder</div><div class="test-status">pending</div><div class="test-duration"> </div></div></div></div></details></main></body></html>
