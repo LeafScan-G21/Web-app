@@ -14,7 +14,7 @@ const HistoryTest = () => {
           <h1 className="text-3xl font-bold text-green-700 mb-6 text-center">
             Test User History
           </h1>
-          <HistoryList userId="user123" />
+          <HistoryList userId="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InRlc3RfdXNlcl9pZCIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsInJvbGVzIjpbInVzZXIiXSwiZXhwIjoxNzYwMDU1MzYyfQ.2G0POWAZDqY4VN0hMd3Pgqgp7rDImZmuiKWi_CPX7Ik" />
         </div>
       </div>
     </>
