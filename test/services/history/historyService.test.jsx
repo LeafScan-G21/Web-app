@@ -16,22 +16,26 @@ describe("services/history/historyService", () => {
       json: () => Promise.resolve({ ok: true }),
     });
     const res = await addHistoryRecord(payload);
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      "http://localhost:8000/history/",
-      expect.objectContaining({ method: "POST" })
-    );
+    // Assert path suffix to align with configurable base URL
+    const [calledUrl, options] = globalThis.fetch.mock.calls[0];
+    expect(calledUrl).toMatch(/\/history\/?$/);
+    expect(options).toEqual(expect.objectContaining({ method: "POST" }));
     expect(res).toEqual({ ok: true });
   });
 
   test("getUserHistory fetches and returns array", async () => {
+    const payload = [{ id: "h1" }];
     globalThis.fetch.mockResolvedValueOnce({
-      json: () => Promise.resolve([{ id: "h1" }]),
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      headers: { get: () => "application/json" },
+      text: () => Promise.resolve(JSON.stringify(payload)),
     });
     const res = await getUserHistory("u1");
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      "http://localhost:8000/history/u1"
-    );
-    expect(res).toEqual([{ id: "h1" }]);
+    const [calledUrl2] = globalThis.fetch.mock.calls[0];
+    expect(calledUrl2).toMatch(/\/history\/u1$/);
+    expect(res).toEqual(payload);
   });
 
   test("addHistoryRecord returns null on network error", async () => {

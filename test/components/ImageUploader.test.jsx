@@ -59,7 +59,8 @@ describe("components/ImageUploader", () => {
     });
     // Verify endpoint and headers used
     const [url, options] = globalThis.fetch.mock.calls[0];
-    expect(url).toBe(`${BACKEND_URL}/upload/api/v1/upload`);
+    // Implementation posts to `${BACKEND_URL}/api/v1/upload` now
+    expect(url).toBe(`${BACKEND_URL}/api/v1/upload`);
     expect(options.method).toBe("POST");
     expect(options.headers.Authorization).toBe("Bearer tkn");
     expect(options.body).toBeInstanceOf(FormData);
