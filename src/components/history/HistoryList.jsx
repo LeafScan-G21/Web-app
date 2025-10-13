@@ -17,6 +17,7 @@ const HistoryList = ({ userId }) => {
   }, [search]);
 
   useEffect(() => {
+    if (!userId) return;
     const fetchHistory = async () => {
       try {
         const data = await getUserHistory(userId);

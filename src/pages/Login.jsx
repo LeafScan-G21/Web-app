@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../services/auth/supabaseClient";
 import googleLogo from "../assets/google.png";
 
+
 const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [email, setEmail] = useState("");
@@ -57,6 +58,7 @@ const Login = () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
     });
+    navigate("/dashboard");
     console.log("login Data:", data);
     if (error) toast.error(error.message);
   };

@@ -19,7 +19,7 @@ export const addHistoryRecord = async (record) => {
 export const getUserHistory = async (userId) => {
   try {
     console.log("Fetching history for user:", userId);
-    const response = await fetch(`${API_URL}/${userId}`);
+    const response = await fetch(`${API_URL}/history/${userId}`);
     const data = await response.json();
     console.log("History response:", data);
     return data;
