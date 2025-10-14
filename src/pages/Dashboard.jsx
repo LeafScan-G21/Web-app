@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   Camera,
   Users,
@@ -10,7 +11,7 @@ import {
   User,
   ChevronDown,
   CloudRain,
-  Bot
+  Bot,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -18,6 +19,11 @@ import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 
 export default function Dashboard() {
+  const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "localhost:8000";
+  const authData = JSON.parse(
+    localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+  );
+  const token = authData?.access_token || "";
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const first = user?.user_metadata?.first_name;
@@ -29,7 +35,6 @@ export default function Dashboard() {
   const [weatherData, setWeatherData] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
-  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState("");
   const menuRef = useRef();
   const [latitude, setLatitude] = useState();
@@ -128,7 +133,12 @@ export default function Dashboard() {
       try {
         setLoading(true);
         const res = await fetch(
-          `http://localhost:8000/weather/current?latitude=${latitude}&longitude=${longitude}`
+          `${VITE_BACKEND_URL}/weather/current?latitude=${latitude}&longitude=${longitude}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (!res.ok) throw new Error(`Error: ${res.status}`);
         const data = await res.json();
@@ -150,7 +160,7 @@ export default function Dashboard() {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [latitude, longitude]);
+  }, [VITE_BACKEND_URL, latitude, longitude, token]);
 
   const handleLogout = () => {
     logout();
@@ -272,17 +282,17 @@ export default function Dashboard() {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 ">
-          <div className="bg-white rounded-lg shadow-sm px-4 py-5 rounded-lg shadow-md border border-green-100 text-center">
+          <div className="bg-white rounded-lg shadow-sm px-4 py-5 border border-green-100 text-center">
             <div className="text-3xl font-bold text-green-600 mb-2">156</div>
             <div className="text-gray-600">Plants Diagnosed</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm text-center px-4 py-5 rounded-lg shadow-md border border-green-100">
+          <div className="bg-white rounded-xl shadow-sm text-center px-4 py-5  border border-green-100">
             <div className="text-3xl font-bold text-green-600 mb-2">89%</div>
             <div className="text-gray-600">Accuracy Rate</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm px-4 py-5 rounded-lg shadow-md border border-green-100 text-center">
+          <div className="bg-white rounded-xl shadow-sm px-4 py-5 r border border-green-100 text-center">
             <div className="text-3xl font-bold text-green-600 mb-2">2.3k</div>
             <div className="text-gray-600">Community Members</div>
           </div>
