@@ -18,6 +18,8 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 export default function Dashboard() {
   const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "localhost:8000";
   const authData = JSON.parse(
@@ -133,7 +135,7 @@ export default function Dashboard() {
       try {
         setLoading(true);
         const res = await fetch(
-          `${VITE_BACKEND_URL}/weather/current?latitude=${latitude}&longitude=${longitude}`,
+          `${BACKEND_URL}/weather/current?latitude=${latitude}&longitude=${longitude}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -18,7 +18,7 @@ export const getLatestPosts = async (start, limit) => {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        "Authorization": `Bearer ${token}`,
       },
     });
     console.log(response);

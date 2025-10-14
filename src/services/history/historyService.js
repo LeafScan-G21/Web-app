@@ -6,11 +6,15 @@ const token = authData?.access_token || "";
 
 export const addHistoryRecord = async (record) => {
   try {
+    const authData = JSON.parse(
+          localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+        );
+    const token = authData?.access_token || "";
     const response = await fetch(`${API_URL}/history`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(record),
     });
@@ -29,14 +33,19 @@ export const getUserHistory = async (userId) => {
   }
 
   try {
+    const authData = JSON.parse(
+          localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+        );
+    const token = authData?.access_token || "";
     console.log("Fetching history for user:", userId);
-    const response = await fetch(`${API_URL}/history/${userId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(`${API_URL}/history/${userId}`,
+      {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+      }
+    );
     const data = await response.json();
     console.log("History response:", data);
     return data;
