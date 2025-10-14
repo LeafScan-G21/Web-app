@@ -17,12 +17,16 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const first = user?.user_metadata?.first_name;
   const last = user?.user_metadata?.last_name;
   const full = user?.user_metadata?.full_name;
+  const authData = JSON.parse(localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}");
+  const token = authData?.access_token;
   const username =
     (first && last ? `${first} ${last}` : full) || "Unknown User";
   const [open, setOpen] = useState(false);
@@ -128,7 +132,13 @@ export default function Dashboard() {
       try {
         setLoading(true);
         const res = await fetch(
-          `http://localhost:8000/weather/current?latitude=${latitude}&longitude=${longitude}`
+          `${BACKEND_URL}/weather/current?latitude=${latitude}&longitude=${longitude}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
         );
         if (!res.ok) throw new Error(`Error: ${res.status}`);
         const data = await res.json();

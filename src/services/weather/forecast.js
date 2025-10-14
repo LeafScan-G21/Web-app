@@ -5,11 +5,17 @@ const FORECAST_URL = `${import.meta.env.VITE_BACKEND_URL}/weather`;
 
 export const getWeatherForecast = async (latitude, longitude, address) => {
   try {
+    const authData = JSON.parse(
+          localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+        );
+    const token = authData?.access_token || "";
+    const Authorization = token ? `Bearer ${token}` : "";
     const response = await axios.get(`${FORECAST_URL}/forecast`, {
       params: { latitude, longitude, address },
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        "Authorization": Authorization
       },
     });
     return response.data;
@@ -22,11 +28,17 @@ export const getWeatherForecast = async (latitude, longitude, address) => {
 
 export const geturrentWeather = async (latitude, longitude) => {
   try {
+    const authData = JSON.parse(
+          localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+        );
+    const token = authData?.access_token || "";
+    const Authorization = token ? `Bearer ${token}` : "";
     const response = await axios.get(`${FORECAST_URL}/current`, {
       params: { latitude, longitude },
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
+        "Authorization": Authorization
       },
     });
     return response.data;
