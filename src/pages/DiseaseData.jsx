@@ -1,9 +1,23 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Leaf, ChevronRight, X, Eye, AlertTriangle, Stethoscope, Info, Zap, Droplets, Wind } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from "react";
+import {
+  Search,
+  Leaf,
+  ChevronRight,
+  X,
+  Eye,
+  AlertTriangle,
+  Stethoscope,
+  Info,
+  Zap,
+  Wind,
+} from "lucide-react";
+import axios from "axios";
+import DiseaseDataLoader from "../components/loaders/DiseaseDataLoader";
+import DiseaseLoader from "../components/loaders/DiseaseLoader";
 
 const DiseaseData = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPlant, setSelectedPlant] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedPlant, setSelectedPlant] = useState("all");
   const [selectedDisease, setSelectedDisease] = useState(null);
   const [diseaseData, setDiseaseData] = useState({ items: [], total: 0 });
   const [loading, setLoading] = useState(true);
@@ -18,12 +32,21 @@ const DiseaseData = () => {
     const fetchDiseases = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${PREDICTION_URL}/api/v1/diseases?limit=20&skip=0&include_count=true`);
-        if (!res.ok) {
-          throw new Error(`Error: ${res.status}`);
-        }
-        const data = await res.json();
-        setDiseaseData(data);
+        const authData = JSON.parse(
+          localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+        );
+        const token = authData?.access_token || "";
+        const res = await axios.get(
+          `${PREDICTION_URL}/api/v1/diseases?limit=20&skip=0&include_count=true`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        setDiseaseData(res.data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -37,14 +60,23 @@ const DiseaseData = () => {
   // Fetch detailed disease data
   const fetchDiseaseDetail = async (diseaseId) => {
     try {
+      const authData = JSON.parse(
+        localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+      );
+      const token = authData?.access_token || "";
       setDetailLoading(true);
       setDetailError(null);
-      const res = await fetch(`${PREDICTION_URL}/api/v1/diseases/${diseaseId}`);
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status}`);
-      }
-      const data = await res.json();
-      setSelectedDisease(data);
+      const res = await axios.get(
+        `${PREDICTION_URL}/api/v1/diseases/${diseaseId}`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSelectedDisease(res.data);
     } catch (err) {
       setDetailError(err.message);
     } finally {
@@ -53,49 +85,61 @@ const DiseaseData = () => {
   };
 
   const uniquePlants = useMemo(() => {
-    const plants = diseaseData.items.map(item => item.plant_name);
+    const plants = diseaseData.items.map((item) => item.plant_name);
     return [...new Set(plants)].sort();
   }, [diseaseData]);
 
   const filteredDiseases = useMemo(() => {
-    return diseaseData.items.filter(disease => {
+    return diseaseData.items.filter((disease) => {
       const matchesSearch =
         disease.disease_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         disease.plant_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         disease.description.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesPlant = selectedPlant === 'all' || disease.plant_name === selectedPlant;
+      const matchesPlant =
+        selectedPlant === "all" || disease.plant_name === selectedPlant;
 
       return matchesSearch && matchesPlant;
     });
   }, [searchTerm, selectedPlant, diseaseData]);
 
   const truncateText = (text, maxLength = 150) => {
-    if (!text) return '';
-    return text.length <= maxLength ? text : text.substr(0, maxLength) + '...';
+    if (!text) return "";
+    return text.length <= maxLength ? text : text.substr(0, maxLength) + "...";
   };
 
   const formatTextWithBullets = (text) => {
     if (!text) return null;
-    return text.split('\n').map((line, index) => {
-      if (line.trim() === '') return null;
+    return text
+      .split("\n")
+      .map((line, index) => {
+        if (line.trim() === "") return null;
 
-      if (line.trim().endsWith(':') && !line.includes('.')) {
+        if (line.trim().endsWith(":") && !line.includes(".")) {
+          return (
+            <div
+              key={index}
+              className="font-semibold text-gray-800 mt-4 mb-2 text-lg"
+            >
+              {line.trim()}
+            </div>
+          );
+        }
+
         return (
-          <div key={index} className="font-semibold text-gray-800 mt-4 mb-2 text-lg">
-            {line.trim()}
+          <div key={index} className="text-gray-700 mb-2 ml-4 leading-relaxed">
+            {line.trim().startsWith("-") || line.trim().startsWith("•") ? (
+              <span className="flex items-start">
+                <span className="text-green-600 mr-2 mt-1">•</span>
+                <span>{line.replace(/^[-•]\s*/, "")}</span>
+              </span>
+            ) : (
+              <span>{line.trim()}</span>
+            )}
           </div>
         );
-      }
-
-      return (
-        <div key={index} className="text-gray-700 mb-2 ml-4 leading-relaxed">
-          {line.trim().startsWith('-') || line.trim().startsWith('•')
-            ? <span className="flex items-start"><span className="text-green-600 mr-2 mt-1">•</span><span>{line.replace(/^[-•]\s*/, '')}</span></span>
-            : <span>{line.trim()}</span>}
-        </div>
-      );
-    }).filter(Boolean);
+      })
+      .filter(Boolean);
   };
 
   const handleDiseaseClick = (disease) => {
@@ -104,14 +148,7 @@ const DiseaseData = () => {
 
   // Show loading / error states
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-green-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading diseases...</p>
-        </div>
-      </div>
-    );
+    return <DiseaseDataLoader />;
   }
 
   if (error) {
@@ -120,8 +157,8 @@ const DiseaseData = () => {
         <div className="text-center bg-white p-8 rounded-lg shadow-lg">
           <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
           <p className="text-red-600 text-lg">Failed to load data: {error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
           >
             Try Again
@@ -132,36 +169,10 @@ const DiseaseData = () => {
   }
 
   // Disease detail view
+  if (detailLoading) {
+    return <DiseaseLoader />;
+  }
   if (selectedDisease) {
-    if (detailLoading) {
-      return (
-        <div className="min-h-screen">
-          <div className="bg-white shadow-sm border-b border-green-100">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => setSelectedDisease(null)}
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-                <div className="flex items-center space-x-2">
-                  <Leaf className="h-6 w-6 text-green-600" />
-                  <h1 className="text-xl font-bold text-gray-900">Plant Disease Database</h1>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center justify-center min-h-96">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading disease details...</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
     if (detailError) {
       return (
         <div className="min-h-screen">
@@ -176,7 +187,9 @@ const DiseaseData = () => {
                 </button>
                 <div className="flex items-center space-x-2">
                   <Leaf className="h-6 w-6 text-green-600" />
-                  <h1 className="text-xl font-bold text-gray-900">Plant Disease Database</h1>
+                  <h1 className="text-xl font-bold text-gray-900">
+                    Plant Disease Database
+                  </h1>
                 </div>
               </div>
             </div>
@@ -184,14 +197,18 @@ const DiseaseData = () => {
           <div className="flex items-center justify-center min-h-96">
             <div className="text-center bg-white p-8 rounded-lg shadow-lg mx-4">
               <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <p className="text-red-600 mb-4">Failed to load disease details: {detailError}</p>
-              <button 
-                onClick={() => fetchDiseaseDetail(selectedDisease.disease_id || 'D002')}
+              <p className="text-red-600 mb-4">
+                Failed to load disease details: {detailError}
+              </p>
+              <button
+                onClick={() =>
+                  fetchDiseaseDetail(selectedDisease.disease_id || "D002")
+                }
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 mr-2"
               >
                 Try Again
               </button>
-              <button 
+              <button
                 onClick={() => setSelectedDisease(null)}
                 className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
               >
@@ -217,7 +234,9 @@ const DiseaseData = () => {
               </button>
               <div className="flex items-center space-x-2">
                 <Leaf className="h-6 w-6 text-green-600" />
-                <h1 className="text-xl font-bold text-gray-900">Plant Disease Database</h1>
+                <h1 className="text-xl font-bold text-gray-900">
+                  Plant Disease Database
+                </h1>
               </div>
             </div>
           </div>
@@ -230,18 +249,28 @@ const DiseaseData = () => {
             <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-8 py-6">
               <div className="flex items-start justify-between text-white">
                 <div>
-                  <h1 className="text-3xl font-bold mb-2">{selectedDisease.disease_name}</h1>
-                  <p className="text-green-100 text-lg">Affects: {selectedDisease.plant_name}</p>
-                  <p className="text-green-100 text-sm mt-1">Disease ID: {selectedDisease.disease_id}</p>
+                  <h1 className="text-3xl font-bold mb-2">
+                    {selectedDisease.disease_name}
+                  </h1>
+                  <p className="text-green-100 text-lg">
+                    Affects: {selectedDisease.plant_name}
+                  </p>
+                  <p className="text-green-100 text-sm mt-1">
+                    Disease ID: {selectedDisease.disease_id}
+                  </p>
                 </div>
                 <div className="bg-white bg-opacity-20 px-4 py-2 rounded-full">
-                  <span className="text-white font-medium">{selectedDisease.plant_name}</span>
+                  <span className="text-white font-medium">
+                    {selectedDisease.plant_name}
+                  </span>
                 </div>
               </div>
             </div>
-            
+
             <div className="p-8">
-              <p className="text-gray-700 text-lg leading-relaxed">{selectedDisease.description}</p>
+              <p className="text-gray-700 text-lg leading-relaxed">
+                {selectedDisease.description}
+              </p>
             </div>
           </div>
 
@@ -251,7 +280,9 @@ const DiseaseData = () => {
               <div className="bg-green-100 px-6 py-4 border-b">
                 <div className="flex items-center space-x-2">
                   <Eye className="h-5 w-5 text-green-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Healthy Leaf</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Healthy Leaf
+                  </h3>
                 </div>
               </div>
               <div className="p-6">
@@ -262,7 +293,9 @@ const DiseaseData = () => {
                     className="w-full h-64 object-cover rounded-lg"
                   />
                 </div>
-                <p className="text-gray-600 text-center">Normal, healthy appearance</p>
+                <p className="text-gray-600 text-center">
+                  Normal, healthy appearance
+                </p>
               </div>
             </div>
 
@@ -270,7 +303,9 @@ const DiseaseData = () => {
               <div className="bg-red-100 px-6 py-4 border-b">
                 <div className="flex items-center space-x-2">
                   <AlertTriangle className="h-5 w-5 text-red-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Diseased Leaf</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Diseased Leaf
+                  </h3>
                 </div>
               </div>
               <div className="p-6">
@@ -281,7 +316,9 @@ const DiseaseData = () => {
                     className="w-full h-64 object-cover rounded-lg"
                   />
                 </div>
-                <p className="text-gray-600 text-center">Showing symptoms of {selectedDisease.disease_name}</p>
+                <p className="text-gray-600 text-center">
+                  Showing symptoms of {selectedDisease.disease_name}
+                </p>
               </div>
             </div>
           </div>
@@ -293,7 +330,9 @@ const DiseaseData = () => {
               <div className="bg-red-50 px-6 py-4 border-b border-red-100">
                 <div className="flex items-center space-x-2">
                   <Stethoscope className="h-5 w-5 text-red-600" />
-                  <h3 className="text-xl font-semibold text-gray-900">Symptoms</h3>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Symptoms
+                  </h3>
                 </div>
               </div>
               <div className="p-6">
@@ -308,7 +347,9 @@ const DiseaseData = () => {
               <div className="bg-orange-50 px-6 py-4 border-b border-orange-100">
                 <div className="flex items-center space-x-2">
                   <Zap className="h-5 w-5 text-orange-600" />
-                  <h3 className="text-xl font-semibold text-gray-900">Causes</h3>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Causes
+                  </h3>
                 </div>
               </div>
               <div className="p-6">
@@ -323,7 +364,9 @@ const DiseaseData = () => {
               <div className="bg-yellow-50 px-6 py-4 border-b border-yellow-100">
                 <div className="flex items-center space-x-2">
                   <Wind className="h-5 w-5 text-yellow-600" />
-                  <h3 className="text-xl font-semibold text-gray-900">Spread Mechanisms</h3>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Spread Mechanisms
+                  </h3>
                 </div>
               </div>
               <div className="p-6">
@@ -338,7 +381,9 @@ const DiseaseData = () => {
               <div className="bg-green-50 px-6 py-4 border-b border-green-100">
                 <div className="flex items-center space-x-2">
                   <Info className="h-5 w-5 text-green-600" />
-                  <h3 className="text-xl font-semibold text-gray-900">Care Advice</h3>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Care Advice
+                  </h3>
                 </div>
               </div>
               <div className="p-6">
@@ -375,10 +420,12 @@ const DiseaseData = () => {
                 <Leaf className="h-8 w-8 text-green-600" />
               </div>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Plant Disease Database</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              Plant Disease Database
+            </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Explore our comprehensive database of plant diseases. Learn about symptoms,
-              causes, and treatment options for various crop diseases.
+              Explore our comprehensive database of plant diseases. Learn about
+              symptoms, causes, and treatment options for various crop diseases.
             </p>
           </div>
         </div>
@@ -407,8 +454,10 @@ const DiseaseData = () => {
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
               >
                 <option value="all">All Plants</option>
-                {uniquePlants.map(plant => (
-                  <option key={plant} value={plant}>{plant}</option>
+                {uniquePlants.map((plant) => (
+                  <option key={plant} value={plant}>
+                    {plant}
+                  </option>
                 ))}
               </select>
             </div>
@@ -439,8 +488,12 @@ const DiseaseData = () => {
                 </div>
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{disease.disease_name}</h3>
-                <p className="text-green-600 font-medium mb-3">Affects: {disease.plant_name}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  {disease.disease_name}
+                </h3>
+                <p className="text-green-600 font-medium mb-3">
+                  Affects: {disease.plant_name}
+                </p>
                 <p className="text-gray-600 mb-4 leading-relaxed">
                   {truncateText(disease.description)}
                 </p>
@@ -463,8 +516,12 @@ const DiseaseData = () => {
               <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="h-10 w-10 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No diseases found</h3>
-              <p className="text-gray-600">Try adjusting your search terms or filters</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No diseases found
+              </h3>
+              <p className="text-gray-600">
+                Try adjusting your search terms or filters
+              </p>
             </div>
           </div>
         )}

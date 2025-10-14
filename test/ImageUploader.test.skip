@@ -1,0 +1,2 @@
+// Skipped tests for ImageUploader until import.meta.env is polyfilled for Jest.
+// See test setup TODOs to re-enable.

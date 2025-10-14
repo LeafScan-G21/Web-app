@@ -1,19 +1,19 @@
-import React, { useEffect, useState} from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Cloud, Thermometer, Droplets, Wind, Sun, AlertTriangle, Lightbulb, Bug, Leaf, ChevronDown } from 'lucide-react';
-import CareAdviceItem from '../components/ui/CareAdviceItem';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Cloud, Wind, AlertTriangle, Lightbulb, Bug, Leaf } from "lucide-react";
+import CareAdviceItem from "../components/ui/CareAdviceItem";
+import DiagnosisLoader from "../components/loaders/DiagnosisLoader";
 
 // New Component for Care Advice Items
 // const CareAdviceItem = ({ item, index }) => {
 //   const [isOpen, setIsOpen] = useState(false);
 
-  
 //   const parseMarkdown = (text) => {
 //     if (!text) return text;
 
 //     // Convert LaTeX temperature notation to readable format
 //     let cleanedText = text.replace(/\$(\d+)\^\{?\\circ\}?\s*\\text\{([FC])\}\$/g, '$1°$2');
-    
+
 //     // Process the cleaned text for bold markdown
 //     const parts = cleanedText.split('**');
 //     return parts.map((part, index) => {
@@ -26,9 +26,9 @@ import CareAdviceItem from '../components/ui/CareAdviceItem';
 
 //   return (
 //     <div className="bg-green-50 border-l-4 border-green-500 rounded-r-lg overflow-hidden shadow-sm">
-//       <div 
+//       <div
 //         className="flex items-start p-4 space-x-3 cursor-pointer select-none"
-//         onClick={() => item.relevance_reason && setIsOpen(!isOpen)} 
+//         onClick={() => item.relevance_reason && setIsOpen(!isOpen)}
 //       >
 //         <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-green-600 text-white font-bold">
 //           {index + 1}
@@ -38,15 +38,15 @@ import CareAdviceItem from '../components/ui/CareAdviceItem';
 //         </div>
 //         {item.relevance_reason && (
 //           <div className="flex-shrink-0 ml-2 self-center">
-//             <ChevronDown 
-//               className={`w-5 h-5 text-gray-500 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
+//             <ChevronDown
+//               className={`w-5 h-5 text-gray-500 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
 //             />
 //           </div>
 //         )}
 //       </div>
 
 //       {/* Expandable "Why" section with smooth transition */}
-//       <div 
+//       <div
 //         className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-96' : 'max-h-0'}`}
 //       >
 //         {item.relevance_reason && (
@@ -61,7 +61,6 @@ import CareAdviceItem from '../components/ui/CareAdviceItem';
 //   );
 // };
 
-
 const Prediction = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,14 +69,14 @@ const Prediction = () => {
 
   useEffect(() => {
     let predictionData = location.state?.predictionData;
-    
+
     if (!predictionData) {
-      const storedData = sessionStorage.getItem('predictionResult');
+      const storedData = sessionStorage.getItem("predictionResult");
       if (storedData) {
         try {
           predictionData = JSON.parse(storedData);
         } catch (error) {
-          console.error('Error parsing stored prediction data:', error);
+          console.error("Error parsing stored prediction data:", error);
         }
       }
     }
@@ -86,18 +85,18 @@ const Prediction = () => {
       setData(predictionData);
       setLoading(false);
     } else {
-      navigate('/diagnosis', { replace: true });
+      navigate("/diagnosis", { replace: true });
     }
 
     return () => {
-      sessionStorage.removeItem('predictionResult');
+      sessionStorage.removeItem("predictionResult");
     };
   }, [location.state, navigate]);
 
   const parseMarkdown = (text) => {
     if (!text) return text;
-    
-    const parts = text.split('**');
+
+    const parts = text.split("**");
     return parts.map((part, index) => {
       if (index % 2 === 1) {
         return <strong key={index}>{part}</strong>;
@@ -108,7 +107,7 @@ const Prediction = () => {
 
   const formatText = (text) => {
     if (!text) return null;
-    return text.split('\n').map((line, index) => (
+    return text.split("\n").map((line, index) => (
       <p key={index} className="mb-2 last:mb-0">
         {parseMarkdown(line)}
       </p>
@@ -116,29 +115,22 @@ const Prediction = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
+    return new Date(dateString).toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const getConfidenceColor = (confidence) => {
     const percentage = confidence * 100;
-    if (percentage >= 90) return 'text-white bg-green-500';
-    if (percentage >= 70) return 'text-white bg-yellow-500';
-    return 'bg-red-500';
+    if (percentage >= 90) return "text-white bg-green-500";
+    if (percentage >= 70) return "text-white bg-yellow-500";
+    return "bg-red-500";
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading prediction results...</p>
-        </div>
-      </div>
-    );
+    return <DiagnosisLoader />;
   }
 
   if (!data) {
@@ -146,10 +138,14 @@ const Prediction = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">No Prediction Data Found</h2>
-          <p className="text-gray-600 mb-4">Please upload an image first to get a diagnosis.</p>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            No Prediction Data Found
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Please upload an image first to get a diagnosis.
+          </p>
           <button
-            onClick={() => navigate('/diagnosis')}
+            onClick={() => navigate("/diagnosis")}
             className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
           >
             Go to Diagnosis Page
@@ -162,23 +158,31 @@ const Prediction = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-8">
-
         {/* --- HERO SECTION --- */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col lg:flex-row">
             <div className="lg:w-1/2">
-              <img 
-                src={data.cloudinary_url || data.image_url} 
+              <img
+                src={data.cloudinary_url || data.image_url}
                 alt="Plant"
                 className="h-80 lg:h-full w-full object-cover"
               />
             </div>
             <div className="lg:w-1/2 p-6 flex flex-col justify-center space-y-4">
-              <h1 className="text-3xl sm:text-4xl font-bold text-red-700 text-center">{data.disease_data?.disease_name || 'Unknown Disease'}</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold text-red-700 text-center">
+                {data.disease_data?.disease_name || "Unknown Disease"}
+              </h1>
               <p className="text-lg text-gray-700 text-center">
-                Plant: <span className="font-semibold">{data.disease_data?.plant_name || 'Unknown Plant'}</span>
+                Plant:{" "}
+                <span className="font-semibold">
+                  {data.disease_data?.plant_name || "Unknown Plant"}
+                </span>
               </p>
-              <div className={`inline-block px-5 py-2 mx-auto rounded-full text-center font-semibold text-white ${getConfidenceColor(data.confidence)}`}>
+              <div
+                className={`inline-block px-5 py-2 mx-auto rounded-full text-center font-semibold text-white ${getConfidenceColor(
+                  data.confidence
+                )}`}
+              >
                 {(data.confidence * 100).toFixed(1)}% Confidence
               </div>
             </div>
@@ -191,11 +195,20 @@ const Prediction = () => {
               </h2>
               <div className="flex flex-col space-y-4 overflow-y-auto max-h-96">
                 {data.weather.data.forecast.map((day, i) => (
-                  <div key={i} className="bg-blue-50 p-4 rounded-xl text-center shadow-sm">
+                  <div
+                    key={i}
+                    className="bg-blue-50 p-4 rounded-xl text-center shadow-sm"
+                  >
                     <p className="font-semibold">{formatDate(day.date)}</p>
-                    <p className="text-sm text-gray-600">{day.min_temp}° - {day.max_temp}°C</p>
-                    <p className="text-sm text-blue-600">{day.humidity}% Humidity</p>
-                    <p className="text-sm text-gray-500">{day.wind_speed} km/h</p>
+                    <p className="text-sm text-gray-600">
+                      {day.min_temp}° - {day.max_temp}°C
+                    </p>
+                    <p className="text-sm text-blue-600">
+                      {day.humidity}% Humidity
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {day.wind_speed} km/h
+                    </p>
                   </div>
                 ))}
               </div>
@@ -211,7 +224,9 @@ const Prediction = () => {
                 <h2 className="text-xl font-semibold mb-3 text-green-600 flex items-center">
                   <AlertTriangle className="mr-2" /> Description
                 </h2>
-                <div className="text-gray-700 leading-relaxed">{formatText(data.disease_data.description)}</div>
+                <div className="text-gray-700 leading-relaxed">
+                  {formatText(data.disease_data.description)}
+                </div>
               </div>
             )}
             {data.disease_data?.symptoms && (
@@ -219,17 +234,21 @@ const Prediction = () => {
                 <h2 className="text-xl font-semibold mb-3 text-green-600 flex items-center">
                   <Bug className="mr-2" /> Symptoms
                 </h2>
-                <div className="text-gray-700 leading-relaxed">{formatText(data.disease_data.symptoms)}</div>
+                <div className="text-gray-700 leading-relaxed">
+                  {formatText(data.disease_data.symptoms)}
+                </div>
               </div>
             )}
           </div>
-          <div className='rounded-3xl flex flex-col space-y-6'>
+          <div className="rounded-3xl flex flex-col space-y-6">
             {data.disease_data?.causes && (
               <div className="bg-white rounded-3xl shadow-lg p-6">
                 <h2 className="text-xl font-semibold mb-3 text-purple-600 flex items-center">
                   <Lightbulb className="mr-2" /> Causes
                 </h2>
-                <div className="text-gray-700 leading-relaxed">{formatText(data.disease_data.causes)}</div>
+                <div className="text-gray-700 leading-relaxed">
+                  {formatText(data.disease_data.causes)}
+                </div>
               </div>
             )}
             {data.disease_data?.spread_mechanisms && (
@@ -237,30 +256,39 @@ const Prediction = () => {
                 <h2 className="text-xl font-semibold mb-3 text-blue-600 flex items-center">
                   <Wind className="mr-2" /> How It Spreads
                 </h2>
-                <div className="text-gray-700 leading-relaxed">{formatText(data.disease_data.spread_mechanisms)}</div>
+                <div className="text-gray-700 leading-relaxed">
+                  {formatText(data.disease_data.spread_mechanisms)}
+                </div>
               </div>
             )}
           </div>
         </div>
 
         {/* --- UPDATED CARE RECOMMENDATIONS SECTION --- */}
-        {Array.isArray(data.disease_data?.care_advices) && data.disease_data.care_advices.length > 0 && (
-          <div className="bg-white rounded-3xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold mb-6 text-green-700 flex items-center">
-              <Leaf className="mr-3 w-7 h-7" /> Care Recommendations
-            </h2>
-            <div className="space-y-4">
-              {data.disease_data.care_advices.map((item, index) => (
-                <CareAdviceItem key={index} item={item} index={index} />
-              ))}
+        {Array.isArray(data.disease_data?.care_advices) &&
+          data.disease_data.care_advices.length > 0 && (
+            <div className="bg-white rounded-3xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-6 text-green-700 flex items-center">
+                <Leaf className="mr-3 w-7 h-7" /> Care Recommendations
+              </h2>
+              <div className="space-y-4">
+                {data.disease_data.care_advices.map((item, index) => (
+                  <CareAdviceItem key={index} item={item} index={index} />
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div className='flex justify-center'>
-          <button className='bg-green-700 text-white py-5 px-5 rounded-xl font-semibold cursor-pointer' onClick={()=> {navigate('/diagnosis')}}>Diagnose Another Plant</button>
+        <div className="flex justify-center">
+          <button
+            className="bg-green-700 text-white py-5 px-5 rounded-xl font-semibold cursor-pointer"
+            onClick={() => {
+              navigate("/diagnosis");
+            }}
+          >
+            Diagnose Another Plant
+          </button>
         </div>
-
       </div>
     </div>
   );

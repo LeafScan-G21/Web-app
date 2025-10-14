@@ -1,8 +1,9 @@
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/history`;
 
+
 export const addHistoryRecord = async (record) => {
   try {
-    const response = await fetch(`${API_URL}/`, {
+    const response = await fetch(`${API_URL}/history`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -17,6 +18,12 @@ export const addHistoryRecord = async (record) => {
 };
 
 export const getUserHistory = async (userId) => {
+  // Guard: don't call backend when userId is empty (prevents hitting frontend index.html)
+  if (!userId) {
+    console.warn("getUserHistory called without userId");
+    return [];
+  }
+
   try {
     console.log("Fetching history for user:", userId);
     const response = await fetch(`${API_URL}/history/${userId}`);

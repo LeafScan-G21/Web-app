@@ -139,12 +139,12 @@ const Login = () => {
             Continue with Google
           </button>
 
-          <button
+          {/* <button
             type="button"
             className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-colors border border-gray-200"
           >
             Continue as Guest
-          </button>
+          </button> */}
 
           <div className="text-center pt-4">
             <span className="text-sm text-gray-600">
