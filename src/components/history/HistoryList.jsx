@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { getUserHistory } from "../../services/history/historyService";
 import HistoryCard from "./HistoryCard.jsx";
-import HistoryLoader from "./HistoryLoader.jsx";
 import HistoryFilters from "./HistoryFilters.jsx";
+import HistoryLoader from "../loaders/HistoryLoader.jsx";
 
 const HistoryList = ({ userId }) => {
   const [history, setHistory] = useState([]);
@@ -37,7 +37,11 @@ const HistoryList = ({ userId }) => {
     if (sortBy === "confidence") {
       sorted.sort((a, b) => b.confidence - a.confidence);
     } else {
-      sorted.sort((a, b) => new Date(b.timestamp || b.created_at) - new Date(a.timestamp || a.created_at));
+      sorted.sort(
+        (a, b) =>
+          new Date(b.timestamp || b.created_at) -
+          new Date(a.timestamp || a.created_at)
+      );
     }
     setHistory(sorted);
   };
@@ -54,6 +58,7 @@ const HistoryList = ({ userId }) => {
   }, [history, debouncedSearch]);
 
   if (loading) return <HistoryLoader />;
+
   if (error) return <p className="text-center text-red-500">{error}</p>;
   if (history.length === 0) {
     return <p className="text-center text-gray-500">No history found</p>;
@@ -64,11 +69,20 @@ const HistoryList = ({ userId }) => {
       {/* Search input */}
       <div className="mb-4 flex flex-col sm:flex-row gap-2 items-center justify-between">
         <div className="flex items-center gap-2 w-full sm:w-80 bg-gradient-to-r from-green-100 to-emerald-50 rounded-lg px-3 py-2 border border-green-200 shadow-sm">
-          <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+          <svg
+            className="w-5 h-5 text-green-500"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
           <input
             type="text"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by disease or plant name..."
             className="bg-transparent outline-none text-sm w-full"
           />
