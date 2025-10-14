@@ -1,5 +1,8 @@
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/history`;
-
+const authData = JSON.parse(
+  localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+);
+const token = authData?.access_token || "";
 
 export const addHistoryRecord = async (record) => {
   try {

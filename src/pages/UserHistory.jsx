@@ -1,4 +1,5 @@
 import React from "react";
+import { History, Clock } from "lucide-react";
 import HistoryList from "../components/history/HistoryList";
 import { useAuth } from "../context/AuthContext";
 
@@ -7,19 +8,29 @@ const UserHistoryPage = () => {
   const userId = user?.id || ""; // replace 'id' with actual field from AuthContext
 
   return (
-    <>
-      <div className="fixed inset-0 z-0 bg-gradient-to-br from-green-200 via-emerald-100 to-green-400 min-h-screen w-full h-full"></div>
-      <div className="relative min-h-screen py-10 px-4 overflow-x-hidden z-10">
-        <div className="absolute top-10 left-10 w-40 h-40 bg-green-300 rounded-full opacity-30 blur-2xl pointer-events-none z-0"></div>
-        <div className="absolute bottom-10 right-10 w-56 h-56 bg-emerald-300 rounded-full opacity-20 blur-3xl pointer-events-none z-0"></div>
-        <div className="max-w-3xl mx-auto bg-white/90 rounded-2xl shadow-lg p-8 border border-green-100 relative z-10">
-          <h1 className="text-3xl font-bold text-green-700 mb-6 text-center">
-            My Diagnosis History
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
+      {/* Hero Section */}
+      <div className="container mx-auto px-6 pt-16 pb-8">
+        <div className="max-w-4xl mx-auto text-center mb-12">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
+            <History className="w-10 h-10 text-green-600" />
+          </div>
+
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Your Diagnosis History
           </h1>
+
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Track your plant health journey and review past diagnoses
+          </p>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-4xl mx-auto">
           <HistoryList userId={userId} />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

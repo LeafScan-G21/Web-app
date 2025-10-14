@@ -2,6 +2,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 
 const FORECAST_URL = `${import.meta.env.VITE_BACKEND_URL}/weather`;
+const authData = JSON.parse(
+  localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+);
+const token = authData?.access_token || "";
 
 export const getWeatherForecast = async (latitude, longitude, address) => {
   try {
