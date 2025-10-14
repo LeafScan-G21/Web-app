@@ -19,7 +19,7 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
   const [locationLoading, setLocationLoading] = useState(false);
   // const IMAGE_UPLOAD_SERVICE_URL =
   //   import.meta.env.VITE_IMAGE_UPLOAD_SERVICE_URL || "http://localhost:8002";
- const BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/api/v1/upload`;
+ const BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/upload/api/v1/upload`;
 
 
 

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../services/auth/supabaseClient";
 import googleLogo from "../assets/google.png";
 
+
 const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [email, setEmail] = useState("");
@@ -57,6 +58,7 @@ const Login = () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
     });
+    navigate("/dashboard");
     console.log("login Data:", data);
     if (error) toast.error(error.message);
   };
@@ -137,12 +139,12 @@ const Login = () => {
             Continue with Google
           </button>
 
-          <button
+          {/* <button
             type="button"
             className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-colors border border-gray-200"
           >
             Continue as Guest
-          </button>
+          </button> */}
 
           <div className="text-center pt-4">
             <span className="text-sm text-gray-600">
