@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Cloud, Wind, AlertTriangle, Lightbulb, Bug, Leaf } from "lucide-react";
 import CareAdviceItem from "../components/ui/CareAdviceItem";
 import DiagnosisLoader from "../components/loaders/DiagnosisLoader";
+import { motion } from "framer-motion";
 
 // New Component for Care Advice Items
 // const CareAdviceItem = ({ item, index }) => {
@@ -189,30 +190,39 @@ const Prediction = () => {
           </div>
 
           {data.weather?.data?.forecast && (
-            <div className="bg-white rounded-3xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold flex items-center mb-4 text-blue-700">
-                <Cloud className="mr-2" /> 7-Day Forecast
-              </h2>
-              <div className="flex flex-col space-y-4 overflow-y-auto max-h-96">
-                {data.weather.data.forecast.map((day, i) => (
-                  <div
-                    key={i}
-                    className="bg-blue-50 p-4 rounded-xl text-center shadow-sm"
-                  >
-                    <p className="font-semibold">{formatDate(day.date)}</p>
+            <div className="rounded-3xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold flex items-center mb-4 text-green-700">
+              <Cloud className="mr-2" /> 7-Day Forecast
+            </h2>
+
+            <div className="flex flex-col space-y-4 overflow-y-auto max-h-96">
+              {data.weather.data.forecast.map((day, i) => (
+                <motion.div
+                  key={i}
+                  className="relative bg-white/70 p-4 rounded-2xl shadow-sm backdrop-blur-md"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1, duration: 0.4 }}
+                >
+
+                  <div className="text-center">
+                    <p className="font-semibold text-gray-800">{formatDate(day.date)}</p>
                     <p className="text-sm text-gray-600">
                       {day.min_temp}° - {day.max_temp}°C
                     </p>
-                    <p className="text-sm text-blue-600">
+                    <p className="text-sm text-green-600">
                       {day.humidity}% Humidity
                     </p>
-                    <p className="text-sm text-gray-500">
-                      {day.wind_speed} km/h
-                    </p>
+                    <p className="text-sm text-gray-500">{day.wind_speed} km/h</p>
                   </div>
-                ))}
-              </div>
+
+                  <div className="absolute top-3 right-3 text-xs text-gray-400 italic">
+                    {day.description || "Clear skies"}
+                  </div>
+                </motion.div>
+              ))}
             </div>
+          </div>
           )}
         </div>
 
