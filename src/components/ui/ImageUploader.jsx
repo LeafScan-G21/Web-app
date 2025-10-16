@@ -72,20 +72,26 @@ const ImageUploader = ({ onImageUpload, onPredictionResult }) => {
 
     setIsLoading(true);
     setError(null);
+    
+
+    const authData = JSON.parse(
+      localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+    );
+    const token = authData?.access_token || "";
+    const userId = authData?.user?.id;
+
     const formData = new FormData();
     formData.append("file", selectedImage);
     if (location) {
       formData.append("lat", location.lat);
       formData.append("lon", location.lng);
       formData.append("consent_location", true);
+      formData.append("user_id", userId || "anonymous");
     } else {
       formData.append("consent_location", false);
+      formData.append("user_id", userId || "anonymous");
     }
 
-    const authData = JSON.parse(
-      localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
-    );
-    const token = authData?.access_token || "";
 
     try {
       console.log(formData);
