@@ -1,19 +1,65 @@
-import React, {useState} from 'react'
-import { Check, Play, Camera, Users, BookOpen, Sprout, ChevronRight, CheckCircle2, ChevronLeft, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react'
+import { 
+  Sparkles, Camera, Shield, Users, TrendingUp, ArrowRight, Play, CheckCircle2, 
+  Cloud, Brain, Zap, Heart, MessageCircle, ChevronRight 
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'lucide-react';
-import diagnosis from "../assets/hero-app.png";
 import PlantCard from '../components/ui/PlantCard';
 import Footer from '../components/ui/Footer';
+import home_1 from '../assets/home_1.jfif';
+import emma from '../assets/emma.jfif';
+import michael from '../assets/michael.jfif';
+import sarah from '../assets/sarah.jfif';
 
 const Home = () => {
   const navigate = useNavigate();
+  const [scrollY, setScrollY] = useState(0);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleGetStarted = () => {
     navigate('/diagnosis');
   };
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const features = [
+    {
+      icon: Brain,
+      title: 'AI-Powered Detection',
+      description: 'Advanced deep learning models analyze plant diseases with 95%+ accuracy in seconds',
+      gradient: 'from-emerald-400 to-teal-500',
+    },
+    {
+      icon: Zap,
+      title: 'Instant Results',
+      description: 'Get immediate diagnosis and treatment recommendations for your plants',
+      gradient: 'from-green-400 to-emerald-500',
+    },
+    {
+      icon: Cloud,
+      title: 'Weather Intelligence',
+      description: 'Personalized care advice based on your local weather conditions',
+      gradient: 'from-teal-400 to-cyan-500',
+    },
+    {
+      icon: Users,
+      title: 'Expert Community',
+      description: 'Connect with agricultural experts and fellow plant enthusiasts worldwide',
+      gradient: 'from-green-500 to-emerald-600',
+    },
+  ];
 
   const plants = [
     {
@@ -78,6 +124,34 @@ const Home = () => {
     }
   ];
 
+  const testimonials = [
+    {
+      text: 'LeafScan saved my entire tomato harvest. The AI detected early blight before I could even see it!',
+      author: 'Sarah Johnson',
+      role: 'Home Gardener',
+      image:  sarah,
+    },
+    {
+      text: 'As a commercial farmer, LeafScan has increased my yield by 30%. The weather recommendations are spot-on.',
+      author: 'Michael Chen',
+      role: 'Commercial Farmer',
+      image: michael,
+    },
+    {
+      text: 'The community feature is amazing. I got expert advice within minutes when my plants were struggling.',
+      author: 'Emma Rodriguez',
+      role: 'Urban Farmer',
+      image: emma,
+    },
+  ];
+
+  const stats = [
+    { value: '156+', label: 'Plants Diagnosed' },
+    { value: '89%', label: 'Accuracy Rate' },
+    { value: '10K+', label: 'Active Users' },
+    { value: '38+', label: 'Plant Species' },
+  ];
+
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % plants.length);
   };
@@ -95,243 +169,304 @@ const Home = () => {
   };
 
   return (
-    <div className="container mx-auto px-10 overflow-y-hidden">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left side Content */}
-          <div className="space-y-8">
-            <div className="space-y-6">
-              <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                <span className="bg-gradient-to-r from-green-700 via-green-700 to-green-700 bg-clip-text text-transparent">
-                  #1 FREE
-                </span>
-                <span className="text-green-600 ml-3">App</span>
-                <br />
-                <span className="text-gray-800">for Plant Disease</span>
-                <br />
-                <span className="text-gray-800">Detection</span>
-              </h1>
-              
-              <p className="text-lg text-gray-600 leading-relaxed max-w-md">
-                Take a photo of your diseased plant and get instant AI-powered 
-                diagnosis with treatment recommendations. Join our community of plant 
-                enthusiasts and agricultural experts.
-              </p>
+    <div className="min-h-screen bg-white overflow-x-hidden">
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50"
+          style={{
+            transform: `translateY(${scrollY * 0.5}px)`,
+          }}
+        />
+        <div className="absolute top-20 right-10 w-72 h-72 bg-green-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
+        <div className="absolute top-40 left-10 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
+        <div className="absolute bottom-20 right-1/3 w-72 h-72 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000" />
+
+        <div className="relative max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-green-200 shadow-sm mb-8 animate-fade-in-down">
+              <Sparkles className="w-4 h-4 text-green-600" />
+              <span className="text-sm font-semibold text-green-800">AI-Powered Plant Health Platform</span>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 animate-fade-in-up">
+              <span className="bg-gradient-to-r from-green-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+                Detect Plant Diseases
+              </span>
+              <br />
+              <span className="text-gray-800">Instantly with AI</span>
+            </h1>
+
+            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed animate-fade-in-up animation-delay-200">
+              Upload a photo and get instant, accurate diagnosis powered by advanced AI.
+              Save your crops with personalized treatment recommendations.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in-up animation-delay-400">
               <button 
                 onClick={handleGetStarted}
-                className="bg-green-700 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center space-x-2"
+                className="group px-8 py-4 bg-gradient-to-r from-green-700 to-green-600 text-white rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center gap-3"
               >
-                <span>Get Started Free</span>
-                <span className="text-xl">→</span>
+                <Camera className="w-6 h-6" />
+                <span>Upload Image</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
-              
-              <button className="border-2 border-green-500 text-green-500 hover:bg-green-50 px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center space-x-2">
-                <Play className="h-5 w-5" />
+              <button className="group px-8 py-4 bg-white text-gray-700 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-3 border-2 border-gray-200">
+                <Play className="w-6 h-6 text-green-700" />
                 <span>Watch Demo</span>
               </button>
             </div>
 
-            <div className="flex flex-wrap gap-6 pt-4">
-              <div className="flex items-center space-x-2">
-                <Check className="h-5 w-5 text-green-500" />
-                <span className="text-gray-600 font-medium">100% Free</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Check className="h-5 w-5 text-green-500" />
-                <span className="text-gray-600 font-medium">Instant Results</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Check className="h-5 w-5 text-green-500" />
-                <span className="text-gray-600 font-medium">Expert Community</span>
-              </div>
+            <div className="flex flex-wrap items-center justify-center gap-8 text-sm animate-fade-in-up animation-delay-600">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-1">{stat.value}</div>
+                  <div className="text-gray-600 font-medium">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Right side Image */}
-          <div className="relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-              <img 
-                src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
-                alt="Green leaves with water droplets" 
-                className="w-full h-96 lg:h-[500px] object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-br from-green-600/10 to-transparent"></div>
+          <div className="relative mt-20 animate-fade-in-up animation-delay-800">
+            {/* gradient overlay behind floating cards */}
+            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-0 pointer-events-none" />
+            <img
+              src={home_1}
+              alt="Plant analysis"
+              className="w-full max-w-5xl mx-auto rounded-3xl shadow-2xl border-8 border-white"
+            />
+            <div className="absolute top-10 left-10 bg-white rounded-2xl shadow-xl p-4 animate-float z-20">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-8 h-8 text-green-600" />
+                <div>
+                  <div className="font-bold text-gray-800">Disease Detected</div>
+                  <div className="text-sm text-gray-600">Early Blight - 94% confidence</div>
+                </div>
+              </div>
             </div>
-            
-            <div className="absolute -top-4 -right-4 w-20 h-20 bg-green-100 rounded-full opacity-60"></div>
-            <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-green-200 rounded-full opacity-40"></div>
+            <div className="absolute bottom-10 right-10 bg-white rounded-2xl shadow-xl p-4 animate-float animation-delay-1000 z-20">
+              <div className="flex items-center gap-3">
+                <Heart className="w-8 h-8 text-green-600" />
+                <div>
+                  <div className="font-bold text-gray-800">Treatment Ready</div>
+                  <div className="text-sm text-gray-600">3 solutions available</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
-        <div className="bg-green-50 min-h-screen">
-      {/* Hero Section */}
-          <section className="text-center py-16 px-6">
-            <h1 className="text-4xl font-bold text-green-700 mb-4">
-              Boost your crop production
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Our AI-powered platform helps you identify, treat, and prevent plant diseases
-              with the support of a thriving community.
+      {/* Features Section */}
+      <section id="features" className="py-24 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
+              Powered by Advanced <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">AI Technology</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Our cutting-edge machine learning models provide instant, accurate diagnosis for your plants
             </p>
-          </section>
+          </div>
 
-          {/* Features Section */}
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto px-6 mb-16">
-            {/* Diagnose */}
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
-              <div className="w-14 h-14 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                <Camera className="w-7 h-7 text-green-600" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Diagnose your sick crop</h3>
-              <p className="text-gray-600 mb-6 text-sm">
-                Take a photo of your sick crop and get a free diagnosis and treatment
-                suggestions — all in a few seconds!
-              </p>
-              <button className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">
-                Get a free diagnosis
-              </button>
-            </div>
-
-            {/* Community */}
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
-              <div className="w-14 h-14 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                <Users className="w-7 h-7 text-green-600" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Get expert advice</h3>
-              <p className="text-gray-600 mb-6 text-sm">
-                Have a question? Our community of agri-experts will help you. Learn
-                about crop cultivation and help fellow farmers.
-              </p>
-              <button className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">
-                Join community
-              </button>
-            </div>
-
-            {/* Library */}
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
-              <div className="w-14 h-14 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                <Sprout className="w-7 h-7 text-green-600" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Maximize crop yields</h3>
-              <p className="text-gray-600 mb-6 text-sm">
-                Our library covers specific crop diseases and prevention methods to
-                ensure a successful harvest.
-              </p>
-              <button className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">
-                Explore library
-              </button>
-            </div>
-          </section>
-
-          {/* Plant Disease Detection Section */}
-          <section className="bg-white py-16 px-6">
-            <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
-              {/* Image */}
-              <div>
-                <img
-                  src={diagnosis}
-                  alt="Plant diagnosis"
-                  className="rounded-xl shadow-md"
-                />
-              </div>
-
-              {/* Text */}
-              <div>
-                <h2 className="text-3xl font-bold text-green-700 mb-4">
-                  Plant disease detection made simple
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Our advanced CNN model analyzes your plant photos and provides
-                  accurate disease identification with personalized care
-                  recommendations.
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    Instant AI-powered analysis
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    95%+ accuracy rate
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    Trusted by thousands of farmers
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <div className="bg-green-50 py-16 px-4">
-              <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-12">
-                  <h1 className="text-5xl font-bold mb-4 text-green-700">Plants We Diagnose
-                  </h1>
-                  <p className="text-gray-600 text-lg">
-                    Our AI can diagnose diseases across multiple plant species with high accuracy
-                  </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="group bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+              >
+                <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg`}>
+                  <feature.icon className="w-8 h-8 text-white" />
                 </div>
-                <div className="relative">
-                  <div className="flex items-center justify-center gap-6">
-                    <button
-                      onClick={prevSlide}
-                      className="p-3 rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors z-10"
-                      aria-label="Previous slide"
+                <h3 className="text-xl font-bold text-gray-800 mb-3">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-24 px-6 bg-gradient-to-br from-green-100 to-emerald-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
+              How It <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Works</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Three simple steps to healthier plants
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
+            {[
+              { step: '01', title: 'Capture', description: 'Take a photo of your plant leaf showing signs of disease', icon: Camera },
+              { step: '02', title: 'Analyze', description: 'Our AI analyzes the image using deep learning models', icon: Brain },
+              { step: '03', title: 'Treat', description: 'Get instant diagnosis with personalized treatment plans', icon: Sparkles },
+            ].map((item, index) => (
+              <div key={index} className="relative">
+                <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
+                  <div className="text-6xl font-bold text-blue-200 mb-4">{item.step}</div>
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-800 to-green-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <item.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-3">{item.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                </div>
+                {index < 2 && (
+                  <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
+                    <ChevronRight className="w-8 h-8 text-green-300" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <h3 className="text-3xl font-bold text-gray-800 mb-8">Supports 38+ Plant Species</h3>
+            
+            {/* Image Runner - Horizontal Scrolling Carousel */}
+            <div className="relative w-full overflow-hidden bg-gradient-to-r from-emerald-50 via-transparent to-emerald-50 rounded-2xl p-6">
+              <div className="scrolling-container">
+                <div className="scrolling-track">
+                  {/* First set of plants */}
+                  {plants.map((plant, index) => (
+                    <div
+                      key={`first-${index}`}
+                      className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex-shrink-0 w-40 h-48"
                     >
-                      <ChevronLeft className="w-6 h-6 text-gray-700" />
-                    </button>
-                    <div className="flex gap-6 overflow-hidden">
-                      {getVisiblePlants().map((plant, index) => (
-                        <PlantCard key={index} plant={plant} index={index} />
-                      ))}
+                      <img src={plant.image} alt={plant.name} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-3">
+                        <span className="text-white font-bold text-sm">{plant.name}</span>
+                      </div>
                     </div>
-                    <button
-                      onClick={nextSlide}
-                      className="p-3 rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors z-10"
-                      aria-label="Next slide"
+                  ))}
+                  
+                  {/* Duplicate set for seamless loop */}
+                  {plants.map((plant, index) => (
+                    <div
+                      key={`second-${index}`}
+                      className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex-shrink-0 w-40 h-48"
                     >
-                      <ChevronRight className="w-6 h-6 text-gray-700" />
-                    </button>
+                      <img src={plant.image} alt={plant.name} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-3">
+                        <span className="text-white font-bold text-sm">{plant.name}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Gradient overlays for smooth fade effect */}
+              <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white via-white to-transparent z-10" />
+              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white via-white to-transparent z-10" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Community/Testimonials Section */}
+      <section id="community" className="py-24 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
+              Loved by <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Farmers</span> Worldwide
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Join thousands of plant enthusiasts who trust LeafScan
+            </p>
+          </div>
+
+          <div className="relative max-w-4xl mx-auto">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-12 shadow-xl">
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  className={`transition-opacity duration-500 ${
+                    index === currentTestimonial ? 'opacity-100' : 'opacity-0 absolute inset-0 p-12'
+                  }`}
+                >
+                  <MessageCircle className="w-12 h-12 text-green-600 mb-6" />
+                  <p className="text-2xl text-gray-700 mb-8 leading-relaxed italic">
+                    "{testimonial.text}"
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.author}
+                      className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
+                    />
+                    <div>
+                      <div className="font-bold text-gray-800 text-lg">{testimonial.author}</div>
+                      <div className="text-gray-600">{testimonial.role}</div>
+                    </div>
                   </div>
                 </div>
-                <div className="text-center mt-12">
-                  <a
-                    href="/diseases"
-                    className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-4 rounded-lg shadow-lg transition-colors"
-                  >
-                    View All Diseases
-                    <ArrowRight className="w-5 h-5" />
-                  </a>
-                </div>
-              </div>
+              ))}
             </div>
-          </section>
-          <section className="text-center py-16 px-6 bg-white rounded-xl">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              Ready to save your crops?
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Join thousands of farmers and plant enthusiasts who trust LeafScan
-              for accurate plant disease detection and treatment.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition flex items-center justify-center gap-2" onClick={handleGetStarted}>
-                Start Free Diagnosis <ChevronRight className="w-4 h-4" />
-              </button>
-              <button className="bg-white border border-green-600 text-green-600 px-6 py-3 rounded-lg font-medium hover:bg-green-50 transition">
-                Sign In
-              </button>
+            <div className="flex justify-center gap-2 mt-8">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentTestimonial(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentTestimonial ? 'bg-green-600 w-8' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
             </div>
-          </section>
-          <section>
-            <Footer />
-          </section>
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 px-6 bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full filter blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full filter blur-3xl" />
+        </div>
+        <div className="relative max-w-4xl mx-auto text-center">
+          <Shield className="w-20 h-20 text-white mx-auto mb-6 animate-pulse" />
+          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
+            Start Protecting Your Plants Today
+          </h2>
+          <p className="text-xl text-white/90 mb-10 leading-relaxed">
+            Join 10,000+ farmers and gardeners using AI to keep their plants healthy.
+            100% free, no credit card required.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button 
+              onClick={handleGetStarted}
+              className="group px-10 py-5 bg-white text-green-700 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 flex items-center gap-3"
+            >
+              <Camera className="w-6 h-6" />
+              <span>Get Started Free</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+            <button className="px-10 py-5 bg-transparent text-white rounded-2xl font-bold text-lg border-2 border-white hover:bg-white/10 transition-all duration-300">
+              Learn More
+            </button>
+          </div>
+          <div className="flex items-center justify-center gap-6 mt-12 text-white/90">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5" />
+              <span>No Credit Card</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5" />
+              <span>Always Free</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5" />
+              <span>Instant Results</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <Footer />
+    </div>
   )
 }
 
