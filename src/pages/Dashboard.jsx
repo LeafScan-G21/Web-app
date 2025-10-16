@@ -33,7 +33,7 @@ import Image_StrewBerry from "../assets/StrewBerry.jpg";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Dashboard() {
-  const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "localhost:8000";
+  const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const authData = JSON.parse(
     localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
   );
@@ -192,11 +192,7 @@ export default function Dashboard() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [VITE_BACKEND_URL, latitude, longitude, token]);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
+ 
   const modules = [
     {
       icon: Camera,

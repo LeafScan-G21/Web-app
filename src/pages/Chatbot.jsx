@@ -82,6 +82,7 @@ export default function ChatbotInterface() {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_API_URL;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -107,14 +108,16 @@ export default function ChatbotInterface() {
     setIsTyping(true);
 
     try {
-      const formData = new FormData();
-      userQuestion += "Answer without saying Hello! I'm a digital extension agent powered by artificial intelligence, working for PlantVillage."
-      formData.append('question', userQuestion);
-      formData.append('response_length', 'medium');
+      const requestBody = {
+        question: userQuestion
+      };
 
-      const response = await fetch('/proxy/api/v2/ask?session_id=068db4a9-4d5c-77b2-8000-7df536d566e6', {
+      const response = await fetch(`${BACKEND_URL}/chat/ask`, {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json' // 
+        },
+        body: JSON.stringify(requestBody)
       });
 
       const data = await response.json();
