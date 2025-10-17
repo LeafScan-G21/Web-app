@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import PlantCard from '../components/ui/PlantCard';
 import Footer from '../components/ui/Footer';
 import home_1 from '../assets/home_1.jfif';
-import emma from '../assets/emma.jfif';
+import emma from '../assets/Emma.jfif';
 import michael from '../assets/michael.jfif';
 import sarah from '../assets/sarah.jfif';
 
