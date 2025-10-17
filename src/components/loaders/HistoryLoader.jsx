@@ -1,62 +1,38 @@
 import React from "react";
-import { History, Database, FileText, Clock } from "lucide-react";
+import { Leaf, Sparkles } from 'lucide-react';
 
-const HistoryLoader = ({ message = "Loading your history..." }) => {
+const HistoryLoader = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-green-50 to-emerald-50">
+    <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="text-center max-w-md mx-auto">
-        <div className="mb-8">
-          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center relative overflow-hidden">
-            {/* Animated background pulse */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-200 to-emerald-200 animate-pulse"></div>
+        <div className="relative w-32 h-32 mx-auto mb-8">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-green-100 via-emerald-50 to-green-50 animate-pulse"></div>
 
-            {/* Rotating loader ring */}
-            <div className="absolute inset-2 rounded-full border-4 border-transparent border-t-green-500 border-r-green-400 animate-spin"></div>
+          <div className="absolute inset-4 rounded-full border-4 border-transparent border-t-green-500 border-r-emerald-400 animate-spin"></div>
 
-            {/* Main icon with bounce animation */}
-            <div className="relative z-10 animate-bounce">
-              <History size={32} className="text-green-600" />
-            </div>
-
-            {/* Floating dots */}
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
-            <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-emerald-400 rounded-full animate-ping animation-delay-200"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Leaf className="w-12 h-12 text-green-600 animate-pulse" />
           </div>
 
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">
-            Loading History
-          </h1>
-
-          {/* Animated loading dots */}
-          <div className="flex justify-center items-center space-x-2 mb-6">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce delay-[100ms]"></div>
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce delay-[200ms]"></div>
-          </div>
-
-          {/* Progress bar */}
-          <div className="w-full bg-green-100 rounded-full h-2 mb-4 overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse"></div>
-          </div>
-
-          <p className="text-gray-600 text-sm">{message}</p>
+          <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-emerald-400 animate-bounce" />
+          <Sparkles className="absolute -bottom-2 -left-2 w-5 h-5 text-green-400 animate-bounce delay-300" style={{ animationDelay: '0.3s' }} />
         </div>
 
-        {/* History-specific elements */}
-        <div className="space-y-2 text-sm text-gray-500">
-          <p className="flex items-center animate-pulse">
-            <Database size={16} className="mr-2 text-green-600" />
-            Fetching historical records...
-          </p>
-          <p className="flex items-center animate-pulse delay-[500ms]">
-            <FileText size={16} className="mr-2 text-green-600" />
-            Loading past diagnoses...
-          </p>
-          <p className="flex items-center animate-pulse delay-[1000ms]">
-            <Clock size={16} className="mr-2 text-green-600" />
-            Organizing timeline...
-          </p>
+        <h3 className="text-2xl font-semibold text-gray-800 mb-3">
+          Loading Your Journey
+        </h3>
+
+        <div className="flex justify-center items-center space-x-2 mb-6">
+          <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-bounce"></div>
+          <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+          <div className="w-2.5 h-2.5 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
         </div>
+
+        <div className="w-64 mx-auto bg-green-50 rounded-full h-1.5 overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-green-400 via-emerald-500 to-green-400 rounded-full animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+        </div>
+
+        <p className="text-gray-500 text-sm mt-4">Gathering your plant health records...</p>
       </div>
     </div>
   );
