@@ -29,11 +29,11 @@ const PostCard = ({ post }) => {
     fetchAuthorDetails();
   }, [post.author_id]);
   return (
-    <div className="w-full bg-white border rounded-lg hover:shadow-lg transition-shadow duration-200 p-4">
+    <div className="w-full bg-white border border-green-100 rounded-2xl hover:shadow-xl transition-all duration-300 p-6 group hover:border-green-200">
       {/* Header */}
       <div className="flex items-start space-x-4 mb-4">
         {/* Avatar */}
-        <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+        <div className="h-12 w-12 rounded-full overflow-hidden bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center ring-2 ring-green-50 group-hover:ring-green-100 transition-all duration-300">
           {authorDetails ? (
             <img
               src={
@@ -44,7 +44,7 @@ const PostCard = ({ post }) => {
               className="h-full w-full object-cover"
             />
           ) : (
-            <User className="h-6 w-6 text-gray-500" />
+            <User className="h-6 w-6 text-green-600" />
           )}
         </div>
 
@@ -61,7 +61,7 @@ const PostCard = ({ post }) => {
               <span>{formattedDate}</span>
             </div>
           </div>
-          <span className="text-xs bg-gray-100 text-gray-700 rounded px-2 py-1 inline-block">
+          <span className="text-xs bg-green-100 text-green-700 rounded-full px-3 py-1 inline-block font-medium">
             {post.plant_name}
           </span>
         </div>
@@ -70,17 +70,17 @@ const PostCard = ({ post }) => {
       {/* Content */}
       <div className="space-y-4 mb-4">
         <Link to={`/forum/post/${post._id}`}>
-          <h2 className="text-xl font-bold text-gray-900 hover:text-green-600 transition-colors line-clamp-2">
+          <h2 className="text-xl font-bold text-gray-900 hover:text-green-600 transition-colors line-clamp-2 group-hover:text-green-600">
             {post.title}
           </h2>
         </Link>
 
         {coverImage && (
-          <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
+          <div className="relative w-full h-48 rounded-xl overflow-hidden bg-gray-100 shadow-sm group-hover:shadow-md transition-shadow duration-300">
             <img
               src={coverImage}
               alt={post.title}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           </div>
         )}
@@ -91,13 +91,13 @@ const PostCard = ({ post }) => {
           {post.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="text-xs border rounded px-2 py-0.5 text-gray-700"
+              className="text-xs border border-green-200 rounded-full px-3 py-1 text-green-700 bg-green-50 hover:bg-green-100 transition-colors duration-200 font-medium"
             >
               #{tag}
             </span>
           ))}
           {post.tags.length > 3 && (
-            <span className="text-xs border rounded px-2 py-0.5 text-gray-500">
+            <span className="text-xs border border-gray-200 rounded-full px-3 py-1 text-gray-600 bg-gray-50 font-medium">
               +{post.tags.length - 3} more
             </span>
           )}
@@ -105,30 +105,30 @@ const PostCard = ({ post }) => {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-2 border-t">
+      <div className="flex items-center justify-between pt-4 border-t border-green-100">
         <div className="flex items-center space-x-4">
           {/* Upvotes / Downvotes */}
           <div className="flex items-center space-x-1">
-            <button className="flex items-center space-x-1 text-green-600 hover:bg-gray-100 px-2 py-1 rounded text-sm">
+            <button className="flex items-center space-x-1 text-green-600 hover:bg-green-50 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200">
               <ChevronUp className="h-4 w-4" />
               <span>{post.upvote_count}</span>
             </button>
-            <button className="flex items-center space-x-1 text-gray-400 hover:bg-gray-100 px-2 py-1 rounded text-sm">
+            <button className="flex items-center space-x-1 text-gray-400 hover:bg-gray-50 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200">
               <ChevronDown className="h-4 w-4" />
               <span>{post.downvote_count}</span>
             </button>
           </div>
 
           {/* Comments */}
-          <div className="flex items-center space-x-1 text-gray-500">
+          <div className="flex items-center space-x-2 text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg">
             <MessageCircle className="h-4 w-4" />
-            <span className="text-sm">{post.comment_count}</span>
+            <span className="text-sm font-medium">{post.comment_count}</span>
           </div>
         </div>
 
         {/* Read More */}
         <Link to={`/forum/post/${post._id}`}>
-          <button className="border border-gray-300 text-sm px-3 py-1.5 rounded hover:bg-gray-100 transition">
+          <button className="border border-green-300 text-sm px-4 py-2 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-200 text-green-700 font-medium shadow-sm hover:shadow">
             Read More
           </button>
         </Link>

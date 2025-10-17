@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
 import hero from "../../assets/forum/hero-plants.jpg";
 import { useState } from "react";
 import { Search } from "lucide-react";
+import { motion } from "framer-motion";
 import { Input } from "../../components/forum/Input.jsx";
 import PostCard from "../../components/forum/PostCard.jsx";
 import Pagination from "../../components/forum/Pagination.jsx";
@@ -102,11 +104,48 @@ const Forum = () => {
       setFetchingPosts(false);
     }
   };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 },
+    },
+  };
+
+  const heroVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-6 sm:py-8 lg:py-12">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
+      <motion.div
+        className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-6 sm:py-8 lg:py-12"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Hero Section */}
-        <div className="relative mb-12 sm:mb-16">
+        <motion.div className="relative mb-12 sm:mb-16" variants={heroVariants}>
           <div className="relative h-72 sm:h-80 md:h-96 lg:h-[28rem] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
             <img
               src={hero}
@@ -136,10 +175,10 @@ const Forum = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Search Section */}
-        <div className="mb-12 sm:mb-16">
+        <motion.div className="mb-12 sm:mb-16" variants={itemVariants}>
           <div className="max-w-2xl mx-auto">
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300" />
@@ -230,10 +269,10 @@ const Forum = () => {
               Discover solutions, share experiences, and grow your knowledge
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Posts Section */}
-        <div className="max-w-5xl mx-auto">
+        <motion.div className="max-w-5xl mx-auto" variants={itemVariants}>
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 sm:mb-12 gap-4">
             <div>
@@ -266,22 +305,28 @@ const Forum = () => {
                   {/* Posts Grid */}
                   <div className="space-y-6 sm:space-y-8 mb-12 sm:mb-16">
                     {fetchedPosts.map((post, index) => (
-                      <div
+                      <motion.div
                         key={post._id}
-                        className="transform hover:-translate-y-1 transition-all duration-300 hover:shadow-xl"
-                        style={{
-                          animationDelay: `${index * 100}ms`,
-                        }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: index * 0.1 }}
+                        whileHover={{ y: -4, scale: 1.01 }}
+                        className="transition-shadow duration-300"
                       >
                         <PostCard post={post} />
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
 
                   {/* Pagination Section */}
                   {totalPages > 1 && (
                     <>
-                      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8">
+                      <motion.div
+                        className="bg-white rounded-2xl shadow-lg border border-green-100 p-6 sm:p-8"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                      >
                         <div className="flex flex-col items-center space-y-4">
                           <div className="text-center">
                             <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
@@ -297,13 +342,18 @@ const Forum = () => {
                             onPageChange={handlePageChange}
                           />
                         </div>
-                      </div>
+                      </motion.div>
                     </>
                   )}
                 </>
               ) : (
                 <>
-                  <div className="text-center py-16 px-6">
+                  <motion.div
+                    className="text-center py-16 px-6"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
                     {/* Icon Container */}
                     <div className="relative mb-8 flex justify-center">
                       <div className="relative">
@@ -350,18 +400,18 @@ const Forum = () => {
                       <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-green-50 rounded-full opacity-30 blur-xl"></div>
                       <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-emerald-50 rounded-full opacity-40 blur-lg"></div>
                     </div>
-                  </div>
+                  </motion.div>
                 </>
               )}
             </>
           )}
-        </div>
+        </motion.div>
 
         {/* Decorative Elements */}
-        <div className="fixed top-20 left-10 w-32 h-32 bg-green-100 rounded-full opacity-20 blur-3xl pointer-events-none" />
-        <div className="fixed bottom-20 right-10 w-40 h-40 bg-green-200 rounded-full opacity-15 blur-3xl pointer-events-none" />
-        <div className="fixed top-1/2 right-20 w-24 h-24 bg-green-300 rounded-full opacity-10 blur-2xl pointer-events-none" />
-      </div>
+        <div className="fixed top-20 left-10 w-32 h-32 bg-green-200 rounded-full opacity-20 blur-3xl pointer-events-none" />
+        <div className="fixed bottom-20 right-10 w-40 h-40 bg-green-300 rounded-full opacity-15 blur-3xl pointer-events-none" />
+        <div className="fixed top-1/2 right-20 w-24 h-24 bg-emerald-200 rounded-full opacity-10 blur-2xl pointer-events-none" />
+      </motion.div>
     </div>
   );
 };

@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronUp,
   ChevronDown,
@@ -12,6 +14,9 @@ import {
   Share2,
   Edit,
   Trash2,
+  Eye,
+  Tag,
+  X,
 } from "lucide-react";
 import PostCard from "../../components/forum/PostCard.jsx";
 import EditPost from "../../components/forum/modals/EditPost.jsx";
@@ -47,6 +52,8 @@ const PostDetail = () => {
   const [showAllComments, setShowAllComments] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState("view");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
 
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
@@ -94,6 +101,9 @@ const PostDetail = () => {
       if (post && post._id) {
         try {
           const response = await getCommentsByPostId(post._id);
+          console.log("Fetched comments response:", response);
+          console.log("Comments data:", response?.data);
+          console.log("Is array?", Array.isArray(response?.data));
           setComments(response?.data);
         } catch (error) {
           console.error("Failed to fetch comments:", error);
@@ -102,6 +112,10 @@ const PostDetail = () => {
     };
     fetchComments();
   }, [post]);
+
+  useEffect(() => {
+    console.log("comments CHANGED:", comments);
+  }, [comments]);
 
   useEffect(() => {
     const fetchVoteStatus = async () => {
@@ -174,13 +188,18 @@ const PostDetail = () => {
 
   if (!post) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="text-center max-w-md mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 flex items-center justify-center px-4">
+        <motion.div
+          className="text-center max-w-md mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="mb-8">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
-              <MessageCircle className="h-10 w-10 text-gray-400" />
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center shadow-md">
+              <MessageCircle className="h-10 w-10 text-green-600" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-4">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
               Post not found
             </h1>
             <p className="text-gray-600 mb-8">
@@ -188,12 +207,12 @@ const PostDetail = () => {
             </p>
           </div>
           <Link to="/forum">
-            <button className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm">
+            <button className="inline-flex items-center px-6 py-3 border border-green-300 rounded-lg text-sm font-medium text-green-700 bg-white hover:bg-green-50 hover:border-green-400 transition-all duration-200 shadow-sm hover:shadow-md">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Posts
             </button>
           </Link>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -396,26 +415,65 @@ const PostDetail = () => {
     toast.success("Post link copied to clipboard!");
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4 },
+    },
+  };
+
+  const slideUpVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50/30">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
+      <motion.div
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Back Button */}
-        <div className="mb-6 sm:mb-8">
+        <motion.div className="mb-6 sm:mb-8" variants={itemVariants}>
           <Link to="/forum">
-            <button className="inline-flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200 group">
+            <button className="inline-flex items-center space-x-2 text-sm font-medium text-green-600 hover:text-green-700 transition-colors duration-200 group">
               <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-200" />
               <span>Back to Posts</span>
             </button>
           </Link>
-        </div>
+        </motion.div>
 
         {/* Post Content */}
-        <article className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 p-6 sm:p-8 mb-8">
+        <motion.article
+          className="bg-white border border-green-200 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 p-6 sm:p-8 mb-8"
+          variants={itemVariants}
+        >
           {/* Post Header */}
           <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 gap-4">
             <div className="flex items-start space-x-4 flex-1 min-w-0">
               <div className="flex-shrink-0">
-                <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center ring-2 ring-gray-100">
+                <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full overflow-hidden bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center ring-2 ring-green-100">
                   {post.author_id ? (
                     <img
                       src={
@@ -426,7 +484,7 @@ const PostDetail = () => {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <User className="h-7 w-7 sm:h-8 sm:w-8 text-gray-500" />
+                    <User className="h-7 w-7 sm:h-8 sm:w-8 text-green-600" />
                   )}
                 </div>
               </div>
@@ -442,7 +500,7 @@ const PostDetail = () => {
                   <Calendar className="h-4 w-4 flex-shrink-0" />
                   <span className="truncate">{formattedDate}</span>
                 </div>
-                <div className="inline-flex items-center bg-gray-100 text-sm font-medium px-3 py-1.5 rounded-full text-gray-700">
+                <div className="inline-flex items-center bg-green-100 text-sm font-medium px-3 py-1.5 rounded-full text-green-700">
                   {post.plant_name}
                 </div>
               </div>
@@ -452,7 +510,7 @@ const PostDetail = () => {
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleShare}
-                className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                className="self-start flex-shrink-0 p-2 text-green-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200"
                 title="Share post"
               >
                 <Share2 className="h-5 w-5" />
@@ -464,7 +522,7 @@ const PostDetail = () => {
                       setMode("edit");
                       setModalOpen(true);
                     }}
-                    className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                    className="self-start flex-shrink-0 p-2 text-green-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200"
                     title="Edit Post"
                   >
                     <Edit className="h-5 w-5" />
@@ -474,7 +532,7 @@ const PostDetail = () => {
                       setMode("delete");
                       setModalOpen(true);
                     }}
-                    className="self-start flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                    className="self-start flex-shrink-0 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
                     title="Delete Post"
                   >
                     <Trash2 className="h-5 w-5" />
@@ -494,7 +552,7 @@ const PostDetail = () => {
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center px-3 py-1 border border-gray-200 rounded-full text-sm text-gray-600 bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+                className="inline-flex items-center px-3 py-1 border border-green-200 rounded-full text-sm text-green-700 bg-green-50 hover:bg-green-100 transition-colors duration-200"
               >
                 #{tag}
               </span>
@@ -507,7 +565,11 @@ const PostDetail = () => {
                 {post.image_urls.map((url, index) => (
                   <div
                     key={index}
-                    className="group relative rounded-xl overflow-hidden bg-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300"
+                    onClick={() => {
+                      setSelectedImage(url);
+                      setImageModalOpen(true);
+                    }}
+                    className="group relative rounded-xl overflow-hidden bg-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
                   >
                     <img
                       src={url}
@@ -515,6 +577,11 @@ const PostDetail = () => {
                       className="w-full h-48 sm:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg">
+                        <Eye className="h-6 w-6 text-green-600" />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -559,30 +626,33 @@ const PostDetail = () => {
               </button>
             </div>
 
-            <div className="flex items-center space-x-2 px-3 py-2 text-gray-500 bg-gray-50 rounded-lg">
-              <MessageCircle className="h-5 w-5" />
+            <div className="flex items-center space-x-2 px-3 py-2 text-gray-500 bg-green-50 rounded-lg">
+              <MessageCircle className="h-5 w-5 text-green-600" />
               <span className="font-medium">{comments?.length} comments</span>
             </div>
           </footer>
-        </article>
+        </motion.article>
 
         {/* Comments Section */}
-        <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 sm:p-8 mb-8">
+        <motion.section
+          className="bg-white border border-green-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 p-6 sm:p-8 mb-8"
+          variants={slideUpVariants}
+        >
           <header className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
               Comments
-              <span className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-600">
+              <span className="bg-green-100 px-3 py-1 rounded-full text-sm font-medium text-green-700">
                 {comments?.length}
               </span>
             </h2>
           </header>
 
           {/* Add Comment Form */}
-          <div className="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-100">
+          <div className="mb-8 p-6 bg-green-50 rounded-xl border border-green-100">
             <div className="space-y-4">
               <textarea
                 placeholder="Share your thoughts or advice..."
-                className="w-full border border-gray-200 rounded-xl p-4 min-h-[120px] text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 resize-none"
+                className="w-full border border-green-200 rounded-xl p-4 min-h-[120px] text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 resize-none bg-white"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
               />
@@ -607,32 +677,46 @@ const PostDetail = () => {
 
           {/* Comments List */}
           <div className="space-y-6">
+            {console.log(
+              "Rendering comments section. Comments:",
+              comments,
+              "Length:",
+              comments?.length
+            )}
             {comments?.length > 0 ? (
               <>
                 {(showAllComments ? comments : comments.slice(0, 3)).map(
-                  (comment, index) => (
-                    <div key={comment._id}>
-                      <CommentItem
-                        comment={comment}
-                        onVote={handleCommentVote}
-                        onToggleVote={handleToggleCommentVote}
-                        isLast={
-                          index ===
-                          (showAllComments
-                            ? comments?.length - 1
-                            : Math.min(2, comments?.length - 1))
-                        }
-                        handleCommentUpdate={handleCommentUpdate}
-                        handleCommentDelete={handleCommentDelete}
-                      />
-                    </div>
-                  )
+                  (comment, index) => {
+                    console.log("Rendering comment:", comment._id, index);
+                    return (
+                      <motion.div
+                        key={comment._id}
+                        variants={itemVariants}
+                        initial="hidden"
+                        animate="visible"
+                      >
+                        <CommentItem
+                          comment={comment}
+                          onVote={handleCommentVote}
+                          onToggleVote={handleToggleCommentVote}
+                          isLast={
+                            index ===
+                            (showAllComments
+                              ? comments?.length - 1
+                              : Math.min(2, comments?.length - 1))
+                          }
+                          handleCommentUpdate={handleCommentUpdate}
+                          handleCommentDelete={handleCommentDelete}
+                        />
+                      </motion.div>
+                    );
+                  }
                 )}
                 {comments?.length > 3 && (
-                  <div className="text-center pt-6 border-t border-gray-100">
+                  <div className="text-center pt-6 border-t border-green-100">
                     <button
                       onClick={() => setShowAllComments(!showAllComments)}
-                      className="inline-flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200 font-medium"
+                      className="inline-flex items-center space-x-2 px-4 py-2 text-green-700 hover:text-green-900 hover:bg-green-50 rounded-lg transition-all duration-200 font-medium"
                     >
                       <MessageCircle className="h-4 w-4" />
                       <span>
@@ -646,8 +730,8 @@ const PostDetail = () => {
               </>
             ) : (
               <div className="text-center py-12">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                  <MessageCircle className="h-6 w-6 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+                  <MessageCircle className="h-6 w-6 text-green-500" />
                 </div>
                 <p className="text-gray-500 text-lg">
                   No comments yet. Be the first to share your thoughts!
@@ -655,16 +739,19 @@ const PostDetail = () => {
               </div>
             )}
           </div>
-        </section>
+        </motion.section>
 
         {/* Related Posts */}
         {relatedPosts?.length > 0 && (
-          <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 sm:p-8">
+          <motion.section
+            className="bg-white border border-green-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 p-6 sm:p-8"
+            variants={slideUpVariants}
+          >
             <header className="flex items-center space-x-3 mb-6">
               <h2 className="text-2xl font-bold text-gray-900">
                 Related Posts
               </h2>
-              <span className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-600">
+              <span className="bg-green-100 px-3 py-1 rounded-full text-sm font-medium text-green-700">
                 {relatedPosts?.length}
               </span>
             </header>
@@ -673,19 +760,58 @@ const PostDetail = () => {
                 <PostCard key={relatedPost.id} post={relatedPost} />
               ))}
             </div>
-          </section>
+          </motion.section>
         )}
-      </div>
-      {modalOpen && mode === "edit" && (
-        <EditPost
-          post={post}
-          onClose={() => setModalOpen(false)}
-          onSave={() => {}}
-        />
-      )}
-      {modalOpen && mode === "delete" && (
-        <DeletePost post_id={post._id} onClose={() => setModalOpen(false)} />
-      )}
+      </motion.div>
+      <AnimatePresence>
+        {modalOpen && mode === "edit" && (
+          <EditPost
+            post={post}
+            onClose={() => setModalOpen(false)}
+            onSave={() => {}}
+          />
+        )}
+        {modalOpen && mode === "delete" && (
+          <DeletePost post_id={post._id} onClose={() => setModalOpen(false)} />
+        )}
+        {imageModalOpen && selectedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            onClick={() => setImageModalOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="relative max-w-7xl max-h-[90vh] w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setImageModalOpen(false)}
+                className="absolute -top-12 right-0 p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full transition-all duration-200 text-white group"
+                aria-label="Close image"
+              >
+                <X className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" />
+              </button>
+
+              {/* Image Container */}
+              <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+                <img
+                  src={selectedImage}
+                  alt="Full size view"
+                  className="w-full h-full max-h-[85vh] object-contain"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

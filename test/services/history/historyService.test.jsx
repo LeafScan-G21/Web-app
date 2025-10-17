@@ -30,7 +30,7 @@ describe("services/history/historyService", () => {
       status: 200,
       statusText: "OK",
       headers: { get: () => "application/json" },
-      text: () => Promise.resolve(JSON.stringify(payload)),
+      json: () => Promise.resolve(payload),
     });
     const res = await getUserHistory("u1");
     const [calledUrl2] = globalThis.fetch.mock.calls[0];
