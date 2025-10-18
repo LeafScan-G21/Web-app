@@ -186,7 +186,3 @@ npm run lint
 ## Contributing
 
 PRs are welcome. Please keep UI changes consistent with the green theme and framer-motion patterns used across pages.
-
-## License
-
-This repository does not currently include a license file. Add one (e.g., MIT) if you plan to open-source the project.
