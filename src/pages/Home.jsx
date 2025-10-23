@@ -10,6 +10,9 @@ import home_1 from '../assets/home_1.jfif';
 import emma from '../assets/Emma.jfif';
 import michael from '../assets/michael.jfif';
 import sarah from '../assets/sarah.jfif';
+import AppDownload from '../assets/AppDownload.png';
+import AppDownload2 from '../assets/AppDownload-2.png';
+import phone_2 from '../assets/hero-app.png';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -418,6 +421,66 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* App Download Section */}
+
+      <section className="py-24 px-6 bg-green-100 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-green-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
+
+        <div className="relative max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+          {/* Left content */}
+          <div className="text-left space-y-6">
+            <h2 className="text-5xl font-bold text-gray-900 leading-tight">
+              Keep Your <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Plants Healthy</span> <br /> Wherever You Go
+            </h2>
+            <p className="text-lg text-gray-600 max-w-md">
+              Download the <strong>LeafScan App</strong> and diagnose plant diseases instantly from your phone. 
+              Get AI-powered results, treatment advice, and connect with a community of growers—all in one place.
+            </p>
+
+            <div className="flex items-center gap-4 mt-8">
+              <a href="https://drive.google.com/file/d/1YPiDAiTxqBu1b7Vhr9f_W2wR_3jbTxOv/view">
+                <img
+                  src={AppDownload}
+                  alt="Get it on Google Play"
+                  className="h-14 transition-transform hover:scale-105"
+                />
+              </a>
+              <a href="https://drive.google.com/file/d/1YPiDAiTxqBu1b7Vhr9f_W2wR_3jbTxOv/view">
+                <img
+                  src={AppDownload2}
+                  alt="Download on the App Store"
+                  className="h-15.5 transition-transform hover:scale-105"
+                />
+              </a>
+            </div>
+          </div>
+
+          {/* Right mockup image */}
+          <div className="relative flex justify-center md:justify-end w-full h-full">
+            <div className="relative w-full h-full flex items-center justify-center md:justify-end">
+              <img
+                src={phone_2}
+                alt="LeafScan mobile app mockup"
+                className="w-full h-full max-h-[600px] object-contain rounded-[2rem] shadow-2xl border-6 border-green-100"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6 bg-white shadow-xl rounded-2xl p-3 md:p-4 flex items-center gap-2 md:gap-3 animate-float max-w-[200px] md:max-w-none">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 md:w-8 md:h-8 text-green-600 flex-shrink-0">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15L15 9.75" />
+                </svg>
+                <div>
+                  <p className="text-gray-800 font-semibold text-sm md:text-base">AI Detection Active</p>
+                  <p className="text-gray-500 text-xs md:text-sm">89% Confidence</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
       {/* CTA Section */}
       <section className="py-24 px-6 bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 relative overflow-hidden">
