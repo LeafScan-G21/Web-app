@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { Send, Bot, User } from "lucide-react";
 
 const formatMessage = (text) => {
   // Split by newlines to handle paragraphs and lists
-  const lines = text.split('\n');
+  const lines = text.split("\n");
   const elements = [];
   let currentList = [];
   let listType = null;
@@ -12,17 +12,17 @@ const formatMessage = (text) => {
     // Check for numbered lists
     const numberedMatch = line.match(/^(\d+)\.\s\*\*(.*?)\*\*(.*)$/);
     if (numberedMatch) {
-      if (listType !== 'numbered') {
+      if (listType !== "numbered") {
         if (currentList.length > 0) {
           elements.push({ type: listType, items: currentList });
           currentList = [];
         }
-        listType = 'numbered';
+        listType = "numbered";
       }
       currentList.push({
         number: numberedMatch[1],
         bold: numberedMatch[2],
-        rest: numberedMatch[3]
+        rest: numberedMatch[3],
       });
       return;
     }
@@ -30,16 +30,16 @@ const formatMessage = (text) => {
     // Check for bullet points with ***
     const bulletMatch = line.match(/^\*\*\*(.*?):?\*\*(.*)$/);
     if (bulletMatch) {
-      if (listType !== 'bullet') {
+      if (listType !== "bullet") {
         if (currentList.length > 0) {
           elements.push({ type: listType, items: currentList });
           currentList = [];
         }
-        listType = 'bullet';
+        listType = "bullet";
       }
       currentList.push({
         bold: bulletMatch[1],
-        rest: bulletMatch[2]
+        rest: bulletMatch[2],
       });
       return;
     }
@@ -53,7 +53,7 @@ const formatMessage = (text) => {
 
     // Regular paragraph
     if (line.trim()) {
-      elements.push({ type: 'paragraph', text: line });
+      elements.push({ type: "paragraph", text: line });
     }
   });
 
@@ -68,7 +68,7 @@ const formatMessage = (text) => {
 const renderBoldText = (text) => {
   const parts = text.split(/(\*\*.*?\*\*)/g);
   return parts.map((part, i) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
+    if (part.startsWith("**") && part.endsWith("**")) {
       return <strong key={i}>{part.slice(2, -2)}</strong>;
     }
     return part;
@@ -77,15 +77,25 @@ const renderBoldText = (text) => {
 
 export default function ChatbotInterface() {
   const [messages, setMessages] = useState([
-    { id: 1, text: "Hello! I'm your AI assistant. How can I help you today?", sender: 'bot', timestamp: new Date() }
+    {
+      id: 1,
+      text: "Hello! I'm your AI assistant. How can I help you today?",
+      sender: "bot",
+      timestamp: new Date(),
+    },
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_API_URL;
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+  const authData = JSON.parse(
+    localStorage.getItem("sb-pxscukkdtytvjvfookbm-auth-token") || "{}"
+  );
+  const token = authData?.access_token || "";
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -98,52 +108,57 @@ export default function ChatbotInterface() {
     const userMessage = {
       id: messages.length + 1,
       text: input,
-      sender: 'user',
-      timestamp: new Date()
+      sender: "user",
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     let userQuestion = input;
-    setInput('');
+    setInput("");
     setIsTyping(true);
 
     try {
       const requestBody = {
-        question: userQuestion
+        question: userQuestion,
       };
 
-      const response = await fetch(`${BACKEND_URL}/chat/ask`, {
-        method: 'POST',
+      const response = await fetch(`${BACKEND_URL}/ask/ask`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json' // 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
-      
+
       const botMessage = {
         id: messages.length + 2,
-        text: data.answer || data.response || 'Sorry, I could not process your request.',
-        sender: 'bot',
-        timestamp: new Date()
+        text:
+          data.answer ||
+          data.response ||
+          "Sorry, I could not process your request.",
+        sender: "bot",
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, botMessage]);
+      setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       const errorMessage = {
         id: messages.length + 2,
-        text: 'Sorry, there was an error connecting to the chatbot. Please try again.',
-        sender: 'bot',
-        timestamp: new Date()
+        text: "Sorry, there was an error connecting to the chatbot. Please try again.",
+        sender: "bot",
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      console.log("Chatbot error:", error);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsTyping(false);
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -167,49 +182,61 @@ export default function ChatbotInterface() {
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex gap-3 ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
+            className={`flex gap-3 ${
+              message.sender === "user" ? "flex-row-reverse" : "flex-row"
+            }`}
           >
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-              message.sender === 'user' ? 'bg-green-600' : 'bg-gray-300'
-            }`}>
-              {message.sender === 'user' ? (
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                message.sender === "user" ? "bg-green-600" : "bg-gray-300"
+              }`}
+            >
+              {message.sender === "user" ? (
                 <User className="w-5 h-5 text-white" />
               ) : (
                 <Bot className="w-5 h-5 text-gray-700" />
               )}
             </div>
-            <div className={`max-w-xs lg:max-w-md xl:max-w-lg ${
-              message.sender === 'user' ? 'items-end' : 'items-start'
-            }`}>
-              <div className={`px-4 py-3 rounded-2xl ${
-                message.sender === 'user'
-                  ? 'bg-green-600 text-white rounded-tr-sm'
-                  : 'bg-white text-gray-800 rounded-tl-sm shadow-md'
-              }`}>
-                {message.sender === 'user' ? (
+            <div
+              className={`max-w-xs lg:max-w-md xl:max-w-lg ${
+                message.sender === "user" ? "items-end" : "items-start"
+              }`}
+            >
+              <div
+                className={`px-4 py-3 rounded-2xl ${
+                  message.sender === "user"
+                    ? "bg-green-600 text-white rounded-tr-sm"
+                    : "bg-white text-gray-800 rounded-tl-sm shadow-md"
+                }`}
+              >
+                {message.sender === "user" ? (
                   <p className="text-sm">{message.text}</p>
                 ) : (
                   <div className="text-sm space-y-2">
                     {formatMessage(message.text).map((element, idx) => {
-                      if (element.type === 'paragraph') {
+                      if (element.type === "paragraph") {
                         return <p key={idx}>{renderBoldText(element.text)}</p>;
-                      } else if (element.type === 'numbered') {
+                      } else if (element.type === "numbered") {
                         return (
                           <ol key={idx} className="space-y-2 ml-4">
                             {element.items.map((item, i) => (
                               <li key={i} className="list-none">
-                                <span className="font-semibold">{item.number}. {item.bold}:</span>
+                                <span className="font-semibold">
+                                  {item.number}. {item.bold}:
+                                </span>
                                 {renderBoldText(item.rest)}
                               </li>
                             ))}
                           </ol>
                         );
-                      } else if (element.type === 'bullet') {
+                      } else if (element.type === "bullet") {
                         return (
                           <ul key={idx} className="space-y-1 ml-4">
                             {element.items.map((item, i) => (
                               <li key={i} className="list-none">
-                                <span className="font-semibold">{item.bold}:</span>
+                                <span className="font-semibold">
+                                  {item.bold}:
+                                </span>
                                 {renderBoldText(item.rest)}
                               </li>
                             ))}
@@ -222,12 +249,15 @@ export default function ChatbotInterface() {
                 )}
               </div>
               <p className="text-xs text-gray-500 mt-1 px-2">
-                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {message.timestamp.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </p>
             </div>
           </div>
         ))}
-        
+
         {isTyping && (
           <div className="flex gap-3">
             <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
@@ -236,8 +266,14 @@ export default function ChatbotInterface() {
             <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md">
               <div className="flex gap-1">
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div
+                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  style={{ animationDelay: "0.1s" }}
+                ></div>
+                <div
+                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  style={{ animationDelay: "0.2s" }}
+                ></div>
               </div>
             </div>
           </div>
