@@ -149,9 +149,9 @@ const Home = () => {
   ];
 
   const stats = [
-    { value: '156+', label: 'Plants Diagnosed' },
+    { value: '56+', label: 'Plants Diagnosed' },
     { value: '89%', label: 'Accuracy Rate' },
-    { value: '10K+', label: 'Active Users' },
+    { value: '10+', label: 'Active Users' },
     { value: '38+', label: 'Plant Species' },
   ];
 
@@ -440,14 +440,14 @@ const Home = () => {
             </p>
 
             <div className="flex items-center gap-4 mt-8">
-              <a href="https://drive.google.com/file/d/1YPiDAiTxqBu1b7Vhr9f_W2wR_3jbTxOv/view">
+              <a href="https://drive.google.com/file/d/1Q4pohSmX52xr5KLAIzSKv003UTVLFpMl/view?usp=sharing">
                 <img
                   src={AppDownload}
                   alt="Get it on Google Play"
                   className="h-14 transition-transform hover:scale-105"
                 />
               </a>
-              <a href="https://drive.google.com/file/d/1YPiDAiTxqBu1b7Vhr9f_W2wR_3jbTxOv/view">
+              <a href="https://drive.google.com/file/d/1Q4pohSmX52xr5KLAIzSKv003UTVLFpMl/view?usp=sharing">
                 <img
                   src={AppDownload2}
                   alt="Download on the App Store"
